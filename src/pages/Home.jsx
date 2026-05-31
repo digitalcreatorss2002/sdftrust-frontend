@@ -335,118 +335,120 @@ const Home = () => {
       <Herosection />
 
       <section className="py-10 relative bg-bg-color">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="flex flex-col lg:flex-row gap-12 items-center">
-      
-      {/* Left Block: Info Content */}
-      <div className="lg:w-1/3">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl shadow-sm animate-float">
-            🌱
-          </div>
-          <h2 className="text-3xl md:text-3xl font-serif text-text-primary leading-tight">
-            Why Sustainable
-            <br />
-            Development Foundation ?
-          </h2>
-        </div>
-
-        <p className="text-gray-600 mb-6 leading-relaxed line-clamp-9">
-          {aboutData && aboutData.who_we_are_text
-            ? aboutData.who_we_are_text
-            : "Established in 2014 by a dedicated group of professional social workers, the Sustainable Development Foundation (SDF) is a distinguished autonomous and 'not-for-profit' organization in India..."}
-        </p>
-
-        <Link to="/about">
-          <button className="bg-primary hover:bg-[#5a6425] text-white px-8 py-2.5 rounded-full font-medium transition-colors">
-            View More
-          </button>
-        </Link>
-      </div>
-
-      {/* Right Block: Complete Projects Grid Only */}
-      <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
-        {(() => {
-          // 1. सेफ्टी चेक: डेटा आया है या नहीं
-          if (!recentProjects || !Array.isArray(recentProjects)) {
-            return (
-              <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
-                <p className="font-medium">Loading projects...</p>
-              </div>
-            );
-          }
-
-          // 2. सिर्फ 'completed' प्रोजेक्ट्स को फ़िल्टर करें और उनकी कुल संख्या को 3 तक सीमित (slice) करें
-          const completedProjects = recentProjects
-            .filter((project) => project && project.status === "completed")
-            .slice(0, 3);
-
-          // 3. अगर प्रोजेक्ट्स मिल जाते हैं तो उन्हें मैप करें
-          if (completedProjects.length > 0) {
-            return completedProjects.map((project, idx) => {
-              const finalMediaUrl = getImageUrl(project.image_url);
-              return (
-                <div
-                  key={project.id || idx}
-                  className="bg-white rounded-2xl shadow-sm text-center border border-gray-100 pb-6 flex flex-col h-full hover:shadow-md transition-shadow"
-                >
-                  {/* Media Wrapper */}
-                  <div className="p-4 h-40">
-                    {isVideoFile(project.image_url) ? (
-                      <video
-                        src={finalMediaUrl}
-                        className="w-full h-full object-cover rounded-xl shadow-sm"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                      />
-                    ) : (
-                      <img
-                        src={finalMediaUrl}
-                        alt={project.title}
-                        className="w-full h-full object-cover rounded-xl shadow-sm"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "https://via.placeholder.com/500x300?text=Image+Not+Found";
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  {/* Text Content Area */}
-                  <div className="p-5 grow flex flex-col">
-                    <h3 className="text-xl font-serif text-text-primary mb-3 line-clamp-2">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-500 text-sm mb-6 grow line-clamp-3">
-                      {project.description}
-                    </p>
-
-                    <Link
-                      to={`/projectdetails/${project.slug}`}
-                      className="text-primary font-bold text-sm hover:underline mt-auto"
-                    >
-                      View Project →
-                    </Link>
-                  </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-12 items-center">
+            {/* Left Block: Info Content */}
+            <div className="lg:w-1/3">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl shadow-sm animate-float">
+                  🌱
                 </div>
-              );
-            });
-          } else {
-            // 4. अगर कोई भी कम्प्लीटेड प्रोजेक्ट नहीं मिलता है
-            return (
-              <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
-                <p className="font-medium">No completed projects found.</p>
+                <h2 className="text-3xl md:text-3xl font-serif text-text-primary leading-tight">
+                  Why Sustainable
+                  <br />
+                  Development Foundation ?
+                </h2>
               </div>
-            );
-          }
-        })()}
-      </div>
 
-    </div>
-  </div>
-</section>
+              <p className="text-gray-600 mb-6 leading-relaxed line-clamp-9">
+                {aboutData && aboutData.who_we_are_text
+                  ? aboutData.who_we_are_text
+                  : "Established in 2014 by a dedicated group of professional social workers, the Sustainable Development Foundation (SDF) is a distinguished autonomous and 'not-for-profit' organization in India..."}
+              </p>
+
+              <Link to="/about">
+                <button className="bg-primary hover:bg-[#5a6425] text-white px-8 py-2.5 rounded-full font-medium transition-colors">
+                  View More
+                </button>
+              </Link>
+            </div>
+
+            {/* Right Block: Complete Projects Grid Only */}
+            <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
+              {(() => {
+                // 1. सेफ्टी चेक: डेटा आया है या नहीं
+                if (!recentProjects || !Array.isArray(recentProjects)) {
+                  return (
+                    <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
+                      <p className="font-medium">Loading projects...</p>
+                    </div>
+                  );
+                }
+
+                // 2. सिर्फ 'completed' प्रोजेक्ट्स को फ़िल्टर करें और उनकी कुल संख्या को 3 तक सीमित (slice) करें
+                const completedProjects = recentProjects
+                  .filter(
+                    (project) => project && project.status === "completed",
+                  )
+                  .slice(0, 3);
+
+                // 3. अगर प्रोजेक्ट्स मिल जाते हैं तो उन्हें मैप करें
+                if (completedProjects.length > 0) {
+                  return completedProjects.map((project, idx) => {
+                    const finalMediaUrl = getImageUrl(project.image_url);
+                    return (
+                      <div
+                        key={project.id || idx}
+                        className="bg-white rounded-2xl shadow-sm text-center border border-gray-100 pb-6 flex flex-col h-full hover:shadow-md transition-shadow"
+                      >
+                        {/* Media Wrapper */}
+                        <div className="p-4 h-40">
+                          {isVideoFile(project.image_url) ? (
+                            <video
+                              src={finalMediaUrl}
+                              className="w-full h-full object-cover rounded-xl shadow-sm"
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                            />
+                          ) : (
+                            <img
+                              src={finalMediaUrl}
+                              alt={project.title}
+                              className="w-full h-full object-cover rounded-xl shadow-sm"
+                              onError={(e) => {
+                                e.currentTarget.src =
+                                  "https://via.placeholder.com/500x300?text=Image+Not+Found";
+                              }}
+                            />
+                          )}
+                        </div>
+
+                        {/* Text Content Area */}
+                        <div className="p-5 grow flex flex-col">
+                          <h3 className="text-xl font-serif text-text-primary mb-3 line-clamp-2">
+                            {project.title}
+                          </h3>
+                          <p className="text-gray-500 text-sm mb-6 grow line-clamp-3">
+                            {project.description}
+                          </p>
+
+                          <Link
+                            to={`/projectdetails/${project.slug}`}
+                            className="text-primary font-bold text-sm hover:underline mt-auto"
+                          >
+                            View Project →
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  });
+                } else {
+                  // 4. अगर कोई भी कम्प्लीटेड प्रोजेक्ट नहीं मिलता है
+                  return (
+                    <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
+                      <p className="font-medium">
+                        No completed projects found.
+                      </p>
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section
         ref={focusRef}
@@ -506,7 +508,7 @@ const Home = () => {
 
       <ProjectSlider />
 
-      <OurProgramsSection/>
+      <OurProgramsSection />
 
       <Testimonials />
 
@@ -531,7 +533,7 @@ const Home = () => {
             <a href="/volunteerform">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm relative group cursor-pointer h-80">
                 <img
-                  src="about/vol.png"
+                  src="about/volunteer.jpeg"
                   alt="Volunteer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   onError={(e) => {
@@ -550,7 +552,7 @@ const Home = () => {
             <a href="/donate">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm relative group cursor-pointer h-80">
                 <img
-                  src="banner/donate-page.png"
+                  src="about/donations.jpeg"
                   alt="Donate"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   onError={(e) => {

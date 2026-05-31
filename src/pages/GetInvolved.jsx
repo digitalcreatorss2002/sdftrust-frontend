@@ -122,7 +122,7 @@ const GetInvolved = () => {
             <div className="flex flex-col md:flex-row gap-12 items-center">
               <div className="w-full md:w-1/2 rounded-2xl overflow-hidden shadow-sm h-96 relative">
                 <img
-                  src="about/vol.png"
+                  src="about/volunteer.jpeg"
                   alt="Volunteer"
                   className="w-full h-full object-cover"
                 />
