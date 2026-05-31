@@ -1,71 +1,3 @@
-// import { useEffect, useRef } from "react";
-
-// function Testimonials({ testimonials }) {
-//   const scrollRef = useRef();
-
-//   useEffect(() => {
-//     const container = scrollRef.current;
-//     let animationFrame;
-
-//     const speed = 0.5;
-
-//     const scroll = () => {
-//       if (!container) return;
-
-//       container.scrollLeft += speed;
-
-     
-//       if (
-//         container.scrollLeft + container.clientWidth >=
-//         container.scrollWidth
-//       ) {
-//         container.scrollLeft = 0;
-//       }
-
-//       animationFrame = requestAnimationFrame(scroll);
-//     };
-
-//     animationFrame = requestAnimationFrame(scroll);
-
-//     return () => cancelAnimationFrame(animationFrame);
-//   }, []);
-
-//   return (
-//     <section className="py-10 bg-white">
-//       <div className="max-w-7xl mx-auto px-4 text-center">
-//         <h2 className="text-3xl font-serif mb-10">Stories of Impact</h2>
-
-        
-//         <div
-//           ref={scrollRef}
-//           className="flex gap-6 overflow-x-auto scrollbar-hide pb-8"
-//         >
-//           {testimonials.map((item, index) => (
-//             <div
-//               key={index}
-//               className="min-w-70 bg-gray-100 p-6 rounded-2xl flex gap-4"
-//             >
-//               <img
-//                 src={item.image}
-//                 className="w-16 h-16 rounded-full object-cover"
-//               />
-
-//               <div>
-//                 <p className="text-sm italic">{item.message}</p>
-//                 <h4 className="font-bold text-sm">{item.title}</h4>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-// export default Testimonials;
-
-
-
 import { useEffect, useRef, useState } from "react";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 
@@ -73,17 +5,24 @@ function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const scrollRef = useRef();
 
-  // 🔥 FIXED: Direct root extraction logic for Bluehost
+  // ✅ FIXED: ब्लूहोस्ट लाइव सर्वर के सटीक 'backend/uploads/' पाथ स्ट्रक्चर के लिए परफेक्ट हेल्पर फ़ंक्शन
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/150x150?text=SDF";
     if (path.startsWith("http")) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root nikalna
-    const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
-    const cleanPath = path.replace(/^\/+/, "");
+    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) से '/backend' तक का रूट निकालना
+    const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
+    
+    // पाथ के शुरुआत के स्लैश को साफ करना
+    let cleanPath = path.replace(/^\/+/, "");
+    
+    // अगर बैकएंड पाथ में पहले से 'admin/' लगा हुआ आ रहा है, तो उसे क्लीन करें क्योंकि फ़ाइलें सीधे backend/uploads/ में हैं
+    if (cleanPath.startsWith("admin/")) {
+      cleanPath = cleanPath.replace("admin/", "");
+    }
 
-    // Path structure: domain/backend/admin/uploads/...
-    return `${rootDomain}/backend/admin/${cleanPath}`;
+    // फ़ाइनल यूआरएल स्ट्रक्चर: https://hrntechsolutions.com/backend/uploads/testimonials/filename.ext
+    return `${rootDomain}/backend/${cleanPath}`;
   };
 
   // 1. Fetch data from PHP
@@ -91,8 +30,7 @@ function Testimonials() {
     fetch(`${API_BASE_URL}/testimonial.php?t=${Date.now()}`)
       .then((res) => res.json())
       .then((data) => {
-        // Checking if data is coming correctly
-        if (data.status === "success") {
+        if (data.status === "success" && Array.isArray(data.data)) {
           setTestimonials(data.data);
         } else if (Array.isArray(data)) {
           setTestimonials(data);
@@ -133,8 +71,12 @@ function Testimonials() {
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {testimonials.map((item, index) => {
-            // FIXED: Using helper for image path
-            const imgSrc = getImageUrl(item.image);
+            // ✅ FIXED: 'item.image_url' और 'item.image' दोनों फ़ील्ड्स को सेफ़्टी के लिए मैप किया
+            const targetPath = item.image_url || item.image || "";
+            const imgSrc = getImageUrl(targetPath);
+            
+            // ✅ FIXED: डेटाबेस कॉलम 'message' और फॉलबैक 'message_text' को मैप किया
+            const displayMessage = item.message || item.message_text || "";
 
             return (
               <div 
@@ -151,7 +93,7 @@ function Testimonials() {
                   }}
                 />
                 <div>
-                  <p className="text-sm italic mb-2 text-gray-600">"{item.message}"</p>
+                  <p className="text-sm italic mb-2 text-gray-600 line-clamp-4">"{displayMessage}"</p>
                   <h4 className="font-bold text-sm text-text-primary">{item.name}</h4>
                   <p className="text-[10px] uppercase font-bold text-primary tracking-wider">{item.title}</p>
                 </div>

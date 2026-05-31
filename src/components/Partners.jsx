@@ -7,17 +7,24 @@ const PartnersSection = () => {
   const [societyPartners, setSocietyPartners] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 FIXED: Direct root extraction helper for Bluehost paths
+  // ✅ FIXED: ब्लूहोस्ट लाइव सर्वर के सटीक 'backend/uploads/' पाथ स्ट्रक्चर के लिए हेल्पर फ़ंक्शन
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/150x150?text=No+Logo";
     if (path.startsWith("http")) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se domain nikalna
-    const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
-    const cleanPath = path.replace(/^\/+/, "");
+    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) से 'backend' तक का रूट निकालना
+    const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
+    
+    // पाथ को साफ़ करें और डबल 'admin/' या 'uploads/' की चेकिंग संभालें
+    let cleanPath = path.replace(/^\/+/, "");
+    
+    // अगर API या डेटाबेस पाथ में 'admin/uploads/' आ रहा है, तो उसे 'uploads/' में बदलें
+    if (cleanPath.startsWith("admin/uploads/")) {
+      cleanPath = cleanPath.replace("admin/uploads/", "uploads/");
+    }
 
-    // Final URL structure: domain/backend/admin/uploads/path
-    return `${rootDomain}/backend/admin/${cleanPath}`;
+    // फ़ाइनल यूआरएल स्ट्रक्चर: domain/backend/uploads/partners/filename.jpg
+    return `${rootDomain}/backend/${cleanPath}`;
   };
 
   // Fetch partners data
@@ -46,8 +53,8 @@ const PartnersSection = () => {
         <h3 className="text-2xl font-serif mb-8 text-[#4a5840]">{title}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
           {data.map((partner, index) => {
-            // FIXED: Using the new helper function for image path
-            const imgSrc = getImageUrl(partner.img);
+            // FIXED: नए सुधरे हुए हेल्पर फ़ंक्शन से इमेज सोर्स निकालना
+            const imgSrc = getImageUrl(partner.img || partner.image_url);
 
             return (
               <a
@@ -86,8 +93,8 @@ const PartnersSection = () => {
         </h2>
 
         {renderPartnerGrid("Corporate Partners", partners)}
-        {/* {renderPartnerGrid("Public Partners", publicPartners)}
-        {renderPartnerGrid("Society Partners", societyPartners)} */}
+        {/* {renderPartnerGrid("Public Partners", publicPartners)} */}
+        {/* {renderPartnerGrid("Society Partners", societyPartners)} */}
       </div>
     </section>
   );

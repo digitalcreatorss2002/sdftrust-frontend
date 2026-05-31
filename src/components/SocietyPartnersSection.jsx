@@ -5,19 +5,24 @@ const SocietyPartnersSection = () => {
   const [societyPartners, setSocietyPartners] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 FINAL BULLETPROOF IMAGE PATH LOGIC: Mapped precisely with backend/admin/uploads
+  // ✅ FIXED: ब्लूहोस्ट लाइव सर्वर के सटीक 'backend/uploads/' पाथ स्ट्रक्चर के लिए परफेक्ट हेल्पर फ़ंक्शन
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/150x150?text=No+Logo";
     if (path.startsWith("http")) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se core domain extract karna
-    const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
+    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) से '/backend' तक का रूट निकालना
+    const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
     
-    // Path ke shuruat ke forward slashes ko clean karna
-    const cleanPath = path.replace(/^\/+/, "");
+    // पाथ के शुरुआत के स्लैश को साफ करना
+    let cleanPath = path.replace(/^\/+/, "");
+    
+    // अगर बैकएंड पाथ में पहले से 'admin/' लगा हुआ आ रहा है, तो उसे क्लीन करें क्योंकि फ़ाइलें सीधे backend/uploads/ में हैं
+    if (cleanPath.startsWith("admin/")) {
+      cleanPath = cleanPath.replace("admin/", "");
+    }
 
-    // Generates perfect absolute mapping: rootDomain + /backend/admin/ + uploads/society_partners/filename.ext
-    return `${rootDomain}/backend/admin/${cleanPath}`;
+    // फ़ाइनल यूआरएल स्ट्रक्चर: https://hrntechsolutions.com/backend/uploads/society_partners/filename.ext
+    return `${rootDomain}/backend/${cleanPath}`;
   };
 
   // Fetch only society partners matching your exact database schema
@@ -57,7 +62,7 @@ const SocietyPartnersSection = () => {
           Our Society Partners & Supporters
         </h2>
 
-        {/* 🔥 MATCHED DESIGN GRID: Aligned exactly with image_d98acc.jpg layout structure */}
+        {/* MATCHED DESIGN GRID: Aligned exactly with premium layout structure */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {societyPartners.map((partner, index) => {
             const targetPath = partner.image_url || partner.img || "";

@@ -5,19 +5,24 @@ const PublicPartnersSection = () => {
   const [publicPartners, setPublicPartners] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 FINAL BULLETPROOF IMAGE PATH LOGIC: Mapped precisely with backend/admin/uploads
+  // ✅ FIXED: ब्लूहोस्ट लाइव सर्वर के सटीक 'backend/uploads/' पाथ स्ट्रक्चर के लिए परफेक्ट हेल्पर फ़ंक्शन
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/150x150?text=No+Logo";
     if (path.startsWith("http")) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se core domain extract karna
-    const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
+    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) से '/backend' तक का रूट निकालना
+    const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
     
-    // Path ke shuruat ke forward slashes ko clean karna
-    const cleanPath = path.replace(/^\/+/, "");
+    // पाथ के शुरुआत के स्लैश को साफ करना
+    let cleanPath = path.replace(/^\/+/, "");
+    
+    // अगर बैकएंड पाथ में 'admin/' लगा हुआ आ रहा है, तो उसे हटाएं क्योंकि फ़ाइलें सीधे backend/uploads/ में हैं
+    if (cleanPath.startsWith("admin/")) {
+      cleanPath = cleanPath.replace("admin/", "");
+    }
 
-    // Generates perfect absolute mapping: rootDomain + /backend/admin/ + uploads/public_partners/filename.ext
-    return `${rootDomain}/backend/admin/${cleanPath}`;
+    // फ़ाइनल यूआरएल स्ट्रक्चर: https://hrntechsolutions.com/backend/uploads/public_partners/filename.ext
+    return `${rootDomain}/backend/${cleanPath}`;
   };
 
   // Fetch only public partners matching your exact database schema
@@ -58,10 +63,10 @@ const PublicPartnersSection = () => {
           Our Public Partners & Supporters
         </h2>
 
-        {/* 🔥 UPDATED PREMIUM DESIGN GRID: Aligned with image_d98acc.jpg layout structure */}
+        {/* PREMIUM DESIGN GRID: Aligned layout structure */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {publicPartners.map((partner, index) => {
-            // 🔥 Dynamic Key Check: Checks for both 'image_url' and alternative 'img' columns
+            // Dynamic Key Check: Checks for both 'image_url' and alternative 'img' columns
             const targetPath = partner.image_url || partner.img || "";
             const imgSrc = getImageUrl(targetPath);
 
@@ -71,7 +76,6 @@ const PublicPartnersSection = () => {
                 href={partner.link && partner.link !== "#" ? partner.link : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                // 🔥 Increased Aspect Ratio: Updated from 4/5 to 4/5.2 for larger container
                 className="bg-white rounded-3xl p-6 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col items-center justify-between transition-all duration-300 ease-in-out hover:-translate-y-1.5 group aspect-[4/5.2]"
               >
                 {/* Image Container Wrapper ensuring square ratio scale box with increased min-height */}
@@ -79,7 +83,6 @@ const PublicPartnersSection = () => {
                   <img
                     src={imgSrc}
                     alt={partner.title || "Public Partner"}
-                    // 🔥 Increased Max Height: Updated from 85px to 95px for larger logos
                     className="max-w-full max-h-[95px] object-contain transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       e.currentTarget.onerror = null;

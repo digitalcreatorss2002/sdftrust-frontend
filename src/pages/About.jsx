@@ -381,52 +381,54 @@ const About = () => {
 
         {/* 4. PARTNERS */}
         {activeTab === "partners" && (
-          <div className="max-w-4xl mx-auto animate-fade-in text-center">
-            <div className="mb-12">
-              <h2 className="text-3xl font-serif text-text-primary mb-4">
-                Partners & Affiliations
-              </h2>
-              <div className="w-24 h-1 bg-primary mx-auto"></div>
-            </div>
+  <div className="max-w-4xl mx-auto animate-fade-in text-center">
+    <div className="mb-12">
+      <h2 className="text-3xl font-serif text-text-primary mb-4">
+        Partners & Affiliations
+      </h2>
+      <div className="w-24 h-1 bg-primary mx-auto"></div>
+    </div>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-16">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* 1. Corporate Section */}
-                <Link
-                  to="/partners"
-                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-                >
-                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-                    Corporate
-                  </div>
-                  <div className="text-gray-500">CSR Partners</div>
-                </Link>
-
-                {/* 2. Public Section */}
-                <Link
-                  to="/public_partners"
-                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-                >
-                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-                    Public
-                  </div>
-                  <div className="text-gray-500">Government Alliances</div>
-                </Link>
-
-                {/* 3. Civil Society Section */}
-                <Link
-                  to="/society_partners"
-                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-                >
-                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-                    Civil Society
-                  </div>
-                  <div className="text-gray-500">NGO Partners</div>
-                </Link>
-              </div>
-            </div>
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-16">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        {/* 1. Corporate Section */}
+        <Link
+          to="/partners"
+          className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+        >
+          <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
+            Corporate
           </div>
-        )}
+          <div className="text-gray-500">CSR Partners</div>
+        </Link>
+
+        {/* 2. Public Section - PATH FIXED */}
+        <Link
+          to="/public-partners"
+          className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+        >
+          <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
+            Public
+          </div>
+          <div className="text-gray-500">Government Alliances</div>
+        </Link>
+
+        {/* 3. Civil Society Section - PATH FIXED */}
+        <Link
+          to="/society-partners"
+          className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+        >
+          <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
+            Civil Society
+          </div>
+          <div className="text-gray-500">NGO Partners</div>
+        </Link>
+        
+      </div>
+    </div>
+  </div>
+)}
 
         {/* 5. FAQ */}
         {activeTab === "faq" && (

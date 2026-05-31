@@ -31,7 +31,7 @@ const Projects = () => {
   // Category state under dynamic dynamic listings - defaults to null to show all projects initially
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // 🔥 UPDATED IMAGE URL HELPER: Aligned with Bluehost backend/admin/uploads structure
+  // 🔥 UPDATED IMAGE URL HELPER: Fixed to dynamically handle paths with or without admin/uploads prefix securely
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/600x400?text=No+Media";
     
@@ -41,7 +41,14 @@ const Projects = () => {
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
     
     // Path clean karna (shuruat ke slashes hatana)
-    const cleanPath = path.replace(/^\/+/, ""); 
+    let cleanPath = path.replace(/^\/+/, ""); 
+
+    // Agar path me already 'backend/admin/' ya 'admin/' laga ho to redundant mapping clean karein
+    if (cleanPath.startsWith('backend/admin/')) {
+      cleanPath = cleanPath.replace('backend/admin/', '');
+    } else if (cleanPath.startsWith('admin/')) {
+      cleanPath = cleanPath.replace('admin/', '');
+    }
     
     // Final URL: Root + backend/admin + uploads path
     return `${rootDomain}/backend/admin/${cleanPath}`;
@@ -71,35 +78,35 @@ const Projects = () => {
   const mapClipPath = useMotionTemplate`circle(${mapClipPercentage}% at 50% 50%)`;
 
   const stateStaticData = {
-    "Andhra Pradesh": { image: "map/AndhraPradesh.jpg", livesImpacted: "800k+" },
-    "Arunachal Pradesh": { image: "map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
-    "Assam": { image: "map/Assam.jpg", livesImpacted: "200k+" },
-    "Bihar": { image: "map/Bihar.jpg", livesImpacted: "1M+" },
-    "Chhattisgarh": { image: "map/Chhattisgarh.jpg", livesImpacted: "300k+" },
-    "Goa": { image: "map/Goa.jpg", livesImpacted: "20k+" },
-    "Gujarat": { image: "map/Gujarat.jpg", livesImpacted: "600k+" },
-    "Haryana": { image: "map/Haryana.jpg", livesImpacted: "400k+" },
-    "Himachal Pradesh": { image: "map/Himachal Pradesh.jpg", livesImpacted: "150k+" },
-    "Jharkhand": { image: "map/Jharkhand.jpg", livesImpacted: "500k+" },
-    "Karnataka": { image: "map/Karnataka.jpg", livesImpacted: "750k+" },
-    "Kerala": { image: "map/Kerala.jpg", livesImpacted: "300k+" },
-    "Madhya Pradesh": { image: "map/Madhya Pradesh.jpg", livesImpacted: "1.2M+" },
-    "Maharashtra": { image: "map/Maharashtra.jpg", livesImpacted: "2M+" },
-    "Manipur": { image: "map/Manipur.jpg", livesImpacted: "40k+" },
-    "Meghalaya": { image: "map/Meghalaya.jpg", livesImpacted: "60k+" },
-    "Mizoram": { image: "map/Mizoram.jpg", livesImpacted: "30k+" },
-    "Nagaland": { image: "map/Nagaland.jpg", livesImpacted: "45k+" },
-    "Odisha": { image: "map/Odisha.jpg", livesImpacted: "900k+" },
-    "Punjab": { image: "map/Punjab.jpg", livesImpacted: "400k+" },
-    "Rajasthan": { image: "map/Rajasthan.jpg", livesImpacted: "1.1M+" },
-    "Sikkim": { image: "map/Sikkim.jpg", livesImpacted: "25k+" },
-    "Tamil Nadu": { image: "map/TamilNadu.jpg", livesImpacted: "850k+" },
-    "Telangana": { image: "map/Telangana.jpg", livesImpacted: "600k+" },
-    "Tripura": { image: "map/Tripura.jpg", livesImpacted: "70k+" },
-    "Uttar Pradesh": { image: "map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
-    "Uttarakhand": { image: "map/Uttarakhand.jpg", livesImpacted: "200k+" },
-    "West Bengal": { image: "map/WestBengal.jpg", livesImpacted: "1.3M+" },
-    "Jammu and Kashmir": { image: "map/Jammu and Kashmir.png", livesImpacted: "100k+" },
+    "Andhra Pradesh": { image: "/map/AndhraPradesh.jpg", livesImpacted: "800k+" },
+    "Arunachal Pradesh": { image: "/map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
+    "Assam": { image: "/map/Assam.jpg", livesImpacted: "200k+" },
+    "Bihar": { image: "/map/Bihar.jpg", livesImpacted: "1M+" },
+    "Chhattisgarh": { image: "/map/Chhattisgarh.jpg", livesImpacted: "300k+" },
+    "Goa": { image: "/map/Goa.jpg", livesImpacted: "20k+" },
+    "Gujarat": { image: "/map/Gujarat.jpg", livesImpacted: "600k+" },
+    "Haryana": { image: "/map/Haryana.jpg", livesImpacted: "400k+" },
+    "Himachal Pradesh": { image: "/map/Himachal Pradesh.jpg", livesImpacted: "150k+" },
+    "Jharkhand": { image: "/map/Jharkhand.jpg", livesImpacted: "500k+" },
+    "Karnataka": { image: "/map/Karnataka.jpg", livesImpacted: "750k+" },
+    "Kerala": { image: "/map/Kerala.jpg", livesImpacted: "300k+" },
+    "Madhya Pradesh": { image: "/map/Madhya Pradesh.jpg", livesImpacted: "1.2M+" },
+    "Maharashtra": { image: "/map/Maharashtra.jpg", livesImpacted: "2M+" },
+    "Manipur": { image: "/map/Manipur.jpg", livesImpacted: "40k+" },
+    "Meghalaya": { image: "/map/Meghalaya.jpg", livesImpacted: "60k+" },
+    "Mizoram": { image: "/map/Mizoram.jpg", livesImpacted: "30k+" },
+    "Nagaland": { image: "/map/Nagaland.jpg", livesImpacted: "45k+" },
+    "Odisha": { image: "/map/Odisha.jpg", livesImpacted: "900k+" },
+    "Punjab": { image: "/map/Punjab.jpg", livesImpacted: "400k+" },
+    "Rajasthan": { image: "/map/Rajasthan.jpg", livesImpacted: "1.1M+" },
+    "Sikkim": { image: "/map/Sikkim.jpg", livesImpacted: "25k+" },
+    "Tamil Nadu": { image: "/map/TamilNadu.jpg", livesImpacted: "850k+" },
+    "Telangana": { image: "/map/Telangana.jpg", livesImpacted: "600k+" },
+    "Tripura": { image: "/map/Tripura.jpg", livesImpacted: "70k+" },
+    "Uttar Pradesh": { image: "/map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
+    "Uttarakhand": { image: "/map/Uttarakhand.jpg", livesImpacted: "200k+" },
+    "West Bengal": { image: "/map/WestBengal.jpg", livesImpacted: "1.3M+" },
+    "Jammu and Kashmir": { image: "/map/Jammu and Kashmir.png", livesImpacted: "100k+" },
   };
 
   useEffect(() => {
@@ -182,22 +189,22 @@ const Projects = () => {
   };
 
   // Calculate dynamic completed projects counts directly from the array for global snapshot view
-  const globalCompletedCount = projects.filter(p => p.status?.toLowerCase() === 'completed').length;
+  const globalCompletedCount = projects.filter(p => p.status?.trim().toLowerCase() === 'completed').length;
 
   // Exact conditional schema validation logic aligned with dynamic tabs
   let displayProjects = [];
   if (activeTab === "all") {
-      displayProjects = projects.filter((p) => p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'ongoing');
+      displayProjects = projects.filter((p) => p.status?.trim().toLowerCase() === 'active' || p.status?.trim().toLowerCase() === 'ongoing');
       if (selectedCategory) {
           displayProjects = displayProjects.filter((p) => p.category?.trim() === selectedCategory);
       }
   } else if (activeTab === "completed") {
-      displayProjects = projects.filter((p) => p.status?.toLowerCase() === 'completed');
+      displayProjects = projects.filter((p) => p.status?.trim().toLowerCase() === 'completed');
       if (selectedCategory) {
           displayProjects = displayProjects.filter((p) => p.category?.trim() === selectedCategory);
       }
   } else if (activeTab === "planned") {
-      displayProjects = projects.filter((p) => p.status?.toLowerCase() === 'planned');
+      displayProjects = projects.filter((p) => p.status?.trim().toLowerCase() === 'planned');
       if (selectedCategory) {
           displayProjects = displayProjects.filter((p) => p.category?.trim() === selectedCategory);
       }
@@ -310,8 +317,9 @@ const Projects = () => {
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-[10px] font-bold text-accent uppercase tracking-widest">{project.category}</div>
-                      <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded ${project.status?.toLowerCase() === 'completed' ? 'bg-green-100 text-green-700' : project.status?.toLowerCase() === 'planned' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-700'}`}>
-                        {project.status}
+                      {/* 🔥 FIXED BADGE DISPLAY: Added absolute text capitalization template for badges formatting uniformity */}
+                      <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded ${project.status?.trim().toLowerCase() === 'completed' ? 'bg-green-100 text-green-700' : project.status?.trim().toLowerCase() === 'planned' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-700'}`}>
+                        {project.status?.trim().toLowerCase() === 'active' || project.status?.trim().toLowerCase() === 'ongoing' ? 'Ongoing' : project.status}
                       </span>
                     </div>
                     <h3 className="text-2xl font-serif font-bold text-text-primary mb-2 leading-tight">{project.title}</h3>
@@ -390,7 +398,7 @@ const Projects = () => {
                     
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-105">
-                        {selectedMapState.projects?.filter(p => p.status?.toLowerCase() === 'completed' || p.is_completed).length || 0}
+                        {selectedMapState.projects?.filter(p => p.status?.trim().toLowerCase() === 'completed' || p.is_completed).length || 0}
                       </div>
                       <div>
                         <div className="text-sm font-bold text-gray-800 uppercase tracking-tight">Total Complete Projects</div>

@@ -24,9 +24,6 @@ import PartnersSection from './components/Partners';
 import PublicPartnersSection from './components/PublicPartnersSection';
 import SocietyPartnersSection from './components/SocietyPartnersSection';
 
-
-
-
 function App() {
   return (
     <BrowserRouter>
@@ -46,9 +43,12 @@ function App() {
           <Route path="testimonials" element={<Testimonials/>} />
           <Route path="volunteerform" element={<VolunteerForm/>} />
           <Route path="projects" element={<Projects />} />
+          
+          {/* 🤝 CLEAN ROUTING MATCHES FOR PARTNERS */}
           <Route path="partners" element={<PartnersSection />} />
-          <Route path="publicpartnerssection" element={<PublicPartnersSection />} />
-          <Route path="societypartnerssection" element={<SocietyPartnersSection />} />
+          <Route path="public-partners" element={<PublicPartnersSection />} />
+          <Route path="society-partners" element={<SocietyPartnersSection />} />
+          
           <Route path="projectdetails/:slug" element={<ProjectDetails />} />
           <Route path="press-coverage/:slug" element={<PressCoverageDetails />} />
           <Route path="publications" element={<Publications />} />
@@ -56,7 +56,6 @@ function App() {
           <Route path="impact" element={<ImpactAndEvidence />} />
           <Route path="contact" element={<Contact />} />
           <Route path="donate" element={<Donate />} />
-
         </Route>
       </Routes>
     </BrowserRouter>
