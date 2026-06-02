@@ -5,25 +5,23 @@ function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const scrollRef = useRef();
 
-  // ✅ FIXED: ब्लूहोस्ट लाइव सर्वर के सटीक 'backend/uploads/' पाथ स्ट्रक्चर के लिए परफेक्ट हेल्पर फ़ंक्शन
   const getImageUrl = (path) => {
-    if (!path) return "https://placehold.co/150x150?text=SDF";
-    if (path.startsWith("http")) return path;
+  if (!path) return "https://placehold.co/150x150?text=SDF";
+  if (path.startsWith("http")) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) से '/backend' तक का रूट निकालना
-    const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
-    
-    // पाथ के शुरुआत के स्लैश को साफ करना
-    let cleanPath = path.replace(/^\/+/, "");
-    
-    // अगर बैकएंड पाथ में पहले से 'admin/' लगा हुआ आ रहा है, तो उसे क्लीन करें क्योंकि फ़ाइलें सीधे backend/uploads/ में हैं
-    if (cleanPath.startsWith("admin/")) {
-      cleanPath = cleanPath.replace("admin/", "");
-    }
+  // Extract root domain
+  const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
+  
+  // Clean starting slashes
+  let cleanPath = path.replace(/^\/+/, "");
 
-    // फ़ाइनल यूआरएल स्ट्रक्चर: https://hrntechsolutions.com/backend/uploads/testimonials/filename.ext
-    return `${rootDomain}/backend/${cleanPath}`;
-  };
+  if (!cleanPath.startsWith("admin/")) {
+      cleanPath = `admin/${cleanPath}`;
+  }
+
+  // Final URL will correctly be: https://hrntechsolutions.com/backend/admin/uploads/...
+  return `${rootDomain}/backend/${cleanPath}`;
+};
 
   // 1. Fetch data from PHP
   useEffect(() => {
