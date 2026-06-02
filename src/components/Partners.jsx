@@ -10,7 +10,7 @@ const PartnersSection = () => {
   // ✅ FIXED: ब्लूहोस्ट लाइव सर्वर के सटीक 'backend/uploads/' पाथ स्ट्रक्चर के लिए हेल्पर फ़ंक्शन
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/150x150?text=No+Logo";
-    if (path.startsWith("http")) return path;
+    if (path.startsWith("https")) return path;
 
     // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) से 'backend' तक का रूट निकालना
     const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");

@@ -35,7 +35,7 @@ const Projects = () => {
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/600x400?text=No+Media";
     
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('https')) return path;
 
     // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root nikalna
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 

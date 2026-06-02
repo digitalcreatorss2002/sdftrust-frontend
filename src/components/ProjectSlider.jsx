@@ -12,7 +12,7 @@ const ProjectSlider = () => {
   // 🔥 FIXED IMAGE URL HELPER: Matches your Bluehost structure logic
   const getImageUrl = (path) => {
     if (!path) return "https://via.placeholder.com/800x500?text=SDF+Project"; 
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('https')) return path;
 
     // Root domain nikalne ke liye logic (e.g., https://hrntechsolutions.com)
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 

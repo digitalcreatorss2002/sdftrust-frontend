@@ -9,7 +9,7 @@ const makeImageUrl = (path) => {
     return "https://via.placeholder.com/1200x800?text=No+Image";
   }
 
-  if (path.startsWith("http://") || path.startsWith("https://")) {
+  if (path.startsWith("https://") || path.startsWith("https://")) {
     return path;
   }
 

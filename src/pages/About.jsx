@@ -7,7 +7,7 @@ const BASE_URL = ADMIN_BASE_URL;
 // 🔥 FIXED BULLETPROOF IMAGE PATH ROUTING: Aligned exactly with yesterday's layout structure
 const makeImageUrl = (path) => {
   if (!path) return "https://placehold.co/150x150?text=No+Photo";
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  if (path.startsWith("https://") || path.startsWith("https://")) return path;
   
   // ADMIN_BASE_URL se base core domain extract karna
   const rootDomain = BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");

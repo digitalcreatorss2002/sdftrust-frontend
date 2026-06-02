@@ -56,7 +56,7 @@ const OurProgramsSection = () => {
                   {/* Image Container */}
                   <div className="h-48 overflow-hidden relative">
                     <img
-                      src={program.image_url?.startsWith("http") ? program.image_url : `https://hrntechsolutions.com/backend/admin/${program.image_url}`}
+                      src={program.image_url?.startsWith("https") ? program.image_url : `https://hrntechsolutions.com/backend/admin/${program.image_url}`}
                       alt={program.title}
                       className="w-full h-full object-cover"
                       onError={(e) => {

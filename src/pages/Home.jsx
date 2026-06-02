@@ -28,7 +28,7 @@ const isVideoFile = (url) => {
 // Direct root extraction to match your working Project details/listing logic
 const getImageUrl = (path) => {
   if (!path) return "https://via.placeholder.com/800x500?text=No+Image";
-  if (path.startsWith("http")) return path;
+  if (path.startsWith("https")) return path;
 
   const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(
     /\/+$/,

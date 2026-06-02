@@ -17,7 +17,7 @@ const Publications = () => {
 
   const getFullUrl = (path) => {
     if (!path) return "";
-    if (path.startsWith("http")) return path;
+    if (path.startsWith("https")) return path;
     return `${ADMIN_BASE_URL}${path}`;
   };
 

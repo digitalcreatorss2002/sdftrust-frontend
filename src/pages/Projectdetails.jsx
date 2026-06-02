@@ -19,7 +19,7 @@ const ProjectDetails = () => {
   // 🔥 FIXED IMAGE URL HELPER: Aligned with your Bluehost folder structure
   const getImageUrl = (path) => {
     if (!path) return "https://via.placeholder.com/1200x800?text=SDF+Project";
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('https')) return path;
 
     // Root domain nikalna (e.g., https://hrntechsolutions.com)
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 

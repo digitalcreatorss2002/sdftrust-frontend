@@ -194,7 +194,7 @@ const Programs = () => {
               <div className="h-48 overflow-hidden">
                 <img
                   src={
-                    program.image_url?.startsWith("http")
+                    program.image_url?.startsWith("https")
                       ? program.image_url
                       : `https://hrntechsolutions.com/backend/admin/${program.image_url}`
                   }

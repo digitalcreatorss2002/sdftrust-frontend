@@ -122,7 +122,7 @@ const MediaAndStories = () => {
   // 🔥 FIXED IMAGE URL HELPER: Aligned with Bluehost root structure
   const getImageUrl = (path) => {
     if (!path) return 'https://via.placeholder.com/800x600?text=No+Media';
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('https')) return path;
 
     // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root domain nikalna
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 

@@ -7,7 +7,7 @@ function Testimonials() {
 
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/150x150?text=SDF";
-    if (path.startsWith("http")) return path;
+    if (path.startsWith("https")) return path;
 
     const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
     
