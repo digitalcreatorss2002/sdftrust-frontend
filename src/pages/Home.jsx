@@ -336,9 +336,9 @@ const Home = () => {
 
       <section className="py-10 relative bg-bg-color">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-12 items-center">
+          <div className="flex flex-col lg:flex-row xl:items-start lg:items-center gap-12 justify-between">
             {/* Left Block: Info Content */}
-            <div className="lg:w-1/3">
+            <div className="w-full lg:w-[30%] xl:max-w-[350px] shrink-0">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl shadow-sm animate-float">
                   🌱
@@ -363,10 +363,8 @@ const Home = () => {
               </Link>
             </div>
 
-            {/* Right Block: Complete Projects Grid Only */}
-            <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="w-full lg:w-[68%] xl:max-w-[850px] grid grid-cols-1 md:grid-cols-3 gap-6">
               {(() => {
-                // 1. सेफ्टी चेक: डेटा आया है या नहीं
                 if (!recentProjects || !Array.isArray(recentProjects)) {
                   return (
                     <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
@@ -375,14 +373,12 @@ const Home = () => {
                   );
                 }
 
-                // 2. सिर्फ 'completed' प्रोजेक्ट्स को फ़िल्टर करें और उनकी कुल संख्या को 3 तक सीमित (slice) करें
                 const completedProjects = recentProjects
                   .filter(
                     (project) => project && project.status === "completed",
                   )
                   .slice(0, 3);
 
-                // 3. अगर प्रोजेक्ट्स मिल जाते हैं तो उन्हें मैप करें
                 if (completedProjects.length > 0) {
                   return completedProjects.map((project, idx) => {
                     const finalMediaUrl = getImageUrl(project.image_url);
@@ -391,8 +387,7 @@ const Home = () => {
                         key={project.id || idx}
                         className="bg-white rounded-2xl shadow-sm text-center border border-gray-100 pb-6 flex flex-col h-full hover:shadow-md transition-shadow"
                       >
-                        {/* Media Wrapper */}
-                        <div className="p-4 h-40">
+                        <div className="p-4 h-44">
                           {isVideoFile(project.image_url) ? (
                             <video
                               src={finalMediaUrl}
@@ -435,7 +430,6 @@ const Home = () => {
                     );
                   });
                 } else {
-                  // 4. अगर कोई भी कम्प्लीटेड प्रोजेक्ट नहीं मिलता है
                   return (
                     <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
                       <p className="font-medium">
