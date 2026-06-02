@@ -17,16 +17,13 @@ const getYoutubeId = (url) => {
   }
 };
 
-// 🔥 FIXED: Direct root extraction to match your Bluehost structure
 const getMediaUrl = (path) => {
   if (!path) return "https://via.placeholder.com/150x100?text=No+Image";
   if (path.startsWith('http')) return path;
 
-  // Root domain nikalne ke liye (ADMIN_BASE_URL split logic)
   const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
   const cleanPath = path.replace(/^\/+/, ''); 
   
-  // Images backend/admin/uploads/ mein hain
   return `${rootDomain}/backend/admin/${cleanPath}`;
 };
 
@@ -69,7 +66,8 @@ function Herosection() {
   const activeVideo = getYoutubeId(heroCards[activeIndex]?.youtube_link);
 
   return (
-    <section className="relative bg-black overflow-hidden pb-44 sm:pb-48 md:pb-32">
+    <section className="relative bg-black overflow-hidden min-h-screen flex flex-col justify-between">
+      
       {/* 🎥 VIDEO SECTION */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-black">
         {activeVideo ? (
@@ -86,55 +84,56 @@ function Herosection() {
           <div className="absolute inset-0 bg-gray-900"></div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-black/10"></div> 
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-black/20"></div> 
       </div>
 
       {/* CONTENT */}
-      <div className="relative z-10 w-[95%] mx-auto min-h-[350px] sm:min-h-[450px] md:min-h-150 flex items-center pt-24 pb-16 md:pt-20 md:pb-28">
-        <div className="max-w-5xl lg:max-w-6xl xl:max-w-7xl text-white pl-6 md:pl-10">
+      <div className="relative z-10 w-[90%] mx-auto flex-grow flex items-center pt-32 pb-48">
+        <div className="max-w-3xl text-white pl-4 md:pl-12">
           <div key={activeIndex} className="animate-fadeSlide">
-            <h1 className="w-full max-w-5xl mx-auto text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-4 sm:mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] bg-[linear-gradient(to_right,#eab308,#2c8fa3)] bg-clip-text text-transparent leading-tight">
+            <h1 className="w-full text-4xl md:text-7xl font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)] bg-[linear-gradient(to_right,#eab308,#2c8fa3)] bg-clip-text text-transparent leading-tight">
               {heroCards[activeIndex]?.title || "Loading..."}
             </h1>
 
-            <p className="mb-6 sm:mb-8 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] text-base sm:text-lg lg:text-xl xl:text-2xl leading-relaxed font-medium">
+            <p className="mb-10 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] text-lg md:text-xl leading-relaxed font-medium max-w-2xl">
               {heroCards[activeIndex]?.description || ""}
             </p>
           </div>
 
           <Link
             to="/about"
-            className="bg-[#635d0d] hover:bg-[#4e490a] transition-all hover:scale-105 px-8 py-3.5 rounded-full font-bold shadow-lg inline-block text-white"
+            className="bg-[#635d0d] hover:bg-[#4e490a] transition-all hover:scale-105 px-10 py-4 rounded-full font-bold shadow-xl inline-block text-white text-lg"
           >
             Learn More →
           </Link>
         </div>
       </div>
 
-      {/* CAROUSEL THUMBNAILS */}
+      {/* 🔄 CAROUSEL THUMBNAILS - CURVE EFFECT FIXED */}
       <div
-        className="absolute bottom-12 sm:bottom-16 md:bottom-24 left-0 w-full z-30 flex justify-center items-center"
+        className="absolute bottom-15 left-0 w-full z-30 flex justify-center items-center"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-12 lg:gap-16 xl:gap-24 2xl:gap-32 w-full px-4">
+        <div className="flex items-end justify-center gap-6 md:gap-16 w-full px-4 min-h-[100px]">
           {heroCards.length > 0 &&
             [-1, 0, 1].map((offset) => {
               const index =
                 (activeIndex + offset + heroCards.length) % heroCards.length;
               const card = heroCards[index];
 
+              // Curve dynamic alignment logic using Tailwind CSS classes
               let curveClasses = "";
               if (offset === 0) {
-                curveClasses =
-                  "scale-105 sm:scale-110 md:scale-125 border-[3px] md:border-4 border-yellow-400 z-40 opacity-100 shadow-2xl translate-y-3 sm:translate-y-6 md:translate-y-8";
+                // Center Active card: Upar utha hua, sidha aur bada border ke sath
+                curveClasses = "w-28 md:w-56 border-2 md:border-4 border-yellow-400 opacity-100 scale-110 shadow-2xl z-40 translate-y-[-12px]";
               } else if (offset === -1) {
-                curveClasses =
-                  "scale-90 sm:scale-95 opacity-70 z-20 hover:opacity-100 shadow-lg translate-y-6 sm:translate-y-12 -rotate-6";
+                // Left card: Thoda neeche dhasa hua aur left ki taraf tilted (-rotate)
+                curveClasses = "w-24 md:w-44 opacity-60 scale-95 translate-y-[12px] -rotate-6 z-20 hover:opacity-90";
               } else if (offset === 1) {
-                curveClasses =
-                  "scale-90 sm:scale-95 opacity-70 z-20 hover:opacity-100 shadow-lg translate-y-6 sm:translate-y-12 rotate-6";
+                // Right card: Thoda neeche dhasa hua aur right ki taraf tilted (rotate)
+                curveClasses = "w-24 md:w-44 opacity-60 scale-95 translate-y-[12px] rotate-6 z-20 hover:opacity-90";
               }
 
               return (
@@ -144,10 +143,9 @@ function Herosection() {
                   className={`cursor-pointer transition-all duration-500 ease-out rounded-xl overflow-hidden bg-black/40 backdrop-blur-sm ${curveClasses}`}
                 >
                   <img
-                    /* 🔥 FIXED: Thumbnail path corrected using helper function */
                     src={getMediaUrl(card?.image_url)}
                     alt={card?.title || "Thumbnail"}
-                    className="w-20 sm:w-28 md:w-36 lg:w-44 xl:w-52 2xl:w-64 aspect-video object-cover"
+                    className="w-full aspect-video object-cover"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src =
@@ -161,9 +159,9 @@ function Herosection() {
       </div>
 
       {/* WAVE SVG */}
-      <div className="absolute -bottom-1 left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
+      <div className="absolute bottom-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
         <svg
-          className="w-full h-12 sm:h-16 md:h-24 lg:h-32"
+          className="w-full h-16 md:h-24 lg:h-28"
           viewBox="0 0 1440 320"
           preserveAspectRatio="none"
         >

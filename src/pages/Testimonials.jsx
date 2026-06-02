@@ -6,22 +6,20 @@ function Testimonials() {
   const scrollRef = useRef();
 
   const getImageUrl = (path) => {
-  if (!path) return "https://placehold.co/150x150?text=SDF";
-  if (path.startsWith("http")) return path;
+    if (!path) return "https://placehold.co/150x150?text=SDF";
+    if (path.startsWith("http")) return path;
 
-  // Extract root domain
-  const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
-  
-  // Clean starting slashes
-  let cleanPath = path.replace(/^\/+/, "");
+    const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
+    
+    let cleanPath = path.replace(/^\/+/, "");
+    
+    if (cleanPath.startsWith("admin/")) {
+      cleanPath = cleanPath.replace("admin/", "");
+    }
 
-  if (!cleanPath.startsWith("admin/")) {
-      cleanPath = `admin/${cleanPath}`;
-  }
-
-  // Final URL will correctly be: https://hrntechsolutions.com/backend/admin/uploads/...
-  return `${rootDomain}/backend/${cleanPath}`;
-};
+    // फ़ाइनल यूआरएल स्ट्रक्चर: https://hrntechsolutions.com/backend/uploads/testimonials/filename.ext
+    return `${rootDomain}/backend/${cleanPath}`;
+  };
 
   // 1. Fetch data from PHP
   useEffect(() => {
@@ -69,11 +67,9 @@ function Testimonials() {
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {testimonials.map((item, index) => {
-            // ✅ FIXED: 'item.image_url' और 'item.image' दोनों फ़ील्ड्स को सेफ़्टी के लिए मैप किया
             const targetPath = item.image_url || item.image || "";
             const imgSrc = getImageUrl(targetPath);
             
-            // ✅ FIXED: डेटाबेस कॉलम 'message' और फॉलबैक 'message_text' को मैप किया
             const displayMessage = item.message || item.message_text || "";
 
             return (
