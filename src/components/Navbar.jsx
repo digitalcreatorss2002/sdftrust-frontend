@@ -160,7 +160,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden xl:flex items-center space-x-1">
             {menuItems.map((item) => (
               <div key={item.name} className="relative group px-2 py-6">
                 <Link
@@ -208,7 +208,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="flex items-center lg:hidden">
+          <div className="flex items-center xl:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-text-primary hover:text-primary p-2 focus:outline-none"
@@ -221,7 +221,7 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       <div
-        className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+        className={`xl:hidden transition-all duration-300 ease-in-out overflow-hidden ${
           isOpen ? "max-h-screen border-t border-gray-100" : "max-h-0"
         }`}
       >

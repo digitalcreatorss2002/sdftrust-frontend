@@ -576,7 +576,7 @@ const Home = () => {
             <div
               key="map-container"
               ref={mapRef}
-              className="lg:col-span-2 relative h-150 md:h-200 flex items-center justify-center bg-transparent"
+              className="lg:col-span-2 relative h-[350px] sm:h-[500px] lg:h-[600px] xl:h-[800px] flex items-center justify-center bg-transparent"
             >
               <motion.div
                 style={{

@@ -250,6 +250,18 @@ const MapSection = ({ onStateSelect, onDataLoad }) => {
     };
 
     fetchData();
+
+    const handleResize = () => {
+      if (mapRef.current && geoLayerRef.current) {
+        mapRef.current.invalidateSize();
+        mapRef.current.fitBounds(geoLayerRef.current.getBounds());
+      }
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, [onStateSelect]);
 
   return (

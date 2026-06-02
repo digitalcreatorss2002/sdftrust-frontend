@@ -69,7 +69,7 @@ function Herosection() {
   const activeVideo = getYoutubeId(heroCards[activeIndex]?.youtube_link);
 
   return (
-    <section className="relative bg-black overflow-hidden pb-28 md:pb-32">
+    <section className="relative bg-black overflow-hidden pb-44 sm:pb-48 md:pb-32">
       {/* 🎥 VIDEO SECTION */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-black">
         {activeVideo ? (
@@ -92,13 +92,13 @@ function Herosection() {
 
       {/* CONTENT */}
       <div className="relative z-10 w-[95%] mx-auto min-h-[350px] sm:min-h-[450px] md:min-h-150 flex items-center pt-24 pb-16 md:pt-20 md:pb-28">
-        <div className="max-w-2xl text-white pl-6 md:pl-10">
+        <div className="max-w-5xl lg:max-w-6xl xl:max-w-7xl text-white pl-6 md:pl-10">
           <div key={activeIndex} className="animate-fadeSlide">
-            <h1 className="w-full max-w-5xl mx-auto text-3xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] bg-[linear-gradient(to_right,#eab308,#2c8fa3)] bg-clip-text text-transparent leading-tight">
+            <h1 className="w-full max-w-5xl mx-auto text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-4 sm:mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] bg-[linear-gradient(to_right,#eab308,#2c8fa3)] bg-clip-text text-transparent leading-tight">
               {heroCards[activeIndex]?.title || "Loading..."}
             </h1>
 
-            <p className="mb-6 sm:mb-8 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] text-base sm:text-lg leading-relaxed font-medium">
+            <p className="mb-6 sm:mb-8 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,1)] text-base sm:text-lg lg:text-xl xl:text-2xl leading-relaxed font-medium">
               {heroCards[activeIndex]?.description || ""}
             </p>
           </div>
@@ -118,7 +118,7 @@ function Herosection() {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-24 w-full px-4">
+        <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-12 lg:gap-16 xl:gap-24 2xl:gap-32 w-full px-4">
           {heroCards.length > 0 &&
             [-1, 0, 1].map((offset) => {
               const index =
@@ -147,7 +147,7 @@ function Herosection() {
                     /* 🔥 FIXED: Thumbnail path corrected using helper function */
                     src={getMediaUrl(card?.image_url)}
                     alt={card?.title || "Thumbnail"}
-                    className="w-20 sm:w-28 md:w-36 aspect-video object-cover"
+                    className="w-20 sm:w-28 md:w-36 lg:w-44 xl:w-52 2xl:w-64 aspect-video object-cover"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src =

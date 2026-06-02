@@ -342,7 +342,7 @@ const Projects = () => {
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-4xl font-serif text-text-primary mb-10 text-center">State-wise Listings & Snapshot</h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div ref={mapRef} className="lg:col-span-2 relative h-150 md:h-200 flex items-center justify-center bg-transparent">
+            <div ref={mapRef} className="lg:col-span-2 relative h-[350px] sm:h-[500px] lg:h-[600px] xl:h-[800px] flex items-center justify-center bg-transparent">
               <motion.div style={{ scale: mapScale, clipPath: mapClipPath, WebkitClipPath: mapClipPath, transformOrigin: "center center", backfaceVisibility: "hidden", width: "100%", height: "100%", position: "relative", zIndex: 10 }} className="bg-accent rounded-xl overflow-hidden shadow-lg">
                 <MapSection onStateSelect={setSelectedMapState} onDataLoad={(totals) => setMapTotals({
                     totalStates: totals.totalStates,

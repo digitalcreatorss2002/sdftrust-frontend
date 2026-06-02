@@ -129,10 +129,10 @@ const About = () => {
       {/* Hero Section */}
       <section className="bg-primary text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold mb-4">
             About Us
           </h1>
-          <p className="text-xl max-w-2xl mx-auto text-white opacity-90">
+          <p className="text-xl lg:text-2xl max-w-2xl mx-auto text-white opacity-90">
             Discover our journey, our vision, and the people behind our mission
             to empower communities.
           </p>
@@ -142,7 +142,7 @@ const About = () => {
       {/* TABS BAR */}
       <section className="border-b sticky top-20 bg-white z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center space-x-8 overflow-x-auto no-scrollbar">
+          <div className="flex justify-start md:justify-center space-x-8 overflow-x-auto no-scrollbar px-4 md:px-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -189,7 +189,7 @@ const About = () => {
               ].map((box, i) => (
                 <div
                   key={i}
-                  className="relative rounded-2xl overflow-hidden shadow-lg h-80 flex items-center justify-center text-center bg-gray-900 group"
+                  className="relative rounded-2xl overflow-hidden shadow-lg h-auto min-h-[320px] py-8 md:h-80 md:py-0 flex items-center justify-center text-center bg-gray-900 group"
                   style={{
                     backgroundImage: `url('${makeImageUrl(box.img)}')`,
                     backgroundSize: "cover",
