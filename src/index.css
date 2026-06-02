@@ -10,6 +10,10 @@
 
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: 'Merriweather', serif;
+
+  --spacing-150: 37.5rem;
+  --spacing-200: 50rem;
+  --spacing-112.5: 28.125rem;
 }
 
 body {
