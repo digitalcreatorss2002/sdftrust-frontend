@@ -1,13 +1,11 @@
 #root {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0; /* यहाँ से पैडिंग हटा दी ताकि टेलविंड के कंटेनर (max-w-7xl) अपनी पैडिंग खुद ले सकें */
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
-
-
 
 .logo {
   height: 6em;
