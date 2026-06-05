@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-[#75843a] text-white font-sans">
-      {/* 🔥 MAIN CONTENT AREA - Padding 'px' reduced as requested */}
+      {/* 🔥 MAIN CONTENT AREA */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 items-start">
-          {/* 🌿 LEFT SIDE - Increased width for Paragraph */}
+          
+          {/* 🌿 LEFT SIDE */}
           <div className="space-y-8 flex flex-col justify-start lg:col-span-1">
             <p
               className="text-white/95 text-2xl md:text-[21px] leading-[1.4] max-w-[420px] text-left"
@@ -49,38 +50,25 @@ const Footer = () => {
             </h4>
             <ul className="space-y-4 text-[15px] font-medium opacity-90">
               <li>
-                <Link
-                  to="/about"
-                  className="hover:opacity-75 transition-opacity"
-                >
+                <Link to="/about" className="hover:opacity-75 transition-opacity">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/programs"
-                  className="hover:opacity-75 transition-opacity"
-                >
+                <Link to="/programs" className="hover:opacity-75 transition-opacity">
                   Our Programs
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/projects"
-                  className="hover:opacity-75 transition-opacity"
-                >
+                <Link to="/projects" className="hover:opacity-75 transition-opacity">
                   Ongoing Projects
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/impact"
-                  className="hover:opacity-75 transition-opacity"
-                >
+                <Link to="/impact" className="hover:opacity-75 transition-opacity">
                   Impact & Evidence
                 </Link>
               </li>
-              
             </ul>
           </div>
 
@@ -103,9 +91,9 @@ const Footer = () => {
             <h4 className="text-xl font-bold mb-6 border-b-2 border-white/30 w-fit pb-1">
               Contact
             </h4>
-            <ul className="space-y-6 text-[14px] leading-relaxed opacity-95">
+            <ul className="space-y-5 text-[14px] leading-relaxed opacity-95">
               <li className="flex items-start gap-3">
-                <span className="text-xl">📍</span>
+                <span className="text-xl select-none">📍</span>
                 <span>
                   Sustainable Development Foundation (SDF), Near Dwarka More,
                   Sector-15, Dwarka, Delhi – 110059
@@ -113,20 +101,35 @@ const Footer = () => {
               </li>
 
               <li className="flex items-center gap-3">
-                <span className="text-xl">📞</span>
+                <span className="text-xl select-none">📞</span>
                 <a href="tel:+919289222127" className="hover:underline">
                   +91 9289222127
                 </a>
               </li>
 
-              <li className="flex items-center gap-3">
-                <span className="text-xl">✉️</span>
-                <a
-                  href="mailto:contact@sdfoundation.org"
-                  className="hover:underline"
-                >
-                  contact@sdfoundation.org
-                </a>
+              {/* ✉️ 3 Dynamic Functional Emails Block */}
+              <li className="flex items-start gap-3">
+                <span className="text-xl select-none mt-0.5">✉️</span>
+                <div className="flex flex-col space-y-2">
+                  <a
+                    href="mailto:chairman@sdftrust.org"
+                    className="hover:underline text-white/90 hover:text-white transition-colors break-all"
+                  >
+                    chairman@sdftrust.org
+                  </a>
+                  <a
+                    href="mailto:hr@sdftrust.org"
+                    className="hover:underline text-white/90 hover:text-white transition-colors break-all"
+                  >
+                    hr@sdftrust.org
+                  </a>
+                  <a
+                    href="mailto:Sdftindia@gmail.com"
+                    className="hover:underline text-white/90 hover:text-white transition-colors break-all"
+                  >
+                    Sdftindia@gmail.com
+                  </a>
+                </div>
               </li>
             </ul>
           </div>
@@ -142,7 +145,6 @@ const Footer = () => {
           </p>
           <span className="hidden sm:inline">||</span>
           <p>
-            
             <a
               href="https://hrntechsolutions.com/digital_creators"
               target="_blank"
