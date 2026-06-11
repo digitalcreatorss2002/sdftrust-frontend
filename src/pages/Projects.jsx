@@ -77,6 +77,17 @@ const Projects = () => {
 
   const mapClipPath = useMotionTemplate`circle(${mapClipPercentage}% at 50% 50%)`;
 
+  // --- STATE NORMALIZATION UTILITY ---
+  const normalizeStateName = (name) => {
+    if (!name) return "";
+    const cleaned = name.trim().toLowerCase().replace(/\s+/g, " ");
+    if (cleaned === "orissa" || cleaned === "odisha") return "Odisha";
+    if (cleaned === "maharastra" || cleaned === "maharashtra") return "Maharashtra";
+    if (cleaned === "uttaranchal" || cleaned === "uttarakhand") return "Uttarakhand";
+    if (cleaned === "jammu & kashmir" || cleaned === "jammu and kashmir") return "Jammu and Kashmir";
+    return name.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+  };
+
   const stateStaticData = {
     "Andhra Pradesh": { image: "/map/AndhraPradesh.jpg", livesImpacted: "800k+" },
     "Arunachal Pradesh": { image: "/map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
@@ -100,7 +111,7 @@ const Projects = () => {
     "Punjab": { image: "/map/Punjab.jpg", livesImpacted: "400k+" },
     "Rajasthan": { image: "/map/Rajasthan.jpg", livesImpacted: "1.1M+" },
     "Sikkim": { image: "/map/Sikkim.jpg", livesImpacted: "25k+" },
-    "Tamil Nadu": { image: "/map/TamilNadu.jpg", livesImpacted: "850k+" },
+    "Tamil Nadu": { image: "/map/Tamil Nadu.jpg", livesImpacted: "850k+" },
     "Telangana": { image: "/map/Telangana.jpg", livesImpacted: "600k+" },
     "Tripura": { image: "/map/Tripura.jpg", livesImpacted: "70k+" },
     "Uttar Pradesh": { image: "/map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
@@ -167,10 +178,10 @@ const Projects = () => {
       let states = [];
       try {
          const locs = JSON.parse(p.state_locations || "[]");
-         states = locs.map(l => l.state?.trim());
+         states = locs.map(l => normalizeStateName(l.state));
       } catch(e) {}
       if (states.length === 0 && p.location) {
-         states = p.location.split(',').map(s => s.trim());
+         states = p.location.split(',').map(s => normalizeStateName(s));
       }
       return states;
     }).filter(Boolean))
@@ -213,10 +224,10 @@ const Projects = () => {
           let states = [];
           try {
              const locs = JSON.parse(p.state_locations || "[]");
-             states = locs.map(l => l.state?.trim());
+             states = locs.map(l => normalizeStateName(l.state));
           } catch(e) {}
           if (states.length === 0 && p.location) {
-             states = p.location.split(',').map(s => s.trim());
+             states = p.location.split(',').map(s => normalizeStateName(s));
           }
           return states.includes(activeState);
       });

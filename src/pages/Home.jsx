@@ -255,65 +255,62 @@ const Home = () => {
     return isNaN(parsed) ? acc : acc + parsed;
   }, 0);
 
+  // --- STATE NORMALIZATION UTILITY ---
+  const normalizeStateName = (name) => {
+    if (!name) return "";
+    const cleaned = name.trim().toLowerCase().replace(/\s+/g, " ");
+    if (cleaned === "orissa" || cleaned === "odisha") return "Odisha";
+    if (cleaned === "maharastra" || cleaned === "maharashtra") return "Maharashtra";
+    if (cleaned === "uttaranchal" || cleaned === "uttarakhand") return "Uttarakhand";
+    if (cleaned === "jammu & kashmir" || cleaned === "jammu and kashmir") return "Jammu and Kashmir";
+    return name.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+  };
+
   const stateStaticData = {
-    "Andhra Pradesh": {
-      image: "map/AndhraPradesh.jpg",
-      livesImpacted: "800k+",
-    },
-    "Arunachal Pradesh": {
-      image: "map/ArunachalPradesh.jpg",
-      livesImpacted: "50k+",
-    },
-    Assam: { image: "map/Assam.jpg", livesImpacted: "200k+" },
-    Bihar: { image: "map/Bihar.jpg", livesImpacted: "1M+" },
-    Chhattisgarh: { image: "map/Chhattisgarh.jpg", livesImpacted: "300k+" },
-    Goa: { image: "map/Goa.jpg", livesImpacted: "20k+" },
-    Gujarat: { image: "map/Gujarat.jpg", livesImpacted: "600k+" },
-    Haryana: { image: "map/Haryana.jpg", livesImpacted: "400k+" },
-    "Himachal Pradesh": {
-      image: "map/Himachal Pradesh.jpg",
-      livesImpacted: "150k+",
-    },
-    Jharkhand: { image: "map/Jharkhand.jpg", livesImpacted: "500k+" },
-    Karnataka: { image: "map/Karnataka.jpg", livesImpacted: "750k+" },
-    Kerala: { image: "map/Kerala.jpg", livesImpacted: "300k+" },
-    "Madhya Pradesh": {
-      image: "map/Madhya Pradesh.jpg",
-      livesImpacted: "1.2M+",
-    },
-    Maharashtra: { image: "map/Maharashtra.jpg", livesImpacted: "2M+" },
-    Manipur: { image: "map/Manipur.jpg", livesImpacted: "40k+" },
-    Meghalaya: { image: "map/Meghalaya.jpg", livesImpacted: "60k+" },
-    Mizoram: { image: "map/Mizoram.jpg", livesImpacted: "30k+" },
-    Nagaland: { image: "map/Nagaland.jpg", livesImpacted: "45k+" },
-    Odisha: { image: "map/Odisha.jpg", livesImpacted: "900k+" },
-    Punjab: { image: "map/Punjab.jpg", livesImpacted: "400k+" },
-    Rajasthan: { image: "map/Rajasthan.jpg", livesImpacted: "1.1M+" },
-    Sikkim: { image: "map/Sikkim.jpg", livesImpacted: "25k+" },
-    "Tamil Nadu": { image: "map/TamilNadu.jpg", livesImpacted: "850k+" },
-    Telangana: { image: "map/Telangana.jpg", livesImpacted: "600k+" },
-    Tripura: { image: "map/Tripura.jpg", livesImpacted: "70k+" },
-    "Uttar Pradesh": { image: "map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
-    Uttarakhand: { image: "map/Uttarakhand.jpg", livesImpacted: "200k+" },
-    "West Bengal": { image: "map/WestBengal.jpg", livesImpacted: "1.3M+" },
-    "Jammu and Kashmir": {
-      image: "map/Jammu and Kashmir.png",
-      livesImpacted: "100k+",
-    },
+    "Andhra Pradesh": { image: "/map/AndhraPradesh.jpg", livesImpacted: "800k+" },
+    "Arunachal Pradesh": { image: "/map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
+    "Assam": { image: "/map/Assam.jpg", livesImpacted: "200k+" },
+    "Bihar": { image: "/map/Bihar.jpg", livesImpacted: "1M+" },
+    "Chhattisgarh": { image: "/map/Chhattisgarh.jpg", livesImpacted: "300k+" },
+    "Goa": { image: "/map/Goa.jpg", livesImpacted: "20k+" },
+    "Gujarat": { image: "/map/Gujarat.jpg", livesImpacted: "600k+" },
+    "Haryana": { image: "/map/Haryana.jpg", livesImpacted: "400k+" },
+    "Himachal Pradesh": { image: "/map/Himachal Pradesh.jpg", livesImpacted: "150k+" },
+    "Jharkhand": { image: "/map/Jharkhand.jpg", livesImpacted: "500k+" },
+    "Karnataka": { image: "/map/Karnataka.jpg", livesImpacted: "750k+" },
+    "Kerala": { image: "/map/Kerala.jpg", livesImpacted: "300k+" },
+    "Madhya Pradesh": { image: "/map/Madhya Pradesh.jpg", livesImpacted: "1.2M+" },
+    "Maharashtra": { image: "/map/Maharashtra.jpg", livesImpacted: "2M+" },
+    "Manipur": { image: "/map/Manipur.jpg", livesImpacted: "40k+" },
+    "Meghalaya": { image: "/map/Meghalaya.jpg", livesImpacted: "60k+" },
+    "Mizoram": { image: "/map/Mizoram.jpg", livesImpacted: "30k+" },
+    "Nagaland": { image: "/map/Nagaland.jpg", livesImpacted: "45k+" },
+    "Odisha": { image: "/map/Odisha.jpg", livesImpacted: "900k+" },
+    "Punjab": { image: "/map/Punjab.jpg", livesImpacted: "400k+" },
+    "Rajasthan": { image: "/map/Rajasthan.jpg", livesImpacted: "1.1M+" },
+    "Sikkim": { image: "/map/Sikkim.jpg", livesImpacted: "25k+" },
+    "Tamil Nadu": { image: "/map/Tamil Nadu.jpg", livesImpacted: "850k+" },
+    "Telangana": { image: "/map/Telangana.jpg", livesImpacted: "600k+" },
+    "Tripura": { image: "/map/Tripura.jpg", livesImpacted: "70k+" },
+    "Uttar Pradesh": { image: "/map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
+    "Uttarakhand": { image: "/map/Uttarakhand.jpg", livesImpacted: "200k+" },
+    "West Bengal": { image: "/map/WestBengal.jpg", livesImpacted: "1.3M+" },
+    "Jammu and Kashmir": { image: "/map/Jammu and Kashmir.png", livesImpacted: "100k+" }
   };
 
   // Helper routine computing live state wise filtered beneficiaries values directly
   const getStateLivesImpactedCount = (stateName) => {
+    const normalizedTarget = normalizeStateName(stateName);
     const stateProjects = allProjects.filter((p) => {
       let states = [];
       try {
         const locs = JSON.parse(p.state_locations || "[]");
-        states = locs.map((l) => l.state?.trim().toLowerCase());
+        states = locs.map((l) => normalizeStateName(l.state));
       } catch (e) {}
       if (states.length === 0 && p.location) {
-        states = p.location.split(",").map((s) => s.trim().toLowerCase());
+        states = p.location.split(",").map((s) => normalizeStateName(s));
       }
-      return states.includes(stateName.toLowerCase());
+      return states.includes(normalizedTarget);
     });
 
     const sum = stateProjects.reduce((acc, curr) => {
@@ -327,7 +324,7 @@ const Home = () => {
 
     return sum > 0
       ? formatCompact(sum)
-      : stateStaticData[stateName]?.livesImpacted || "0";
+      : stateStaticData[normalizedTarget]?.livesImpacted || "0";
   };
 
   return (

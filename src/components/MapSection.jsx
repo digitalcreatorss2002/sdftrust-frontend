@@ -4,37 +4,48 @@ import "leaflet/dist/leaflet.css";
 
 import { API_BASE_URL } from "../config";
 
+// --- STATE NORMALIZATION UTILITY ---
+const normalizeStateName = (name) => {
+  if (!name) return "";
+  const cleaned = name.trim().toLowerCase().replace(/\s+/g, " ");
+  if (cleaned === "orissa" || cleaned === "odisha") return "Odisha";
+  if (cleaned === "maharastra" || cleaned === "maharashtra") return "Maharashtra";
+  if (cleaned === "uttaranchal" || cleaned === "uttarakhand") return "Uttarakhand";
+  if (cleaned === "jammu & kashmir" || cleaned === "jammu and kashmir") return "Jammu and Kashmir";
+  return name.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+};
+
 // --- STATIC STATE DATA ---
 const stateDataMap = {
-  "Andhra Pradesh": { image: "/images/states/ap.jpg", livesImpacted: "800k+" },
-  "Arunachal Pradesh": { image: "/images/states/arunachal.jpg", livesImpacted: "50k+" },
-  "Assam": { image: "/images/states/assam.jpg", livesImpacted: "200k+" },
-  "Bihar": { image: "map/Bihar.jpg", livesImpacted: "1.5M+" },
-  "Chhattisgarh": { image: "/images/states/cg.jpg", livesImpacted: "300k+" },
-  "Goa": { image: "/images/states/goa.jpg", livesImpacted: "20k+" },
-  "Gujarat": { image: "/images/states/gujarat.jpg", livesImpacted: "600k+" },
-  "Haryana": { image: "/images/states/haryana.jpg", livesImpacted: "400k+" },
-  "Himachal Pradesh": { image: "/images/states/hp.jpg", livesImpacted: "150k+" },
-  "Jharkhand": { image: "map/Jharkhand.jpg", livesImpacted: "500k+" },
-  "Karnataka": { image: "/images/states/karnataka.jpg", livesImpacted: "750k+" },
-  "Kerala": { image: "/images/states/kerala.jpg", livesImpacted: "300k+" },
-  "Madhya Pradesh": { image: "/images/states/mp.jpg", livesImpacted: "1.2M+" },
-  "Maharashtra": { image: "/images/states/maharashtra.jpg", livesImpacted: "2M+" },
-  "Manipur": { image: "/images/states/manipur.jpg", livesImpacted: "40k+" },
-  "Meghalaya": { image: "/images/states/meghalaya.jpg", livesImpacted: "60k+" },
-  "Mizoram": { image: "/images/states/mizoram.jpg", livesImpacted: "30k+" },
-  "Nagaland": { image: "/images/states/nagaland.jpg", livesImpacted: "45k+" },
-  "Odisha": { image: "/images/states/odisha.jpg", livesImpacted: "900k+" },
-  "Punjab": { image: "/images/states/punjab.jpg", livesImpacted: "400k+" },
-  "Rajasthan": { image: "/images/states/rajasthan.jpg", livesImpacted: "1.1M+" },
-  "Sikkim": { image: "/images/states/sikkim.jpg", livesImpacted: "25k+" },
-  "Tamil Nadu": { image: "/images/states/tn.jpg", livesImpacted: "850k+" },
-  "Telangana": { image: "/images/states/telangana.jpg", livesImpacted: "600k+" },
-  "Tripura": { image: "/images/states/tripura.jpg", livesImpacted: "70k+" },
-  "Uttar Pradesh": { image: "/images/states/up.jpg", livesImpacted: "2.5M+" },
-  "Uttarakhand": { image: "/images/states/uttarakhand.jpg", livesImpacted: "200k+" },
-  "West Bengal": { image: "/images/states/wb.jpg", livesImpacted: "1.3M+" },
-  "Jammu and Kashmir": { image: "/images/states/jk.jpg", livesImpacted: "100k+" }
+  "Andhra Pradesh": { image: "/map/AndhraPradesh.jpg", livesImpacted: "800k+" },
+  "Arunachal Pradesh": { image: "/map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
+  "Assam": { image: "/map/Assam.jpg", livesImpacted: "200k+" },
+  "Bihar": { image: "/map/Bihar.jpg", livesImpacted: "1.5M+" },
+  "Chhattisgarh": { image: "/map/Chhattisgarh.jpg", livesImpacted: "300k+" },
+  "Goa": { image: "/map/Goa.jpg", livesImpacted: "20k+" },
+  "Gujarat": { image: "/map/Gujarat.jpg", livesImpacted: "600k+" },
+  "Haryana": { image: "/map/Haryana.jpg", livesImpacted: "400k+" },
+  "Himachal Pradesh": { image: "/map/Himachal Pradesh.jpg", livesImpacted: "150k+" },
+  "Jharkhand": { image: "/map/Jharkhand.jpg", livesImpacted: "500k+" },
+  "Karnataka": { image: "/map/Karnataka.jpg", livesImpacted: "750k+" },
+  "Kerala": { image: "/map/Kerala.jpg", livesImpacted: "300k+" },
+  "Madhya Pradesh": { image: "/map/Madhya Pradesh.jpg", livesImpacted: "1.2M+" },
+  "Maharashtra": { image: "/map/Maharashtra.jpg", livesImpacted: "2M+" },
+  "Manipur": { image: "/map/Manipur.jpg", livesImpacted: "40k+" },
+  "Meghalaya": { image: "/map/Meghalaya.jpg", livesImpacted: "60k+" },
+  "Mizoram": { image: "/map/Mizoram.jpg", livesImpacted: "30k+" },
+  "Nagaland": { image: "/map/Nagaland.jpg", livesImpacted: "45k+" },
+  "Odisha": { image: "/map/Odisha.jpg", livesImpacted: "900k+" },
+  "Punjab": { image: "/map/Punjab.jpg", livesImpacted: "400k+" },
+  "Rajasthan": { image: "/map/Rajasthan.jpg", livesImpacted: "1.1M+" },
+  "Sikkim": { image: "/map/Sikkim.jpg", livesImpacted: "25k+" },
+  "Tamil Nadu": { image: "/map/Tamil Nadu.jpg", livesImpacted: "850k+" },
+  "Telangana": { image: "/map/Telangana.jpg", livesImpacted: "600k+" },
+  "Tripura": { image: "/map/Tripura.jpg", livesImpacted: "70k+" },
+  "Uttar Pradesh": { image: "/map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
+  "Uttarakhand": { image: "/map/Uttarakhand.jpg", livesImpacted: "200k+" },
+  "West Bengal": { image: "/map/WestBengal.jpg", livesImpacted: "1.3M+" },
+  "Jammu and Kashmir": { image: "/map/Jammu and Kashmir.png", livesImpacted: "100k+" }
 };
 
 const MapSection = ({ onStateSelect, onDataLoad }) => {
@@ -86,7 +97,7 @@ const MapSection = ({ onStateSelect, onDataLoad }) => {
 
           if (stateLocations && stateLocations.length > 0) {
             stateLocations.forEach(loc => {
-              const state = loc.state ? loc.state.trim() : null;
+              const state = loc.state ? normalizeStateName(loc.state) : null;
               if (state) {
                 if (!projectData[state]) {
                   projectData[state] = {
@@ -109,7 +120,7 @@ const MapSection = ({ onStateSelect, onDataLoad }) => {
               }
             });
           } else {
-            const states = p.location ? p.location.split(",").map((s) => s.trim()) : [];
+            const states = p.location ? p.location.split(",").map((s) => normalizeStateName(s)) : [];
             const districts = p.district ? p.district.split(",").map((d) => d.trim()) : [];
             const blocks = p.block ? p.block.split(",").map((b) => b.trim()) : [];
             const villages = p.village ? p.village.split(",").map((v) => v.trim()) : [];
@@ -174,7 +185,8 @@ const MapSection = ({ onStateSelect, onDataLoad }) => {
 
         geoLayerRef.current = L.geoJSON(geoData, {
           style: (feature) => {
-            const hasProjects = projectData[feature.properties.NAME_1]?.list.length > 0;
+            const stateName = normalizeStateName(feature.properties.NAME_1);
+            const hasProjects = projectData[stateName]?.list.length > 0;
             return {
               color: "#ffffff",
               weight: 1.5,
@@ -184,7 +196,7 @@ const MapSection = ({ onStateSelect, onDataLoad }) => {
             };
           },
           onEachFeature: (feature, layer) => {
-            const stateName = feature.properties.NAME_1;
+            const stateName = normalizeStateName(feature.properties.NAME_1);
             const data = projectData[stateName] || { list: [], districtSet: new Set(), blockSet: new Set(), villageSet: new Set(), totalBeneficiaries: 0 };
             const districtCount = data.districtSet.size;
             const blockCount = data.blockSet.size;
