@@ -4,23 +4,29 @@ import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 
 const BASE_URL = ADMIN_BASE_URL;
 
-// 🔥 FIXED BULLETPROOF IMAGE PATH ROUTING: Aligned exactly with yesterday's layout structure
+// 🔥 FIXED & UPDATED BULLETPROOF IMAGE PATH ROUTING
 const makeImageUrl = (path) => {
   if (!path) return "https://placehold.co/150x150?text=No+Photo";
-  if (path.startsWith("https://") || path.startsWith("https://")) return path;
-  
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+
   // ADMIN_BASE_URL se base core domain extract karna
   const rootDomain = BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
-  
+
   // Forward slashes parameters ko safely cleanup karna
   const cleanPath = path.replace(/^\/+/, "");
 
-  // Generates perfect absolute link mapping matching cPanel files: domain.com/backend/admin/uploads/...
-  // Agar path me pehle se 'backend/admin' nahi h, toh use dynamically adjust karega
+  // 1. Agar path me pehle se 'backend/admin' laga hua h (Old Structure)
   if (cleanPath.startsWith("backend/admin/")) {
     return `${rootDomain}/${cleanPath}`;
   }
-  return `${rootDomain}/backend/admin/${cleanPath}`;
+
+  // 2. Agar path seedhe 'uploads/' se shuru ho raha h (New Root Structure)
+  if (cleanPath.startsWith("uploads/")) {
+    return `${rootDomain}/${cleanPath}`;
+  }
+
+  // Fallback map
+  return `${rootDomain}/${cleanPath}`;
 };
 
 const About = () => {
@@ -30,7 +36,7 @@ const About = () => {
   // 🔥 STATES
   const [activeTab, setActiveTab] = useState("who-we-are");
   const [selectedLeader, setSelectedLeader] = useState(null);
-  const [selectedPartner, setSelectedPartner] = useState(null); // Modal state for Partners
+  const [selectedPartner, setSelectedPartner] = useState(null); 
 
   const [aboutData, setAboutData] = useState(null);
   const [leadershipData, setLeadershipData] = useState([]);
@@ -169,40 +175,44 @@ const About = () => {
                 Who We Are
               </h2>
               <div className="w-24 h-1 bg-accent mx-auto"></div>
-              <p className="mt-6 text-gray-600 text-lg leading-relaxed text-left max-w-5xl mx-auto">
+              <p className="mt-6 text-gray-600 text-lg leading-relaxed text-justify max-w-5xl mx-auto">
                 {aboutData?.who_we_are_text || "Content loading..."}
               </p>
             </div>
 
+            {/* 🔥 FIXED VISION & MISSION BLOCKS OVERFLOW */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               {[
                 {
-                  title: "💡 Our Vision",
+                  // title: "💡 Our Vision",
                   text: aboutData?.vision_text,
                   img: aboutData?.vision_image || "/about/5.png",
                 },
                 {
-                  title: "🎯 Our Mission",
+                  // title: "🎯 Our Mission",
                   text: aboutData?.mission_text,
                   img: aboutData?.mission_image || "/about/3.png",
                 },
               ].map((box, i) => (
                 <div
                   key={i}
-                  className="relative rounded-2xl overflow-hidden shadow-lg h-auto min-h-[320px] py-8 md:h-80 md:py-0 flex items-center justify-center text-center bg-gray-900 group"
+                  className="relative rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between text-left bg-gray-900 group min-h-[500px]"
                   style={{
                     backgroundImage: `url('${makeImageUrl(box.img)}')`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
                 >
-                  <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-500"></div>
-                  <div className="relative z-10 px-8">
-                    <h3 className="text-2xl font-serif text-white mb-4">
+                  {/* Dark overlay for better text contrast */}
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-0"></div>
+                  
+                  {/* Content Container */}
+                  <div className="relative z-10 p-8 md:p-10 flex flex-col h-full justify-center">
+                    <h3 className="text-2xl md:text-3xl font-serif text-white font-bold mb-4 border-b border-white/20 pb-2 inline-block max-w-max">
                       {box.title}
                     </h3>
                     <div
-                      className="text-gray-200 leading-relaxed"
+                      className="text-gray-100 leading-relaxed text-base md:text-lg space-y-2 prose-invert tags-fix-styles"
                       dangerouslySetInnerHTML={{ __html: box.text }}
                     />
                   </div>
@@ -381,54 +391,49 @@ const About = () => {
 
         {/* 4. PARTNERS */}
         {activeTab === "partners" && (
-  <div className="max-w-4xl mx-auto animate-fade-in text-center">
-    <div className="mb-12">
-      <h2 className="text-3xl font-serif text-text-primary mb-4">
-        Partners & Affiliations
-      </h2>
-      <div className="w-24 h-1 bg-primary mx-auto"></div>
-    </div>
+          <div className="max-w-4xl mx-auto animate-fade-in text-center">
+            <div className="mb-12">
+              <h2 className="text-3xl font-serif text-text-primary mb-4">
+                Partners & Affiliations
+              </h2>
+              <div className="w-24 h-1 bg-primary mx-auto"></div>
+            </div>
 
-    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-16">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        {/* 1. Corporate Section */}
-        <Link
-          to="/partners"
-          className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-        >
-          <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-            Corporate
-          </div>
-          <div className="text-gray-500">CSR Partners</div>
-        </Link>
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-16">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <Link
+                  to="/partners"
+                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+                >
+                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
+                    Corporate
+                  </div>
+                  <div className="text-gray-500">CSR Partners</div>
+                </Link>
 
-        {/* 2. Public Section - PATH FIXED */}
-        <Link
-          to="/public-partners"
-          className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-        >
-          <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-            Public
-          </div>
-          <div className="text-gray-500">Government Alliances</div>
-        </Link>
+                <Link
+                  to="/public-partners"
+                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+                >
+                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
+                    Public
+                  </div>
+                  <div className="text-gray-500">Government Alliances</div>
+                </Link>
 
-        {/* 3. Civil Society Section - PATH FIXED */}
-        <Link
-          to="/society-partners"
-          className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-        >
-          <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-            Civil Society
+                <Link
+                  to="/society-partners"
+                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+                >
+                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
+                    Civil Society
+                  </div>
+                  <div className="text-gray-500">NGO Partners</div>
+                </Link>
+              </div>
+            </div>
           </div>
-          <div className="text-gray-500">NGO Partners</div>
-        </Link>
-        
-      </div>
-    </div>
-  </div>
-)}
+        )}
 
         {/* 5. FAQ */}
         {activeTab === "faq" && (
