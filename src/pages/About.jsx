@@ -204,7 +204,7 @@ const About = () => {
                   }}
                 >
                   {/* Dark overlay for better text contrast */}
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-0"></div>
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all duration-500 z-0"></div>
                   
                   {/* Content Container */}
                   <div className="relative z-10 p-8 md:p-10 flex flex-col h-full justify-center">
@@ -403,7 +403,7 @@ const About = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <Link
                   to="/partners"
-                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+                  className="p-8 bg-gray-100 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
                 >
                   <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
                     Corporate
@@ -413,17 +413,17 @@ const About = () => {
 
                 <Link
                   to="/public-partners"
-                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+                  className="p-8 bg-gray-100 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
                 >
                   <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-                    Public
+                    Government and Institutional Partners
                   </div>
                   <div className="text-gray-500">Government Alliances</div>
                 </Link>
 
                 <Link
                   to="/society-partners"
-                  className="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
+                  className="p-8 bg-gray-100 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
                 >
                   <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
                     Civil Society

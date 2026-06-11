@@ -4,16 +4,35 @@ import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 
 const BASE_URL = ADMIN_BASE_URL;
 
+// 🔥 MATCHED WITH YOUR EXACT BACKEND ROUTING STRUCTURE
 const makeImageUrl = (path) => {
-  if (!path) {
+  if (!path || typeof path !== "string") {
     return "https://via.placeholder.com/1200x800?text=No+Image";
   }
 
-  if (path.startsWith("https://") || path.startsWith("https://")) {
-    return path;
+  const cleanPath = path.trim().replace(/^\/+/, "");
+
+  // स्थिति 1: अगर इमेज पहले से ही फुल एक्सटर्नल URL है (जैसे Unsplash लिंक)
+  if (cleanPath.startsWith("http://") || cleanPath.startsWith("https://")) {
+    return cleanPath;
   }
 
-  return `${BASE_URL}${path.replace(/^\/+/, "")}`;
+  // ADMIN_BASE_URL (domain.com/backend/admin) से मुख्य रूट डोमेन अलग करना
+  const rootDomain = BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
+
+  // स्थिति 2: अगर डेटाबेस पाथ में पहले से 'backend/admin' मौजूद है
+  if (cleanPath.startsWith("backend/admin/")) {
+    return `${rootDomain}/${cleanPath}`;
+  }
+
+  // स्थिति 3: अगर पाथ 'uploads/' से शुरू हो रहा है (जैसे आपका बैकएंड सेव करता है)
+  // इसे सीधे एडमिन के अंदर वाले अपलोड फोल्डर पर री-रूट करना होगा
+  if (cleanPath.startsWith("uploads/")) {
+    return `${rootDomain}/backend/admin/${cleanPath}`;
+  }
+
+  // फॉलबैक: बाकी सभी कंडीशंस के लिए
+  return `${rootDomain}/backend/admin/${cleanPath}`;
 };
 
 const ProgramDetails = () => {
@@ -51,20 +70,39 @@ const ProgramDetails = () => {
           throw new Error("Program not found");
         }
 
-        let normalizedImages = [];
+        let rawImages = [];
 
-        if (
-          Array.isArray(foundProgram.images) &&
-          foundProgram.images.length > 0
-        ) {
-          normalizedImages = foundProgram.images.map((img) =>
-            makeImageUrl(img),
-          );
-        } else if (foundProgram.image_url) {
-          normalizedImages = [makeImageUrl(foundProgram.image_url)];
-        } else {
+        // डेटाबेस की इमेज स्ट्रिंग को पार्स और वैलिडेट करना
+        if (foundProgram.images) {
+          if (Array.isArray(foundProgram.images)) {
+            rawImages = foundProgram.images;
+          } else if (typeof foundProgram.images === "string") {
+            try {
+              const parsed = JSON.parse(foundProgram.images);
+              rawImages = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) {
+              if (foundProgram.images.includes(",")) {
+                rawImages = foundProgram.images.split(",").map(img => img.trim());
+              } else {
+                rawImages = [foundProgram.images.trim()];
+              }
+            }
+          }
+        } 
+        
+        // अगर 'images' एरे खाली है पर 'image_url' कॉलम में डेटा मौजूद है
+        if (rawImages.length === 0 && foundProgram.image_url) {
+          rawImages = [foundProgram.image_url.trim()];
+        }
+
+        // सभी पाथ्स को परफेक्ट वर्किंग इमेज URL में कन्वर्ट करना
+        let normalizedImages = rawImages
+          .filter(Boolean)
+          .map((img) => makeImageUrl(img));
+
+        if (normalizedImages.length === 0) {
           normalizedImages = [
-            "https://via.placeholder.com/1200x800?text=No+Image",
+            "https://via.placeholder.com/1200x800?text=No+Image+Available",
           ];
         }
 
@@ -113,12 +151,10 @@ const ProgramDetails = () => {
           <h2 className="text-3xl font-bold mb-3 text-red-500">
             Program not found
           </h2>
-          <p className="text-gray-600 mb-6">
-            {error || "The program you are looking for does not exist."}
-          </p>
+          <p className="text-gray-600 mb-6">{error}</p>
           <Link
             to="/programs"
-            className="inline-block bg-primary text-white px-6 py-3 rounded-lg"
+            className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-bold"
           >
             Back to Programs
           </Link>
@@ -135,7 +171,7 @@ const ProgramDetails = () => {
             {program.icon || "📌"} {program.slug}
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
+          <h1 className="text-2xl md:text-3xl font-serif font-bold mb-4">
             {program.title}
           </h1>
 
@@ -304,7 +340,7 @@ const ProgramDetails = () => {
                 <div className="space-y-4">
                   {program.achievements.split("\n").filter(a => a.trim()).map((ach, i) => (
                     <div key={i} className="group relative bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:border-yellow-200 hover:bg-yellow-50/30 transition-all font-medium text-gray-700 flex items-center gap-5">
-                     <div className="bg-yellow-100 text-yellow-600 w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xl group-hover:scale-110 transition-transform shadow-sm">🏆</div>
+                     <div className="bg-yellow-100 text-yellow-600 w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xl shadow-sm">🏆</div>
                      <p className="flex-1 leading-relaxed">{ach}</p>
                     </div>
                   ))}
