@@ -9,23 +9,22 @@ const PressCoverageDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ✅ PRODUCT STYLE INTERACTIVE ACTIVE PREVIEW IMAGE STATE
+  // ✅ E-COMMERCE STYLE INTERACTIVE ACTIVE PREVIEW IMAGE STATE
   const [activePreviewImage, setActivePreviewImage] = useState("");
 
   // ✅ GALLERY LIGHTBOX MODAL STATES
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 🔥 FIXED IMAGE URL HELPER: Aligned with Bluehost root structure perfectly
+  // 🔥 FIXED IMAGE URL HELPER: Aligned with backend structure perfectly
   const getImageUrl = (path) => {
-    if (!path) return "https://via.placeholder.com/1200x800?text=No+Image";
-    if (path.startsWith('https')) return path;
+    if (!path) return null;
+    if (path.startsWith('https') || path.startsWith('http')) return path;
 
     // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root domain nikalna
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
     const cleanPath = path.replace(/^\/+/, ''); 
     
-    // Path configuration output structure mapping: domain/backend/admin/uploads/...
     return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
@@ -56,27 +55,23 @@ const PressCoverageDetails = () => {
           throw new Error("Coverage not found");
         }
 
-        // ✅ HANDLE MULTIPLE IMAGES & MAIN IMAGE THROUGH PARSED STRUCTURAL ARRAYS
+        // ✅ NEW DYNAMIC COLUMN PARSING: image1 se image5 tak automatic mapping
         let galleryImages = [];
-        let baseFeatureImage = "";
-
-        try {
-          // Handles both clean backend format array strings natively
-          const rawImages = typeof foundCoverage.image === 'string' && foundCoverage.image.startsWith('[')
-              ? JSON.parse(foundCoverage.image) 
-              : (foundCoverage.images || foundCoverage.image);
-          
-          if (Array.isArray(rawImages) && rawImages.length > 0) {
-              galleryImages = rawImages.map(img => getImageUrl(img));
-              baseFeatureImage = galleryImages[0];
-          } else {
-              baseFeatureImage = getImageUrl(foundCoverage.image_url || foundCoverage.image);
-              galleryImages = [baseFeatureImage];
+        
+        for (let i = 1; i <= 5; i++) {
+          const rawPath = foundCoverage[`image${i}`];
+          const validUrl = getImageUrl(rawPath);
+          if (validUrl) {
+            galleryImages.push(validUrl);
           }
-        } catch (e) {
-            baseFeatureImage = getImageUrl(foundCoverage.image_url || foundCoverage.image);
-            galleryImages = [baseFeatureImage];
         }
+
+        // Fallback agar by chance kisi wajah se images empty hon to default placeholder
+        if (galleryImages.length === 0) {
+          galleryImages.push("https://via.placeholder.com/1200x800?text=No+Image");
+        }
+
+        const baseFeatureImage = galleryImages[0];
 
         setCoverage({
           ...foundCoverage,
@@ -84,7 +79,7 @@ const PressCoverageDetails = () => {
           images: galleryImages,
         });
 
-        // Set primary placeholder state reference structure standard
+        // E-commerce pattern initial active state array index 0 mapping
         setActivePreviewImage(baseFeatureImage);
 
       } catch (err) {
@@ -155,20 +150,20 @@ const PressCoverageDetails = () => {
         </h1>
 
         {/* ========================================================
-            🔥 PRODUCT STYLE INTERACTIVE GALLERY CONTAINER (1 BIG IMAGE + SMALL THUMBNAILS BELOW)
+            🔥 E-COMMERCE STYLE INTERACTIVE GALLERY CONTAINER
            ======================================================== */}
         <div className="mb-10 flex flex-col gap-4">
-            {/* 1. Large Main View Display Block */}
+            {/* 1. Large Main Dynamic View Screen */}
             <div className="relative group overflow-hidden rounded-3xl shadow-md border border-gray-100 bg-gray-50 flex items-center justify-center">
                 <img
                   src={activePreviewImage}
                   alt={coverage.title}
-                  className="w-full h-[320px] md:h-[520px] object-cover cursor-pointer transition-transform duration-700 group-hover:scale-102"
+                  className="w-full h-[320px] md:h-[520px] object-contain cursor-pointer transition-transform duration-700 group-hover:scale-102"
                   onClick={() => openModal(activePreviewImage, coverage.images.indexOf(activePreviewImage))}
                 />
             </div>
 
-            {/* 2. Interactive Row Grid Thumbnails Layout (Only renders if array size contains elements) */}
+            {/* 2. Interactive Dynamic Row Thumbnails Layout (Shows only actual backend array size) */}
             {coverage.images && coverage.images.length > 1 && (
                 <div className="flex flex-wrap gap-3 items-center justify-start p-1 overflow-x-auto no-scrollbar">
                     {coverage.images.map((img, i) => {

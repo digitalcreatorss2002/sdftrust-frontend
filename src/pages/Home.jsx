@@ -11,9 +11,9 @@ import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 import Herosection from "../components/Herosection";
 import Testimonials from "./Testimonials";
 import MapSection from "../components/MapSection";
-import PartnersSection from "../components/Partners";
 import ProjectSlider from "../components/ProjectSlider";
 import OurProgramsSection from "../components/OurProgramsSection";
+import BeforeAfterImpact from "../components/BeforeAfterImpact";
 // import ProjectMap from "../components/ProjectMap";
 
 const PROGRAMS_API_URL = `${API_BASE_URL}/programs.php?t=` + Date.now();
@@ -25,7 +25,7 @@ const isVideoFile = (url) => {
   return /\.(mp4|webm|ogg)$/i.test(url);
 };
 
-// Direct root extraction to match your working Project details/listing logic
+// प्रोजेक्ट्स के लिए इमेज URL फ़ंक्शन (यह वैसे ही रहेगा)
 const getImageUrl = (path) => {
   if (!path) return "https://via.placeholder.com/800x500?text=No+Image";
   if (path.startsWith("https")) return path;
@@ -38,6 +38,25 @@ const getImageUrl = (path) => {
 
   // Images are in backend/admin/uploads/
   return `${rootDomain}/backend/admin/${cleanPath}`;
+};
+
+// 🔴 FIXED: केवल पार्टनर्स के लिए सटीक इमेज URL फ़ंक्शन जो backend/uploads/ से इमेज उठाएगा
+const getPartnerImageUrl = (path) => {
+  if (!path) return "https://via.placeholder.com/150x150?text=No+Logo";
+  if (path.startsWith("https")) return path;
+
+  // ADMIN_BASE_URL से 'backend' तक का रूट निकालना
+  const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
+  
+  let cleanPath = path.replace(/^\/+/, "");
+  
+  // अगर पाथ में गलती से 'admin/uploads/' आ रहा हो तो उसे सिर्फ 'uploads/' में बदलें
+  if (cleanPath.startsWith("admin/uploads/")) {
+    cleanPath = cleanPath.replace("admin/uploads/", "uploads/");
+  }
+
+  // फाइनल पाथ: domain/backend/uploads/partners/filename.jpg
+  return `${rootDomain}/backend/${cleanPath}`;
 };
 
 const createSlug = (text) => {
@@ -75,6 +94,9 @@ const Home = () => {
   // State for raw list of all backend projects to support live calculations
   const [allProjects, setAllProjects] = useState([]);
   const [recentProjects, setRecentProjects] = useState([]);
+
+  // पार्टनर्स का लाइव डेटा स्टेट
+  const [allPartnersData, setAllPartnersData] = useState([]);
 
   // Map Animation hooks
   const mapRef = useRef(null);
@@ -188,10 +210,31 @@ const Home = () => {
       }
     };
 
+    // पार्टनर्स का पूरा कंबाइन डेटा लोड करना
+    const fetchPartnersDataDirectly = async () => {
+      try {
+        const [res1, res2, res3] = await Promise.all([
+          fetch(`${API_BASE_URL}/partners.php?t=${Date.now()}`).then((res) => res.json()),
+          fetch(`${API_BASE_URL}/public_partners.php?t=${Date.now()}`).then((res) => res.json()),
+          fetch(`${API_BASE_URL}/society_partners.php?t=${Date.now()}`).then((res) => res.json()),
+        ]);
+        
+        let combined = [];
+        if (res1.status === "success" && Array.isArray(res1.data)) combined = [...combined, ...res1.data];
+        if (res2.status === "success" && Array.isArray(res2.data)) combined = [...combined, ...res2.data];
+        if (res3.status === "success" && Array.isArray(res3.data)) combined = [...combined, ...res3.data];
+        
+        setAllPartnersData(combined);
+      } catch (err) {
+        console.error("Failed to fetch partners row data:", err);
+      }
+    };
+
     fetchPrograms();
     fetchFocusAreas();
     fetchAboutData();
     fetchRecentProjects();
+    fetchPartnersDataDirectly();
   }, []);
 
   const formatCompact = (num) => {
@@ -260,42 +303,67 @@ const Home = () => {
     if (!name) return "";
     const cleaned = name.trim().toLowerCase().replace(/\s+/g, " ");
     if (cleaned === "orissa" || cleaned === "odisha") return "Odisha";
-    if (cleaned === "maharastra" || cleaned === "maharashtra") return "Maharashtra";
-    if (cleaned === "uttaranchal" || cleaned === "uttarakhand") return "Uttarakhand";
-    if (cleaned === "jammu & kashmir" || cleaned === "jammu and kashmir") return "Jammu and Kashmir";
-    return name.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+    if (cleaned === "maharastra" || cleaned === "maharashtra")
+      return "Maharashtra";
+    if (cleaned === "uttaranchal" || cleaned === "uttarakhand")
+      return "Uttarakhand";
+    if (cleaned === "jammu & kashmir" || cleaned === "jammu and kashmir")
+      return "Jammu and Kashmir";
+    return name
+      .trim()
+      .split(/\s+/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
   };
 
   const stateStaticData = {
-    "Andhra Pradesh": { image: "/map/AndhraPradesh.jpg", livesImpacted: "800k+" },
-    "Arunachal Pradesh": { image: "/map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
-    "Assam": { image: "/map/Assam.jpg", livesImpacted: "200k+" },
-    "Bihar": { image: "/map/Bihar.jpg", livesImpacted: "1M+" },
-    "Chhattisgarh": { image: "/map/Chhattisgarh.jpg", livesImpacted: "300k+" },
-    "Goa": { image: "/map/Goa.jpg", livesImpacted: "20k+" },
-    "Gujarat": { image: "/map/Gujarat.jpg", livesImpacted: "600k+" },
-    "Haryana": { image: "/map/Haryana.jpg", livesImpacted: "400k+" },
-    "Himachal Pradesh": { image: "/map/Himachal Pradesh.jpg", livesImpacted: "150k+" },
-    "Jharkhand": { image: "/map/Jharkhand.jpg", livesImpacted: "500k+" },
-    "Karnataka": { image: "/map/Karnataka.jpg", livesImpacted: "750k+" },
-    "Kerala": { image: "/map/Kerala.jpg", livesImpacted: "300k+" },
-    "Madhya Pradesh": { image: "/map/Madhya Pradesh.jpg", livesImpacted: "1.2M+" },
-    "Maharashtra": { image: "/map/Maharashtra.jpg", livesImpacted: "2M+" },
-    "Manipur": { image: "/map/Manipur.jpg", livesImpacted: "40k+" },
-    "Meghalaya": { image: "/map/Meghalaya.jpg", livesImpacted: "60k+" },
-    "Mizoram": { image: "/map/Mizoram.jpg", livesImpacted: "30k+" },
-    "Nagaland": { image: "/map/Nagaland.jpg", livesImpacted: "45k+" },
-    "Odisha": { image: "/map/Odisha.jpg", livesImpacted: "900k+" },
-    "Punjab": { image: "/map/Punjab.jpg", livesImpacted: "400k+" },
-    "Rajasthan": { image: "/map/Rajasthan.jpg", livesImpacted: "1.1M+" },
-    "Sikkim": { image: "/map/Sikkim.jpg", livesImpacted: "25k+" },
+    "Andhra Pradesh": {
+      image: "/map/AndhraPradesh.jpg",
+      livesImpacted: "800k+",
+    },
+    "Arunachal Pradesh": {
+      image: "/map/ArunachalPradesh.jpg",
+      livesImpacted: "50k+",
+    },
+    Assam: { image: "/map/Assam.jpg", livesImpacted: "200k+" },
+    Bihar: { image: "/map/Bihar.jpg", livesImpacted: "1M+" },
+    Chhattisgarh: { image: "/map/Chhattisgarh.jpg", livesImpacted: "300k+" },
+    Goa: { image: "/map/Goa.jpg", livesImpacted: "20k+" },
+    Gujarat: { image: "/map/Gujarat.jpg", livesImpacted: "600k+" },
+    Haryana: { image: "/map/Haryana.jpg", livesImpacted: "400k+" },
+    "Himachal Pradesh": {
+      image: "/map/Himachal Pradesh.jpg",
+      livesImpacted: "150k+",
+    },
+    Jharkhand: { image: "/map/Jharkhand.jpg", livesImpacted: "500k+" },
+    Karnataka: { image: "/map/Karnataka.jpg", livesImpacted: "750k+" },
+    Kerala: { image: "/map/Kerala.jpg", livesImpacted: "300k+" },
+    "Madhya Pradesh": {
+      image: "/map/Madhya Pradesh.jpg",
+      livesImpacted: "1.2M+",
+    },
+    Maharashtra: { image: "/map/Maharashtra.jpg", livesImpacted: "2M+" },
+    Manipur: { image: "/map/Manipur.jpg", livesImpacted: "40k+" },
+    Meghalaya: { image: "/map/Meghalaya.jpg", livesImpacted: "60k+" },
+    Mizoram: { image: "/map/Mizoram.jpg", livesImpacted: "30k+" },
+    Nagaland: { image: "/map/Nagaland.jpg", livesImpacted: "45k+" },
+    Odisha: { image: "/map/Odisha.jpg", livesImpacted: "900k+" },
+    Punjab: { image: "/map/Punjab.jpg", livesImpacted: "400k+" },
+    Rajasthan: { image: "/map/Rajasthan.jpg", livesImpacted: "1.1M+" },
+    Sikkim: { image: "/map/Sikkim.jpg", livesImpacted: "25k+" },
     "Tamil Nadu": { image: "/map/Tamil Nadu.jpg", livesImpacted: "850k+" },
-    "Telangana": { image: "/map/Telangana.jpg", livesImpacted: "600k+" },
-    "Tripura": { image: "/map/Tripura.jpg", livesImpacted: "70k+" },
-    "Uttar Pradesh": { image: "/map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
-    "Uttarakhand": { image: "/map/Uttarakhand.jpg", livesImpacted: "200k+" },
+    Telangana: { image: "/map/Telangana.jpg", livesImpacted: "600k+" },
+    Tripura: { image: "/map/Tripura.jpg", livesImpacted: "70k+" },
+    "Uttar Pradesh": {
+      image: "/map/Uttar Pradesh.jpg",
+      livesImpacted: "2.5M+",
+    },
+    Uttarakhand: { image: "/map/Uttarakhand.jpg", livesImpacted: "200k+" },
     "West Bengal": { image: "/map/WestBengal.jpg", livesImpacted: "1.3M+" },
-    "Jammu and Kashmir": { image: "/map/Jammu and Kashmir.png", livesImpacted: "100k+" }
+    "Jammu and Kashmir": {
+      image: "/map/Jammu and Kashmir.png",
+      livesImpacted: "100k+",
+    },
   };
 
   // Helper routine computing live state wise filtered beneficiaries values directly
@@ -327,13 +395,21 @@ const Home = () => {
       : stateStaticData[normalizedTarget]?.livesImpacted || "0";
   };
 
+  // डेटा को 2 बराबर हिस्सों (Rows) में विभाजित करने का लॉजिक
+  const halfLength = Math.ceil(allPartnersData.length / 2);
+  const row1Data = allPartnersData.slice(0, halfLength);
+  const row2Data = allPartnersData.slice(halfLength);
+
+  // अनंत लूप के लिए डेटा को रिपीट करने का हेल्पर फ़ंक्शन
+  const getRepeatedData = (data) => [...data, ...data, ...data, ...data];
+
   return (
     <div>
       <Herosection />
 
       <section className="py-10 relative bg-bg-color">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row xl:items-start lg:items-center gap-12 justify-between">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row xl:items-start lg:items-center gap-8 justify-between">
             {/* Left Block: Info Content */}
             <div className="w-full lg:w-[30%] xl:max-w-[350px] shrink-0">
               <div className="flex items-center gap-3 mb-6">
@@ -347,7 +423,7 @@ const Home = () => {
                 </h2>
               </div>
 
-              <p className="text-gray-600 mb-6 leading-relaxed line-clamp-9">
+              <p className="text-gray-600 text-justify mb-6 leading-relaxed line-clamp-9">
                 {aboutData && aboutData.who_we_are_text
                   ? aboutData.who_we_are_text
                   : "Established in 2014 by a dedicated group of professional social workers, the Sustainable Development Foundation (SDF) is a distinguished autonomous and 'not-for-profit' organization in India..."}
@@ -437,136 +513,68 @@ const Home = () => {
                 }
               })()}
             </div>
+            {/* Stats */}
+            <div className="stats">
+              <div className="max-w-1xl">
+                <div className="flex items-center gap-2 border border-gray-100 rounded-xl p-5.5 bg-white shadow-sm">
+                  
+                  <div className=" md:grid-cols-4 gap-4 md:gap-8 relative z-10">
+                    <h4 className="text-[18px] font-bold text-center font-serif mt-[-10px] mb-[10px]">
+                    Our Impact Statistics
+                  </h4>
+                    {focusAreas.length > 0 ? (
+                      focusAreas.map((area, index) => (
+                        <motion.div
+                          key={area.id}
+                          initial={{ y: 50, opacity: 0 }}
+                          whileInView={{ y: 0, opacity: 1 }}
+                          transition={{
+                            duration: 0.6,
+                            delay: 0.3 + index * 0.1,
+                          }}
+                          className="bg-white p-2 mb-4 rounded-3xl shadow-sm hover:-translate-y-2 hover:shadow-lg transition-all duration-300 flex flex-col md:flex-row items-center gap-8 justify-center border border-gray-100"
+                        >
+                          <div
+                            className={`w-8 h-8 rounded-full flex text-left items-left justify-center text-3xl shadow-sm ${area.color_class} ${area.animation_class}`}
+                          >
+                            {area.icon}
+                          </div>
+                          <div className="text-center md:text-left">
+                            <p className="text-1xl font-bold text-gray-900">
+                              {area.number_text}
+                            </p>
+                            <p className="text-xs text-gray-500 uppercase tracking-wide">
+                              {area.title}
+                            </p>
+                          </div>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <p className="col-span-2 md:col-span-4 text-white">
+                        Loading Focus Areas...
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section
-        ref={focusRef}
-        className="bg-bg-color relative flex justify-center py-4 overflow-hidden"
-      >
-        <motion.div
-          style={{
-            width: "100%",
-            maxWidth: focusMaxWidth,
-            borderRadius: focusBorderRadius,
-            scale: focusScale,
-          }}
-          className="mx-auto bg-accent text-center py-16 md:py-24 px-6 sm:px-12 lg:px-16 shadow-xl relative group"
-        >
-          <motion.h2
-            initial={{ y: -20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-3xl font-serif text-white mb-12 relative z-10 inline-block px-4"
-          >
-            Our Focus Areas
-          </motion.h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 relative z-10">
-            {focusAreas.length > 0 ? (
-              focusAreas.map((area, index) => (
-                <motion.div
-                  key={area.id}
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                  className="bg-white p-6 rounded-3xl shadow-sm hover:-translate-y-2 hover:shadow-lg transition-all duration-300 flex flex-col md:flex-row items-center gap-4 justify-center border border-gray-100"
-                >
-                  <div
-                    className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-sm ${area.color_class} ${area.animation_class}`}
-                  >
-                    {area.icon}
-                  </div>
-                  <div className="text-center md:text-left">
-                    <p className="text-2xl font-bold text-gray-900">
-                      {area.number_text}
-                    </p>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">
-                      {area.title}
-                    </p>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              <p className="col-span-2 md:col-span-4 text-white">
-                Loading Focus Areas...
-              </p>
-            )}
-          </div>
-        </motion.div>
-      </section>
+      {/* <ProjectSlider /> */}
 
-      <ProjectSlider />
-
+      <BeforeAfterImpact/>
       <OurProgramsSection />
 
       <Testimonials />
-
-      <section
-        className="py-20 relative bg-cover bg-center bg-fixed"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 relative">
-          <h2 className="text-4xl font-serif text-white mb-4 drop-shadow-lg">
-            Get Involved
-          </h2>
-          <p className="text-xl text-gray-200 mb-12 drop-shadow-md">
-            Join Us in Making a Difference
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <a href="/volunteerform">
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm relative group cursor-pointer h-80">
-                <img
-                  src="about/volunteer.jpeg"
-                  alt="Volunteer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => {
-                    e.currentTarget.src =
-                      "https://via.placeholder.com/800x500?text=Volunteer";
-                  }}
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <h3 className="text-3xl text-white font-serif font-bold tracking-wide">
-                    Volunteer With Us
-                  </h3>
-                </div>
-              </div>
-            </a>
-
-            <a href="/donate">
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm relative group cursor-pointer h-80">
-                <img
-                  src="about/donations.jpeg"
-                  alt="Donate"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => {
-                    e.currentTarget.src =
-                      "https://via.placeholder.com/800x500?text=Donate";
-                  }}
-                />
-                <div className="absolute inset-0 bg-primary/40 flex items-center justify-center">
-                  <h3 className="text-3xl text-white font-serif font-bold tracking-wide">
-                    Make a Donation
-                  </h3>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
 
       {/* Map Section Grassroots Presence */}
       <section className="py-16 bg-bg-color">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-4xl font-serif text-text-primary mb-10 text-center">
-            Our Grassroots Presence
+            Our Presence
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -700,7 +708,7 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* 🔥 Dynamic State wise Completed Project Count calculation */}
+                    {/* Dynamic State wise Completed Project Count calculation */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-105">
                         {selectedMapState.projects?.filter(
@@ -719,7 +727,7 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* 🔥 Dynamic State wise Beneficiaries Mapping */}
+                    {/* Dynamic State wise Beneficiaries Mapping */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-105">
                         {getStateLivesImpactedCount(selectedMapState.name)}
@@ -787,7 +795,7 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* 🔥 Dynamic Live National Counter for Completed Projects */}
+                    {/* Dynamic Live National Counter for Completed Projects */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110">
                         {globalCompletedCount > 0
@@ -804,7 +812,7 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* 🔥 Dynamic Live National Counter for Lives Impacted Summation */}
+                    {/* Dynamic Live National Counter for Lives Impacted Summation */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110">
                         {globalLivesImpactedSum > 0
@@ -835,7 +843,105 @@ const Home = () => {
         </div>
       </section>
 
-      <PartnersSection />
+      {/* हेडिंग अपनी जगह स्थिर रहेगी और डेटा 2 लाइनों में स्क्रॉल होगा */}
+      <section className="py-20 bg-[#F3EFE4] overflow-hidden" id="partners">
+        <style>{`
+          @keyframes marqueeLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          @keyframes marqueeRight {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+          }
+          .animate-scroll-left {
+            animation: marqueeLeft 50s linear infinite;
+          }
+          .animate-scroll-right {
+            animation: marqueeRight 50s linear infinite;
+          }
+          .animate-scroll-left:hover, .animate-scroll-right:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
+
+        <div className="w-full mx-auto text-center relative">
+          <h2 className="text-4xl font-serif mb-16 text-[#233520]">
+            Our Partners & Supporters
+          </h2>
+
+          {/* साइड ब्लर शैडो इफ़ेक्ट */}
+          <div className="absolute left-0 top-20 bottom-0 w-28 bg-gradient-to-r from-[#F3EFE4] to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-20 bottom-0 w-28 bg-gradient-to-l from-[#F3EFE4] to-transparent z-10 pointer-events-none"></div>
+
+          {/* स्क्रॉलिंग डेटा कंटेनर (2 लाइन) */}
+          <div className="flex flex-col gap-6 w-full">
+            
+            {/* ➡️ पहली कतार (Row 1): Right to Left */}
+            {row1Data.length > 0 && (
+              <div className="overflow-hidden w-full">
+                <div className="flex w-max gap-6 animate-scroll-left">
+                  {getRepeatedData(row1Data).map((partner, idx) => (
+                    <a
+                      key={`row1-${partner.id || idx}-${idx}`}
+                      href={partner.link || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-48 sm:w-56 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-lg group shrink-0"
+                    >
+                      {/* ✅ FIXED: अब सटीक पार्टनर इमेज यूआरएल फ़ंक्शन काम करेगा */}
+                      <img
+                        src={getPartnerImageUrl(partner.img || partner.image_url)}
+                        alt={partner.title || "partner"}
+                        className="w-[80%] h-auto max-h-16 object-contain mb-4 transition-transform duration-300 group-hover:scale-110"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://via.placeholder.com/150x150?text=No+Logo";
+                        }}
+                      />
+                      <p className="text-xs font-bold text-gray-600 text-center leading-snug truncate w-full">
+                        {partner.title}
+                      </p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ⬅️ दूसरी कतार (Row 2): Left to Right */}
+            {row2Data.length > 0 && (
+              <div className="overflow-hidden w-full">
+                <div className="flex w-max gap-6 animate-scroll-right">
+                  {getRepeatedData(row2Data).map((partner, idx) => (
+                    <a
+                      key={`row2-${partner.id || idx}-${idx}`}
+                      href={partner.link || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-48 sm:w-56 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-lg group shrink-0"
+                    >
+                      {/* ✅ FIXED: अब सटीक पार्टनर इमेज यूआरएल फ़ंक्शन काम करेगा */}
+                      <img
+                        src={getPartnerImageUrl(partner.img || partner.image_url)}
+                        alt={partner.title || "partner"}
+                        className="w-[80%] h-auto max-h-16 object-contain mb-4 transition-transform duration-300 group-hover:scale-110"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://via.placeholder.com/150x150?text=No+Logo";
+                        }}
+                      />
+                      <p className="text-xs font-bold text-gray-600 text-center leading-snug truncate w-full">
+                        {partner.title}
+                      </p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </section>
 
       <section className="py-10 bg-primary/10 border-t border-primary/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { useLocation } from "react-router-dom"; // 🔥 NEW
+import { useLocation } from "react-router-dom"; 
 
 const Publications = () => {
   const [publications, setPublications] = useState([]);
@@ -10,24 +10,33 @@ const Publications = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔥 TAB STATE
+  // TAB STATE
   const [activeTab, setActiveTab] = useState("annual-reports");
 
-  const location = useLocation(); // 🔥 NEW
+  const location = useLocation(); 
 
+  // ✅ FIXED: प्रोजेक्ट्स और पब्लिकेशन्स (backend/admin/) पाथ के लिए सटीक हेल्पर फ़ंक्शन
   const getFullUrl = (path) => {
     if (!path) return "";
-    if (path.startsWith("https")) return path;
-    return `${ADMIN_BASE_URL}${path}`;
+    if (path.startsWith("https") || path.startsWith("http")) return path;
+    
+    const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
+    const cleanPath = path.replace(/^\/+/, "");
+
+    // अगर डेटाबेस में पहले से 'backend/admin/' जुड़कर आ रहा है तो उसे डुप्लिकेट होने से रोकें
+    if (cleanPath.startsWith("backend/admin/")) {
+      return `${rootDomain}/${cleanPath}`;
+    }
+    return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
-  // 🔥 NEW: HANDLE HASH (MAIN FIX)
+  // HANDLE HASH FOR DIRECT LINKING
   useEffect(() => {
     if (location.hash) {
       const tab = location.hash.replace("#", "");
 
-      // Only allow valid tabs
-      if (["annual-reports", "case-studies", "in-publications"].includes(tab)) {
+      // Allowed valid tabs including legal-documents
+      if (["annual-reports", "case-studies", "legal-documents", "in-publications"].includes(tab)) {
         setActiveTab(tab);
       }
     } else {
@@ -52,12 +61,13 @@ const Publications = () => {
         const inPubData = await inPubRes.json();
 
         if (pubData.status === "success" && inPubData.status === "success") {
-          setPublications(pubData.data);
-          setInPublications(inPubData.data);
+          setPublications(pubData.data || []);
+          setInPublications(inPubData.data || []);
         } else {
           throw new Error("Failed to load data from server");
         }
       } catch (err) {
+        console.error("Fetch error:", err);
         setError("Failed to load data");
       } finally {
         setLoading(false);
@@ -75,8 +85,10 @@ const Publications = () => {
     return <div className="text-center text-red-500 py-20 font-bold">{error}</div>;
   }
 
+  // ✅ डेटा फ़िल्टरिंग (अलग-अलग टाइप्स के आधार पर)
   const reports = publications.filter((p) => p.type === "report");
   const caseStudies = publications.filter((p) => p.type === "case_study");
+  const legalDocuments = publications.filter((p) => p.type === "legal_document"); // 🔥 NEW: लीगल डाक्यूमेंट्स फ़िल्टर
 
   return (
     <div className="bg-bg-color min-h-screen">
@@ -90,7 +102,7 @@ const Publications = () => {
           Publications & Resources
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-primary-50">
-          Explore our reports, case studies, and books showcasing our impact-driven work.
+          Explore our reports, case studies, legal documents, and books showcasing our impact-driven work.
         </motion.p>
       </section>
 
@@ -101,6 +113,7 @@ const Publications = () => {
             {[
               { id: "annual-reports", label: "Reports 📊" },
               { id: "case-studies", label: "Case Studies 📝" },
+              { id: "legal-documents", label: "Legal Documents 📄" }, // ✅ लीगल टैब विज़िबल
               { id: "in-publications", label: "Our Publications 📚" },
             ].map((tab) => (
               <button
@@ -124,6 +137,7 @@ const Publications = () => {
 
       {/* CONTENT */}
       <div className="max-w-7xl mx-auto px-4 py-12 min-h-screen">
+        
         {/* REPORTS */}
         {activeTab === "annual-reports" && (
           reports.length > 0 ? (
@@ -163,6 +177,9 @@ const Publications = () => {
                       src={getFullUrl(c.image_url) || 'https://images.unsplash.com/photo-1544027993-37dbddc92582?q=80&w=400&auto=format&fit=crop'}
                       alt={c.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "https://via.placeholder.com/400x250?text=SDF+Case+Study";
+                      }}
                     />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
@@ -180,17 +197,50 @@ const Publications = () => {
           )
         )}
 
+        {/* ✅ LEGAL DOCUMENTS CONTENT AREA */}
+        {activeTab === "legal-documents" && (
+          legalDocuments.length > 0 ? (
+            <div className="grid md:grid-cols-3 gap-6">
+              {legalDocuments.map((doc) => (
+                <a
+                  key={doc.id}
+                  href={getFullUrl(doc.file_url)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-white p-6 rounded-xl shadow border border-gray-100 hover:shadow-md flex items-center justify-between transition-shadow"
+                >
+                  <div className="flex items-center gap-4">
+                     <div className="w-12 h-12 bg-red-50 text-red-500 rounded flex items-center justify-center font-bold shrink-0">PDF</div>
+                     <div>
+                       <h3 className="font-bold text-gray-900 leading-tight">{doc.title}</h3>
+                       {doc.file_size && <p className="text-sm text-gray-500 mt-1 block">{doc.file_size}</p>}
+                     </div>
+                  </div>
+                  <span className="text-primary font-bold text-xl ml-4">↓</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+             <p className="text-gray-500 text-center py-8">No legal documents available.</p>
+          )
+        )}
+
         {/* IN PUBLICATIONS */}
         {activeTab === "in-publications" && (
           inPublications.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {inPublications.map((book) => (
                 <div key={book.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:-translate-y-1 hover:shadow-md transition-all flex flex-col">
                     <div className="aspect-[3/4] bg-gray-100 relative">
-                      <img src={getFullUrl(book.image_url)} alt={book.title} className="absolute inset-0 w-full h-full object-cover" onError={(e) => e.currentTarget.src='https://via.placeholder.com/400x500?text=No+Cover'} />
+                      <img 
+                        src={getFullUrl(book.image_url)} 
+                        alt={book.title} 
+                        className="absolute inset-0 w-full h-full object-cover" 
+                        onError={(e) => e.currentTarget.src='https://via.placeholder.com/400x500?text=No+Cover'} 
+                      />
                     </div>
                     <div className="p-5 flex-1 flex flex-col justify-between items-center text-center">
-                      <h3 className="font-bold text-lg text-gray-900 mb-4 leading-tight">{book.title}</h3>
+                      <h3 className="font-bold text-base text-gray-900 mb-4 leading-tight line-clamp-2">{book.title}</h3>
                       {book.pdf_url && (
                           <a href={getFullUrl(book.pdf_url)} target="_blank" rel="noreferrer" className="bg-[#6a752b] text-white hover:bg-[#5a6425] w-full py-2.5 rounded text-sm font-bold shadow-sm transition-colors block mt-auto">
                               Read PDF

@@ -122,7 +122,7 @@ const MediaAndStories = () => {
   // 🔥 FIXED IMAGE URL HELPER: Aligned with Bluehost root structure
   const getImageUrl = (path) => {
     if (!path) return 'https://via.placeholder.com/800x600?text=No+Media';
-    if (path.startsWith('https')) return path;
+    if (path.startsWith('https') || path.startsWith('http')) return path;
 
     // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root domain nikalna
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
@@ -154,8 +154,6 @@ const MediaAndStories = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isPhotoModalOpen, handlePrevPhoto, handleNextPhoto]);
-
-  // Press Coverage states have been defined via useState above
 
   return (
     <div className="bg-white min-h-screen relative">
@@ -343,7 +341,8 @@ const MediaAndStories = () => {
                   <Link key={item.id} to={`/press-coverage/${item.slug}`} className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
                     <div className="md:w-48 h-32 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 shrink-0 overflow-hidden">
                       <div className="group-hover:scale-105 transition-transform w-full h-full">
-                        <img src={getImageUrl(item.image_url || item.image)} alt="" className='w-full h-full object-cover' />
+                        {/* 🔥 FIXED: item.image ko badal kar item.image1 kiya taaki single primary photo render ho sake */}
+                        <img src={getImageUrl(item.image1)} alt={item.title} className='w-full h-full object-cover' />
                       </div>
                     </div>
                     <div className="flex-1">
@@ -395,7 +394,7 @@ const MediaAndStories = () => {
             )}
 
             <motion.img 
-              key={currentPhotoIndex} // forces animation on change
+              key={currentPhotoIndex} 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -416,7 +415,7 @@ const MediaAndStories = () => {
             )}
           </div>
 
-          {/* Thumbnails (Shows ALL images in the gallery) */}
+          {/* Thumbnails */}
           {medias.length > 1 && (
             <div 
               className="w-full max-w-4xl mt-6 flex gap-2 overflow-x-auto py-2 custom-scrollbar justify-start md:justify-center px-4"

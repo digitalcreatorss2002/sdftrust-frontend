@@ -4,28 +4,21 @@ import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 
 const BASE_URL = ADMIN_BASE_URL;
 
-// 🔥 FIXED & UPDATED BULLETPROOF IMAGE PATH ROUTING
 const makeImageUrl = (path) => {
   if (!path) return "https://placehold.co/150x150?text=No+Photo";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
 
-  // ADMIN_BASE_URL se base core domain extract karna
   const rootDomain = BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
-
-  // Forward slashes parameters ko safely cleanup karna
   const cleanPath = path.replace(/^\/+/, "");
 
-  // 1. Agar path me pehle se 'backend/admin' laga hua h (Old Structure)
   if (cleanPath.startsWith("backend/admin/")) {
     return `${rootDomain}/${cleanPath}`;
   }
 
-  // 2. Agar path seedhe 'uploads/' se shuru ho raha h (New Root Structure)
   if (cleanPath.startsWith("uploads/")) {
     return `${rootDomain}/${cleanPath}`;
   }
 
-  // Fallback map
   return `${rootDomain}/${cleanPath}`;
 };
 
@@ -33,16 +26,15 @@ const About = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const location = useLocation();
 
-  // 🔥 STATES
+  // STATES
   const [activeTab, setActiveTab] = useState("who-we-are");
   const [selectedLeader, setSelectedLeader] = useState(null);
-  const [selectedPartner, setSelectedPartner] = useState(null); 
+  const [selectedPartner, setSelectedPartner] = useState(null);
 
   const [aboutData, setAboutData] = useState(null);
   const [leadershipData, setLeadershipData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // FETCH DATA
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -70,7 +62,6 @@ const About = () => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  // HANDLE HASH FOR TABS
   useEffect(() => {
     if (location.hash) {
       const tab = location.hash.replace("#", "");
@@ -175,21 +166,23 @@ const About = () => {
                 Who We Are
               </h2>
               <div className="w-24 h-1 bg-accent mx-auto"></div>
-              <p className="mt-6 text-gray-600 text-lg leading-relaxed text-justify max-w-5xl mx-auto">
+              
+              {/* ✅ FIXED: यहाँ whitespace-pre-line क्लास जोड़ी गई है ताकि डेटाबेस के लाइन ब्रेक्स काम करें */}
+              <p className="mt-6 text-gray-600 text-lg leading-relaxed text-justify max-w-5xl mx-auto whitespace-pre-line">
                 {aboutData?.who_we_are_text || "Content loading..."}
               </p>
             </div>
 
-            {/* 🔥 FIXED VISION & MISSION BLOCKS OVERFLOW */}
+            {/* VISION & MISSION BLOCKS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               {[
                 {
-                  // title: "💡 Our Vision",
+                  title: "Our Vision",
                   text: aboutData?.vision_text,
                   img: aboutData?.vision_image || "/about/5.png",
                 },
                 {
-                  // title: "🎯 Our Mission",
+                  title: "Our Mission",
                   text: aboutData?.mission_text,
                   img: aboutData?.mission_image || "/about/3.png",
                 },
@@ -203,16 +196,14 @@ const About = () => {
                     backgroundPosition: "center",
                   }}
                 >
-                  {/* Dark overlay for better text contrast */}
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all duration-500 z-0"></div>
-                  
-                  {/* Content Container */}
+
                   <div className="relative z-10 p-8 md:p-10 flex flex-col h-full justify-center">
                     <h3 className="text-2xl md:text-3xl font-serif text-white font-bold mb-4 border-b border-white/20 pb-2 inline-block max-w-max">
                       {box.title}
                     </h3>
                     <div
-                      className="text-gray-100 leading-relaxed text-base md:text-lg space-y-2 prose-invert tags-fix-styles"
+                      className="text-gray-100 leading-relaxed text-base md:text-lg space-y-2 prose-invert tags-fix-styles whitespace-pre-line"
                       dangerouslySetInnerHTML={{ __html: box.text }}
                     />
                   </div>
@@ -220,31 +211,12 @@ const About = () => {
               ))}
             </div>
 
-            {/* Journey Timeline */}
-            <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-100">
-              <h3 className="text-2xl font-serif text-text-primary mb-10 text-center">
-                Our Journey (2014—Present)
-              </h3>
-              <div className="flex flex-col md:flex-row justify-between items-center text-center gap-6">
-                {[
-                  { year: "2014", desc: "Foundation Established" },
-                  { year: "2018", desc: "Expanded to 5 States" },
-                  { year: "2022", desc: "1 Million Beneficiaries" },
-                  { year: "2026", desc: "Global Recognition" },
-                ].map((step, i, arr) => (
-                  <div key={i} className="flex flex-col items-center flex-1">
-                    <div className="text-primary text-3xl font-bold mb-2">
-                      {step.year}
-                    </div>
-                    <p className="text-sm text-gray-500 font-medium">
-                      {step.desc}
-                    </p>
-                    {i !== arr.length - 1 && (
-                      <div className="hidden md:block w-full h-px bg-gray-200 mt-4"></div>
-                    )}
-                  </div>
-                ))}
-              </div>
+            <div className="w-full max-w-7xl mx-auto rounded-2xl overflow-hidden shadow-lg bg-white group">
+              <img
+                src="/about/organitation.png"
+                alt="Our Working Approach"
+                className="w-full h-auto block object-contain"
+              />
             </div>
           </div>
         )}
@@ -296,7 +268,7 @@ const About = () => {
                   </h2>
 
                   {selectedLeader.title.includes("Founder") ? (
-                    <div className="max-w-4xl mx-auto space-y-6 text-lg leading-relaxed text-justify px-4">
+                    <div className="max-w-4xl mx-auto space-y-6 text-lg leading-relaxed text-justify px-4 whitespace-pre-line">
                       {selectedLeader.members[0]?.content
                         ?.split("\n")
                         .map((p, i) => (
@@ -306,7 +278,7 @@ const About = () => {
                   ) : (
                     <div className="space-y-12">
                       {selectedLeader.intro_text && (
-                        <p className="text-center text-lg max-w-3xl mx-auto opacity-90 mb-10">
+                        <p className="text-center text-lg max-w-3xl mx-auto opacity-90 mb-10 whitespace-pre-line">
                           {selectedLeader.intro_text}
                         </p>
                       )}
@@ -364,27 +336,12 @@ const About = () => {
               </h2>
               <div className="w-24 h-1 bg-primary mx-auto"></div>
             </div>
-            <div className="space-y-6">
-              {[
-                {
-                  title: "Theory of Change",
-                  color: "border-primary",
-                  text: "A systematic method to map out our long-term goals and the steps required to achieve sustainable impact.",
-                },
-                {
-                  title: "Community-Centric Model",
-                  color: "border-secondary",
-                  text: "Putting the community at the heart of decision-making to ensure ownership and long-lasting changes.",
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className={`bg-white p-8 rounded-2xl shadow-sm border-l-4 ${item.color}`}
-                >
-                  <h3 className="font-bold text-xl mb-3">{item.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{item.text}</p>
-                </div>
-              ))}
+            <div className="w-full max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-lg bg-white group">
+              <img
+                src="/about/Approch.jpeg"
+                alt="Our Working Approach"
+                className="w-full h-auto block object-contain"
+              />
             </div>
           </div>
         )}
@@ -466,7 +423,7 @@ const About = () => {
                   <div
                     className={`px-6 overflow-hidden transition-all duration-500 ${openFaq === index ? "max-h-96 opacity-100 pb-6" : "max-h-0 opacity-0"}`}
                   >
-                    <div className="pt-2 border-t border-gray-50 text-gray-600 leading-relaxed">
+                    <div className="pt-2 border-t border-gray-50 text-gray-600 leading-relaxed whitespace-pre-line">
                       {faq.answer}
                     </div>
                   </div>

@@ -44,10 +44,10 @@ const GetInvolved = () => {
         }
 
         // Fetch Funds (Partners EOI/RFQ)
-        const fundRes = await fetch(`${API_BASE_URL}/funds.php`);
+        const fundRes = await fetch(`${API_BASE_URL}/funds.php?t=${Date.now()}`);
         const fundData = await fundRes.json();
         if (fundData.status === "success") {
-          setFundsList(fundData.data);
+          setFundsList(fundData.data || []);
         }
       } catch (error) {
         console.error("Data fetching error:", error);
@@ -59,6 +59,24 @@ const GetInvolved = () => {
 
     fetchData();
   }, []);
+
+  // HELPER FUNCTION: करियर और फंड्स दोनों के PDF पाथ को सही करने के लिए
+  const getBackendFileUrl = (path) => {
+    if (!path) return "";
+    if (path.startsWith("https") || path.startsWith("http")) return path;
+    
+    const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
+    const cleanPath = path.replace(/^\/+/, "");
+
+    if (cleanPath.startsWith("backend/admin/")) {
+      return `${rootDomain}/${cleanPath}`;
+    }
+    
+    return `${rootDomain}/backend/admin/${cleanPath}`;
+  };
+
+  // केवल 'active' स्टेटस वाले फंड्स को ही फ़्रंटएंड पर दिखाना है
+  const activeFunds = fundsList.filter((fund) => fund.status === "active");
 
   return (
     <div className="bg-bg-color min-h-screen pb-24 relative">
@@ -83,22 +101,12 @@ const GetInvolved = () => {
               { id: "volunteer", label: "Volunteer With Us", icon: "🤝", path: null },
               { id: "careers", label: "Careers", icon: "💼", path: null },
               { id: "funds", label: "Partners (EOI/RFQ)", icon: "🌱", path: null },
-              // { id: "contact", label: "Contact Us", icon: "📞", path: "/contact" },
             ].map((tab) => {
-              const isLink = tab.path !== null;
               const baseClass = `py-4 px-1 flex items-center gap-2 border-b-2 font-bold transition-all text-sm md:text-base ${
                 activeTab === tab.id
                   ? "border-primary text-primary"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`;
-
-              if (isLink) {
-                return (
-                  <Link key={tab.id} to={tab.path} className={baseClass}>
-                    <span>{tab.icon}</span> {tab.label}
-                  </Link>
-                );
-              }
 
               return (
                 <button
@@ -165,19 +173,25 @@ const GetInvolved = () => {
                     <div>
                       <h3 className="text-xl font-bold text-primary mb-1">{career.title}</h3>
                       <p className="text-gray-500 text-sm flex items-center gap-2">📍 {career.location}</p>
+                      
                       {career.pdf_url && (
                         <a 
-                          href={`${ADMIN_BASE_URL}${career.pdf_url.replace(/^\/+/, '')}`} 
-                          target="_blank" rel="noreferrer" 
+                          href={getBackendFileUrl(career.pdf_url)} 
+                          target="_blank" 
+                          rel="noreferrer" 
                           className="text-blue-600 hover:underline text-xs mt-2 inline-block font-bold"
                         >
                           📄 View Job Description
                         </a>
                       )}
                     </div>
-                    <a href={career.apply_link} target="_blank" rel="noreferrer" className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-6 py-2 rounded-full font-bold transition-all">
+                    {/* ✅ FIXED: "Apply Now" बटन को सीधे /contact पेज पर जाने के लिए स्टैटिक लिंक से रैप कर दिया गया है */}
+                    <Link 
+                      to="/contact" 
+                      className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-6 py-2 rounded-full font-bold transition-all text-center"
+                    >
                       Apply Now
-                    </a>
+                    </Link>
                   </div>
                 ))
               ) : (
@@ -193,31 +207,36 @@ const GetInvolved = () => {
             <div className="text-center mb-12">
               <span className="text-4xl mb-4 block animate-float">🌱</span>
               <h2 className="text-3xl font-serif text-text-primary mb-4">Partners (EOI/RFQ)</h2>
-              <p className="text-gray-500">Choose a specific fund to support the causes you care about most.</p>
+              <p className="text-gray-500">Explore open procurement requests, expressions of interest, and call for proposals.</p>
             </div>
 
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
               {fundsLoading ? (
                 <div className="p-10 text-center text-gray-400 italic">Loading opportunities...</div>
-              ) : fundsList.length > 0 ? (
-                fundsList.map((fund) => (
-                  <div key={fund.id} className="p-8 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:bg-gray-50 transition-colors">
+              ) : activeFunds.length > 0 ? (
+                activeFunds.map((fund) => (
+                  <div key={fund.id} className="p-8 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 hover:bg-gray-50 transition-colors">
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-primary mb-1">{fund.title}</h3>
-                      <p className="text-gray-500 text-sm mb-3">📍 {fund.location}</p>
-                      <p className="text-gray-600 text-sm leading-relaxed">{fund.description}</p>
+                      <h3 className="text-xl font-bold text-primary mb-2">{fund.title}</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{fund.description}</p>
                     </div>
-                    <a
-                      href={fund.donate_link}
-                      target="_blank" rel="noreferrer"
-                      className="shrink-0 border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-bold transition-all hover:shadow-md"
-                    >
-                      Contribute
-                    </a>
+                    
+                    {fund.file_url ? (
+                      <a
+                        href={getBackendFileUrl(fund.file_url)}
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="shrink-0 bg-primary hover:bg-[#5a6425] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:shadow-md inline-flex items-center gap-1.5"
+                      >
+                        📄 View Document {fund.file_size && <span className="text-xs font-normal opacity-80">({fund.file_size})</span>}
+                      </a>
+                    ) : (
+                      <span className="shrink-0 text-gray-400 italic text-sm">No Document</span>
+                    )}
                   </div>
                 ))
               ) : (
-                <div className="p-10 text-center text-gray-500">No active EOI/RFQ found at the moment.</div>
+                <div className="p-10 text-center text-gray-500">No active EOI/RFQ opportunities found at the moment.</div>
               )}
             </div>
           </section>

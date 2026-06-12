@@ -153,8 +153,8 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-10">
-            <h2 className="text-3xl font-serif font-bold text-text-primary mb-2">
-              Write to Us
+            <h2 className="text-2xl font-serif font-bold text-[#6F7C2E] mb-2">
+              Write to us for Enqueries, Volunteering, Partnerships, or Donations.
             </h2>
             <p className="text-gray-500 mb-8">
               Fill out the form below and our team will get back to you shortly.
@@ -274,7 +274,6 @@ const Contact = () => {
                 disabled={isSubmitting}
                 className="bg-primary hover:-translate-y-1 hover:shadow-lg focus:ring-4 focus:ring-primary/20 hover:bg-[#5a6425] text-white px-8 py-4 rounded-lg font-medium text-lg transition-all shadow-md w-full md:w-auto flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-md"
               >
-                <span className="text-xl">📤</span>{" "}
                 {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </form>

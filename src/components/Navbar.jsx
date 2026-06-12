@@ -102,6 +102,11 @@ const Navbar = () => {
           icon: "📝",
         },
         {
+          label: "Legal Documents",
+          path: "/publications#legal-documents",
+          icon: "📄",
+        },
+        {
           label: "Our Publications",
           path: "/publications#in-publications",
           icon: "📚",
