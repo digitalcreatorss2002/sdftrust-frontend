@@ -177,12 +177,12 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               {[
                 {
-                  title: "Our Vision",
+                  // title: "Our Vision",
                   text: aboutData?.vision_text,
                   img: aboutData?.vision_image || "/about/5.png",
                 },
                 {
-                  title: "Our Mission",
+                  // title: "Our Mission",
                   text: aboutData?.mission_text,
                   img: aboutData?.mission_image || "/about/3.png",
                 },
