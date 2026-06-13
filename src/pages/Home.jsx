@@ -359,7 +359,6 @@ const Home = () => {
                     );
                   }
 
-                  // ✅ FIXED: अब स्लाइस को .slice(0, 4) किया गया है ताकि पूरे 4 प्रोजेक्ट कार्ड्स रेंडर हों
                   const completedProjects = recentProjects
                     .filter((project) => project && project.status === "completed")
                     .slice(0, 4);
@@ -397,20 +396,20 @@ const Home = () => {
 
                           <div className="px-5 pb-2 pt-1 grow flex flex-col justify-between">
                             <div>
-                              <h3 className="text-base font-serif font-bold text-text-primary mb-2 line-clamp-2 min-h-[2.5rem] leading-tight">
+                              <h3 className="text-base font-serif font-bold text-text-primary mb-2 line-clamp-4 min-h-[2.5rem] leading-tight">
                                 {project.title}
                               </h3>
-                              <p className="text-gray-500 text-xs mb-4 line-clamp-3 leading-relaxed">
+                              {/* <p className="text-gray-500 text-xs mb-4 line-clamp-3 leading-relaxed">
                                 {project.description}
-                              </p>
+                              </p> */}
                             </div>
 
-                            <Link
+                            {/* <Link
                               to={`/projectdetails/${project.slug}`}
                               className="text-primary font-bold text-xs hover:underline mt-auto inline-block"
                             >
                               View Project →
-                            </Link>
+                            </Link> */}
                           </div>
                         </div>
                       );

@@ -126,7 +126,7 @@ const About = () => {
   }
 
   return (
-    <div className="bg-bg-color min-h-screen pb-20">
+    <div className="bg-bg-color min-h-screen pb-10">
       {/* Hero Section */}
       <section className="bg-primary text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -179,12 +179,12 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               {[
                 {
-                  title: "Our Vision",
+                  // title: "Our Vision",
                   text: aboutData?.vision_text,
                   img: aboutData?.vision_image || "/about/5.png",
                 },
                 {
-                  title: "Our Mission",
+                  // title: "Our Mission",
                   text: aboutData?.mission_text,
                   img: aboutData?.mission_image || "/about/3.png",
                 },
