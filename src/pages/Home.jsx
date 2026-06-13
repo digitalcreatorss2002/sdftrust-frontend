@@ -566,6 +566,7 @@ const Home = () => {
       {/* <ProjectSlider /> */}
 
       <BeforeAfterImpact/>
+      
       <OurProgramsSection />
 
       <Testimonials />
@@ -843,7 +844,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* हेडिंग अपनी जगह स्थिर रहेगी और डेटा 2 लाइनों में स्क्रॉल होगा */}
       <section className="py-20 bg-[#F3EFE4] overflow-hidden" id="partners">
         <style>{`
           @keyframes marqueeLeft {

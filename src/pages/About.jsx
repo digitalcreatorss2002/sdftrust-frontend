@@ -11,6 +11,10 @@ const makeImageUrl = (path) => {
   const rootDomain = BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
   const cleanPath = path.replace(/^\/+/, "");
 
+  if (cleanPath.startsWith("uploads/team/")) {
+    return `${rootDomain}/backend/admin/${cleanPath}`;
+  }
+
   if (cleanPath.startsWith("backend/admin/")) {
     return `${rootDomain}/${cleanPath}`;
   }
@@ -166,8 +170,6 @@ const About = () => {
                 Who We Are
               </h2>
               <div className="w-24 h-1 bg-accent mx-auto"></div>
-              
-              {/* ✅ FIXED: यहाँ whitespace-pre-line क्लास जोड़ी गई है ताकि डेटाबेस के लाइन ब्रेक्स काम करें */}
               <p className="mt-6 text-gray-600 text-lg leading-relaxed text-justify max-w-5xl mx-auto whitespace-pre-line">
                 {aboutData?.who_we_are_text || "Content loading..."}
               </p>
@@ -177,12 +179,12 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               {[
                 {
-                  // title: "Our Vision",
+                  title: "Our Vision",
                   text: aboutData?.vision_text,
                   img: aboutData?.vision_image || "/about/5.png",
                 },
                 {
-                  // title: "Our Mission",
+                  title: "Our Mission",
                   text: aboutData?.mission_text,
                   img: aboutData?.mission_image || "/about/3.png",
                 },
@@ -290,13 +292,13 @@ const About = () => {
                         return (
                           <div key={lvl}>
                             <h3 className="text-xl font-bold mb-8 border-b border-gray-100 pb-2 inline-block uppercase tracking-widest text-[#6a752b]">
-                              {lvl} Level Team
+                              {lvl === "General" ? "Board & Advisory Team" : `${lvl} Level Team`}
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                               {filteredMembers.map((m, i) => (
                                 <div
                                   key={i}
-                                  className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100 group"
+                                  className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100 flex flex-col h-full group"
                                 >
                                   <div className="w-full h-64 bg-gray-50 overflow-hidden">
                                     <img
@@ -305,13 +307,25 @@ const About = () => {
                                       alt={m.name}
                                     />
                                   </div>
-                                  <div className="p-5 text-center">
-                                    <h4 className="text-[#6a752b] font-bold text-lg">
-                                      {m.name}
-                                    </h4>
-                                    <p className="text-gray-500 text-sm mt-1">
-                                      {m.role}
-                                    </p>
+                                  <div className="p-5 text-center flex flex-col flex-grow justify-between">
+                                    <div>
+                                      <h4 className="text-[#6a752b] font-bold text-lg">
+                                        {m.name}
+                                      </h4>
+                                      <p className="text-gray-500 text-sm mt-1 font-medium">
+                                        {m.role}
+                                      </p>
+                                    </div>
+                                    
+                                    {/* ✅ FIXED: रोल के नीचे डेटाबेस से मैसेज (content) शो करने का ब्लॉक */}
+                                    {m.content && (
+                                      <div className="mt-2 border-t border-gray-50 text-left">
+                                        <p className="text-gray-600 text-xs leading-relaxed italic whitespace-pre-line line-clamp-4 hover:line-clamp-none transition-all duration-300">
+                                          "{m.content}"
+                                        </p>
+                                      </div>
+                                    )}
+
                                   </div>
                                 </div>
                               ))}
