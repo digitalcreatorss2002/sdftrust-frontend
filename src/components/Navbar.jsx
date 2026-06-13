@@ -60,7 +60,7 @@ const Navbar = () => {
         { label: "Leadership", path: "/about#leadership", icon: "👥" },
         { label: "Our Approach", path: "/about#approach", icon: "🎯" },
         { label: "Partners", path: "/about#partners", icon: "🤝" },
-        { label: "FAQ", path: "/about#fAq", icon: "🙋" },
+        { label: "FAQ", path: "/about#faq", icon: "🙋" },
       ],
     },
     {
