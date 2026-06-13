@@ -14,7 +14,6 @@ import MapSection from "../components/MapSection";
 import ProjectSlider from "../components/ProjectSlider";
 import OurProgramsSection from "../components/OurProgramsSection";
 import BeforeAfterImpact from "../components/BeforeAfterImpact";
-// import ProjectMap from "../components/ProjectMap";
 
 const PROGRAMS_API_URL = `${API_BASE_URL}/programs.php?t=` + Date.now();
 const SUBSCRIBE_API_URL = `${API_BASE_URL}/subscribe.php`;
@@ -25,7 +24,7 @@ const isVideoFile = (url) => {
   return /\.(mp4|webm|ogg)$/i.test(url);
 };
 
-// प्रोजेक्ट्स के लिए इमेज URL फ़ंक्शन (यह वैसे ही रहेगा)
+// प्रोजेक्ट्स के लिए इमेज URL फ़ंक्शन
 const getImageUrl = (path) => {
   if (!path) return "https://via.placeholder.com/800x500?text=No+Image";
   if (path.startsWith("https")) return path;
@@ -35,27 +34,20 @@ const getImageUrl = (path) => {
     "",
   );
   const cleanPath = path.replace(/^\/+/, "");
-
-  // Images are in backend/admin/uploads/
   return `${rootDomain}/backend/admin/${cleanPath}`;
 };
 
-// 🔴 FIXED: केवल पार्टनर्स के लिए सटीक इमेज URL फ़ंक्शन जो backend/uploads/ से इमेज उठाएगा
+// पार्टनर्स के लिए सटीक इमेज URL फ़ंक्शन
 const getPartnerImageUrl = (path) => {
   if (!path) return "https://via.placeholder.com/150x150?text=No+Logo";
   if (path.startsWith("https")) return path;
 
-  // ADMIN_BASE_URL से 'backend' तक का रूट निकालना
   const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
-  
   let cleanPath = path.replace(/^\/+/, "");
-  
-  // अगर पाथ में गलती से 'admin/uploads/' आ रहा हो तो उसे सिर्फ 'uploads/' में बदलें
+
   if (cleanPath.startsWith("admin/uploads/")) {
     cleanPath = cleanPath.replace("admin/uploads/", "uploads/");
   }
-
-  // फाइनल पाथ: domain/backend/uploads/partners/filename.jpg
   return `${rootDomain}/backend/${cleanPath}`;
 };
 
@@ -90,52 +82,26 @@ const Home = () => {
   });
 
   const [aboutData, setAboutData] = useState(null);
-
-  // State for raw list of all backend projects to support live calculations
   const [allProjects, setAllProjects] = useState([]);
   const [recentProjects, setRecentProjects] = useState([]);
-
-  // पार्टनर्स का लाइव डेटा स्टेट
   const [allPartnersData, setAllPartnersData] = useState([]);
 
   // Map Animation hooks
   const mapRef = useRef(null);
-
   const { scrollYProgress } = useScroll({
     target: mapRef,
     offset: ["start 90%", "center center"],
   });
 
   const mapScale = useTransform(scrollYProgress, [0, 0.7, 1], [0.6, 0.85, 1]);
-
-  const mapClipPercentage = useTransform(
-    scrollYProgress,
-    [0, 0.7, 1],
-    [40, 60, 150],
-  );
-
+  const mapClipPercentage = useTransform(scrollYProgress, [0, 0.7, 1], [40, 60, 150]);
   const mapClipPath = useMotionTemplate`circle(${mapClipPercentage}% at 50% 50%)`;
-
-  // Focus Areas Animation hooks
-  const focusRef = useRef(null);
-  const { scrollYProgress: focusScrollY } = useScroll({
-    target: focusRef,
-    offset: ["start end", "center center"],
-  });
-
-  const focusMaxWidth = useTransform(focusScrollY, [0, 1], ["100%", "90%"]);
-  const focusBorderRadius = useTransform(focusScrollY, [0, 1], ["0px", "80px"]);
-  const focusScale = useTransform(focusScrollY, [0, 1], [1, 0.92]);
 
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
         const response = await fetch(PROGRAMS_API_URL);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch programs");
-        }
-
+        if (!response.ok) throw new Error("Failed to fetch programs");
         const data = await response.json();
 
         const rawPrograms = Array.isArray(data)
@@ -152,10 +118,7 @@ const Home = () => {
             title: program.title || "Untitled Program",
             description: program.description || "No description available.",
             image_url: program.image_url,
-            slug:
-              program.slug ||
-              createSlug(program.title) ||
-              `program-${index + 1}`,
+            slug: program.slug || createSlug(program.title) || `program-${index + 1}`,
           }));
 
         setProgramsList(normalizedPrograms);
@@ -169,13 +132,9 @@ const Home = () => {
 
     const fetchFocusAreas = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/focus_areas.php?t=${Date.now()}`,
-        );
+        const response = await fetch(`${API_BASE_URL}/focus_areas.php?t=${Date.now()}`);
         const data = await response.json();
-        if (data.status === "success") {
-          setFocusAreas(data.data);
-        }
+        if (data.status === "success") setFocusAreas(data.data);
       } catch (error) {
         console.error("Focus areas fetch error:", error);
       }
@@ -183,13 +142,9 @@ const Home = () => {
 
     const fetchAboutData = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/about_who_we_are.php?t=${Date.now()}`,
-        );
+        const response = await fetch(`${API_BASE_URL}/about_who_we_are.php?t=${Date.now()}`);
         const data = await response.json();
-        if (data.status === "success" && data.data) {
-          setAboutData(data.data);
-        }
+        if (data.status === "success" && data.data) setAboutData(data.data);
       } catch (err) {
         console.error("Failed to fetch about data:", err);
       }
@@ -197,20 +152,17 @@ const Home = () => {
 
     const fetchRecentProjects = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/projects.php?t=${Date.now()}`,
-        );
+        const response = await fetch(`${API_BASE_URL}/projects.php?t=${Date.now()}`);
         const data = await response.json();
         if (data.status === "success" && Array.isArray(data.data)) {
           setAllProjects(data.data);
-          setRecentProjects(data.data.slice(0, 3));
+          setRecentProjects(data.data); // ✅ पूरा डेटा स्टोर किया, ग्रिड के अंदर स्लाइस करेंगे
         }
       } catch (err) {
         console.error("Failed to fetch recent projects:", err);
       }
     };
 
-    // पार्टनर्स का पूरा कंबाइन डेटा लोड करना
     const fetchPartnersDataDirectly = async () => {
       try {
         const [res1, res2, res3] = await Promise.all([
@@ -218,12 +170,12 @@ const Home = () => {
           fetch(`${API_BASE_URL}/public_partners.php?t=${Date.now()}`).then((res) => res.json()),
           fetch(`${API_BASE_URL}/society_partners.php?t=${Date.now()}`).then((res) => res.json()),
         ]);
-        
+
         let combined = [];
         if (res1.status === "success" && Array.isArray(res1.data)) combined = [...combined, ...res1.data];
         if (res2.status === "success" && Array.isArray(res2.data)) combined = [...combined, ...res2.data];
         if (res3.status === "success" && Array.isArray(res3.data)) combined = [...combined, ...res3.data];
-        
+
         setAllPartnersData(combined);
       } catch (err) {
         console.error("Failed to fetch partners row data:", err);
@@ -257,25 +209,18 @@ const Home = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-
       const data = await response.json();
 
       if (data.status === "success") {
-        setMessage({
-          text: data.message || "Subscribed successfully.",
-          type: "success",
-        });
+        setMessage({ text: data.message || "Subscribed successfully.", type: "success" });
         setEmail("");
       } else {
-        setMessage({
-          text: data.message || "Subscription failed.",
-          type: "error",
-        });
+        setMessage({ text: data.message || "Subscription failed.", type: "error" });
       }
     } catch (error) {
       console.error("Subscription error:", error);
       setMessage({
-        text: "Failed to connect to the server. Please ensure the PHP backend is running on localhost.",
+        text: "Failed to connect to the server. Please check your network.",
         type: "error",
       });
     } finally {
@@ -283,32 +228,21 @@ const Home = () => {
     }
   };
 
-  // National/Global Counters derived directly from dynamic live database collection array
-  const globalCompletedCount = allProjects.filter(
-    (p) => p.status?.toLowerCase() === "completed",
-  ).length;
+  const globalCompletedCount = allProjects.filter((p) => p.status?.toLowerCase() === "completed").length;
 
-  // Dynamic summation parser logic loop computing dynamic numeric beneficiaries metrics values natively
   const globalLivesImpactedSum = allProjects.reduce((acc, curr) => {
     if (!curr.beneficiaries) return acc;
-    const parsed = parseInt(
-      curr.beneficiaries.toString().replace(/[^0-9]/g, ""),
-      10,
-    );
-    return isNaN(parsed) ? acc : acc + parsed;
+    const parsed = parseInt(curr.beneficiaries.toString().replace(/[^0-9]/g, ""), 10);
+    return isNaN(acc) ? acc : acc + parsed;
   }, 0);
 
-  // --- STATE NORMALIZATION UTILITY ---
   const normalizeStateName = (name) => {
     if (!name) return "";
     const cleaned = name.trim().toLowerCase().replace(/\s+/g, " ");
     if (cleaned === "orissa" || cleaned === "odisha") return "Odisha";
-    if (cleaned === "maharastra" || cleaned === "maharashtra")
-      return "Maharashtra";
-    if (cleaned === "uttaranchal" || cleaned === "uttarakhand")
-      return "Uttarakhand";
-    if (cleaned === "jammu & kashmir" || cleaned === "jammu and kashmir")
-      return "Jammu and Kashmir";
+    if (cleaned === "maharastra" || cleaned === "maharashtra") return "Maharashtra";
+    if (cleaned === "uttaranchal" || cleaned === "uttarakhand") return "Uttarakhand";
+    if (cleaned === "jammu & kashmir" || cleaned === "jammu and kashmir") return "Jammu and Kashmir";
     return name
       .trim()
       .split(/\s+/)
@@ -317,31 +251,19 @@ const Home = () => {
   };
 
   const stateStaticData = {
-    "Andhra Pradesh": {
-      image: "/map/AndhraPradesh.jpg",
-      livesImpacted: "800k+",
-    },
-    "Arunachal Pradesh": {
-      image: "/map/ArunachalPradesh.jpg",
-      livesImpacted: "50k+",
-    },
+    "Andhra Pradesh": { image: "/map/AndhraPradesh.jpg", livesImpacted: "800k+" },
+    "Arunachal Pradesh": { image: "/map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
     Assam: { image: "/map/Assam.jpg", livesImpacted: "200k+" },
     Bihar: { image: "/map/Bihar.jpg", livesImpacted: "1M+" },
     Chhattisgarh: { image: "/map/Chhattisgarh.jpg", livesImpacted: "300k+" },
     Goa: { image: "/map/Goa.jpg", livesImpacted: "20k+" },
     Gujarat: { image: "/map/Gujarat.jpg", livesImpacted: "600k+" },
     Haryana: { image: "/map/Haryana.jpg", livesImpacted: "400k+" },
-    "Himachal Pradesh": {
-      image: "/map/Himachal Pradesh.jpg",
-      livesImpacted: "150k+",
-    },
+    "Himachal Pradesh": { image: "/map/Himachal Pradesh.jpg", livesImpacted: "150k+" },
     Jharkhand: { image: "/map/Jharkhand.jpg", livesImpacted: "500k+" },
     Karnataka: { image: "/map/Karnataka.jpg", livesImpacted: "750k+" },
     Kerala: { image: "/map/Kerala.jpg", livesImpacted: "300k+" },
-    "Madhya Pradesh": {
-      image: "/map/Madhya Pradesh.jpg",
-      livesImpacted: "1.2M+",
-    },
+    "Madhya Pradesh": { image: "/map/Madhya Pradesh.jpg", livesImpacted: "1.2M+" },
     Maharashtra: { image: "/map/Maharashtra.jpg", livesImpacted: "2M+" },
     Manipur: { image: "/map/Manipur.jpg", livesImpacted: "40k+" },
     Meghalaya: { image: "/map/Meghalaya.jpg", livesImpacted: "60k+" },
@@ -354,19 +276,12 @@ const Home = () => {
     "Tamil Nadu": { image: "/map/Tamil Nadu.jpg", livesImpacted: "850k+" },
     Telangana: { image: "/map/Telangana.jpg", livesImpacted: "600k+" },
     Tripura: { image: "/map/Tripura.jpg", livesImpacted: "70k+" },
-    "Uttar Pradesh": {
-      image: "/map/Uttar Pradesh.jpg",
-      livesImpacted: "2.5M+",
-    },
+    "Uttar Pradesh": { image: "/map/Uttar Pradesh.jpg", livesImpacted: "2.5M+" },
     Uttarakhand: { image: "/map/Uttarakhand.jpg", livesImpacted: "200k+" },
     "West Bengal": { image: "/map/WestBengal.jpg", livesImpacted: "1.3M+" },
-    "Jammu and Kashmir": {
-      image: "/map/Jammu and Kashmir.png",
-      livesImpacted: "100k+",
-    },
+    "Jammu and Kashmir": { image: "/map/Jammu and Kashmir.png", livesImpacted: "100k+" },
   };
 
-  // Helper routine computing live state wise filtered beneficiaries values directly
   const getStateLivesImpactedCount = (stateName) => {
     const normalizedTarget = normalizeStateName(stateName);
     const stateProjects = allProjects.filter((p) => {
@@ -383,47 +298,41 @@ const Home = () => {
 
     const sum = stateProjects.reduce((acc, curr) => {
       if (!curr.beneficiaries) return acc;
-      const parsed = parseInt(
-        curr.beneficiaries.toString().replace(/[^0-9]/g, ""),
-        10,
-      );
+      const parsed = parseInt(curr.beneficiaries.toString().replace(/[^0-9]/g, ""), 10);
       return isNaN(parsed) ? acc : acc + parsed;
     }, 0);
 
-    return sum > 0
-      ? formatCompact(sum)
-      : stateStaticData[normalizedTarget]?.livesImpacted || "0";
+    return sum > 0 ? formatCompact(sum) : stateStaticData[normalizedTarget]?.livesImpacted || "0";
   };
 
-  // डेटा को 2 बराबर हिस्सों (Rows) में विभाजित करने का लॉजिक
   const halfLength = Math.ceil(allPartnersData.length / 2);
   const row1Data = allPartnersData.slice(0, halfLength);
   const row2Data = allPartnersData.slice(halfLength);
-
-  // अनंत लूप के लिए डेटा को रिपीट करने का हेल्पर फ़ंक्शन
   const getRepeatedData = (data) => [...data, ...data, ...data, ...data];
 
   return (
     <div>
       <Herosection />
 
-      <section className="py-10 relative bg-bg-color">
+      {/* 🔴 GRID SECTION: WHY SDF BLOCK & 4 PROJECT CARDS & IMPACT STATISTICS */}
+      <section className="py-12 relative bg-bg-color">
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row xl:items-start lg:items-center gap-8 justify-between">
-            {/* Left Block: Info Content */}
-            <div className="w-full lg:w-[30%] xl:max-w-[350px] shrink-0">
+          <div className="flex flex-col lg:flex-row xl:items-start gap-8 justify-between">
+            
+            {/* 🟢 1. Left Block: Info Content (Why SDF?) */}
+            <div className="w-full lg:w-[22%] xl:max-w-[320px] shrink-0">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl shadow-sm animate-float">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl shadow-sm animate-float shrink-0">
                   🌱
                 </div>
-                <h2 className="text-3xl md:text-3xl font-serif text-text-primary leading-tight">
+                <h2 className="text-2xl md:text-3xl font-serif text-text-primary leading-tight">
                   Why Sustainable
                   <br />
                   Development Foundation ?
                 </h2>
               </div>
 
-              <p className="text-gray-600 text-justify mb-6 leading-relaxed line-clamp-9">
+              <p className="text-gray-600 text-justify mb-6 leading-relaxed line-clamp-10 text-sm md:text-base">
                 {aboutData && aboutData.who_we_are_text
                   ? aboutData.who_we_are_text
                   : "Established in 2014 by a dedicated group of professional social workers, the Sustainable Development Foundation (SDF) is a distinguished autonomous and 'not-for-profit' organization in India..."}
@@ -436,137 +345,131 @@ const Home = () => {
               </Link>
             </div>
 
-            <div className="w-full lg:w-[68%] xl:max-w-[850px] grid grid-cols-1 md:grid-cols-3 gap-6">
-              {(() => {
-                if (!recentProjects || !Array.isArray(recentProjects)) {
-                  return (
-                    <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
-                      <p className="font-medium">Loading projects...</p>
-                    </div>
-                  );
-                }
-
-                const completedProjects = recentProjects
-                  .filter(
-                    (project) => project && project.status === "completed",
-                  )
-                  .slice(0, 3);
-
-                if (completedProjects.length > 0) {
-                  return completedProjects.map((project, idx) => {
-                    const finalMediaUrl = getImageUrl(project.image_url);
+            {/* 🔴 Right Container: चौड़ाई lg:w-[75%] की गई ताकि पूरे 4 कार्ड्स ग्रिड में समानांतर आ सकें */}
+            <div className="w-full lg:w-[75%] flex flex-col gap-6">
+              
+              {/* TOP ROW: 4 Project Cards Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
+                {(() => {
+                  if (!recentProjects || !Array.isArray(recentProjects)) {
                     return (
-                      <div
-                        key={project.id || idx}
-                        className="bg-white rounded-2xl shadow-sm text-center border border-gray-100 pb-6 flex flex-col h-full hover:shadow-md transition-shadow"
-                      >
-                        <div className="p-4 h-44">
-                          {isVideoFile(project.image_url) ? (
-                            <video
-                              src={finalMediaUrl}
-                              className="w-full h-full object-cover rounded-xl shadow-sm"
-                              autoPlay
-                              loop
-                              muted
-                              playsInline
-                            />
-                          ) : (
-                            <img
-                              src={finalMediaUrl}
-                              alt={project.title}
-                              className="w-full h-full object-cover rounded-xl shadow-sm"
-                              onError={(e) => {
-                                e.currentTarget.src =
-                                  "https://via.placeholder.com/500x300?text=Image+Not+Found";
-                              }}
-                            />
-                          )}
-                        </div>
-
-                        {/* Text Content Area */}
-                        <div className="p-5 grow flex flex-col">
-                          <h3 className="text-xl font-serif text-text-primary mb-3 line-clamp-2">
-                            {project.title}
-                          </h3>
-                          <p className="text-gray-500 text-sm mb-6 grow line-clamp-3">
-                            {project.description}
-                          </p>
-
-                          <Link
-                            to={`/projectdetails/${project.slug}`}
-                            className="text-primary font-bold text-sm hover:underline mt-auto"
-                          >
-                            View Project →
-                          </Link>
-                        </div>
+                      <div className="col-span-1 sm:col-span-2 xl:col-span-4 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
+                        <p className="font-medium">Loading projects...</p>
                       </div>
                     );
-                  });
-                } else {
-                  return (
-                    <div className="col-span-1 md:col-span-3 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
-                      <p className="font-medium">
-                        No completed projects found.
-                      </p>
-                    </div>
-                  );
-                }
-              })()}
-            </div>
-            {/* Stats */}
-            <div className="stats">
-              <div className="max-w-1xl">
-                <div className="flex items-center gap-2 border border-gray-100 rounded-xl p-5.5 bg-white shadow-sm">
-                  
-                  <div className=" md:grid-cols-4 gap-4 md:gap-8 relative z-10">
-                    <h4 className="text-[18px] font-bold text-center font-serif mt-[-10px] mb-[10px]">
-                    Our Impact Statistics
-                  </h4>
-                    {focusAreas.length > 0 ? (
-                      focusAreas.map((area, index) => (
-                        <motion.div
-                          key={area.id}
-                          initial={{ y: 50, opacity: 0 }}
-                          whileInView={{ y: 0, opacity: 1 }}
-                          transition={{
-                            duration: 0.6,
-                            delay: 0.3 + index * 0.1,
-                          }}
-                          className="bg-white p-2 mb-4 rounded-3xl shadow-sm hover:-translate-y-2 hover:shadow-lg transition-all duration-300 flex flex-col md:flex-row items-center gap-8 justify-center border border-gray-100"
+                  }
+
+                  // ✅ FIXED: अब स्लाइस को .slice(0, 4) किया गया है ताकि पूरे 4 प्रोजेक्ट कार्ड्स रेंडर हों
+                  const completedProjects = recentProjects
+                    .filter((project) => project && project.status === "completed")
+                    .slice(0, 4);
+
+                  if (completedProjects.length > 0) {
+                    return completedProjects.map((project, idx) => {
+                      const finalMediaUrl = getImageUrl(project.image_url);
+                      return (
+                        <div
+                          key={project.id || idx}
+                          className="bg-white rounded-2xl shadow-sm text-left border border-gray-100 pb-6 flex flex-col h-full hover:shadow-md transition-shadow overflow-hidden"
                         >
-                          <div
-                            className={`w-8 h-8 rounded-full flex text-left items-left justify-center text-3xl shadow-sm ${area.color_class} ${area.animation_class}`}
-                          >
-                            {area.icon}
+                          <div className="p-4 h-44">
+                            {isVideoFile(project.image_url) ? (
+                              <video
+                                src={finalMediaUrl}
+                                className="w-full h-full object-cover rounded-xl shadow-sm"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                              />
+                            ) : (
+                              <img
+                                src={finalMediaUrl}
+                                alt={project.title}
+                                className="w-full h-full object-cover rounded-xl shadow-sm"
+                                onError={(e) => {
+                                  e.currentTarget.src =
+                                    "https://via.placeholder.com/500x300?text=Image+Not+Found";
+                                }}
+                              />
+                            )}
                           </div>
-                          <div className="text-center md:text-left">
-                            <p className="text-1xl font-bold text-gray-900">
-                              {area.number_text}
-                            </p>
-                            <p className="text-xs text-gray-500 uppercase tracking-wide">
-                              {area.title}
-                            </p>
+
+                          <div className="px-5 pb-2 pt-1 grow flex flex-col justify-between">
+                            <div>
+                              <h3 className="text-base font-serif font-bold text-text-primary mb-2 line-clamp-2 min-h-[2.5rem] leading-tight">
+                                {project.title}
+                              </h3>
+                              <p className="text-gray-500 text-xs mb-4 line-clamp-3 leading-relaxed">
+                                {project.description}
+                              </p>
+                            </div>
+
+                            <Link
+                              to={`/projectdetails/${project.slug}`}
+                              className="text-primary font-bold text-xs hover:underline mt-auto inline-block"
+                            >
+                              View Project →
+                            </Link>
                           </div>
-                        </motion.div>
-                      ))
-                    ) : (
-                      <p className="col-span-2 md:col-span-4 text-white">
-                        Loading Focus Areas...
-                      </p>
-                    )}
-                  </div>
+                        </div>
+                      );
+                    });
+                  } else {
+                    return (
+                      <div className="col-span-1 sm:col-span-2 xl:col-span-4 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
+                        <p className="font-medium">No completed projects found.</p>
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
+
+              {/* BOTTOM ROW: Our Impact Statistics (बिना किसी हेडिंग के, ठीक 4 प्रोजेक्ट कार्ड्स के नीचे) */}
+              <div className="w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
+                  {focusAreas && focusAreas.length > 0 ? (
+                    focusAreas.map((area, index) => (
+                      <motion.div
+                        key={area.id}
+                        initial={{ y: 30, opacity: 0 }}
+                        whileInView={{ y: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 0.5,
+                          delay: index * 0.1,
+                        }}
+                        className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:-translate-y-1 hover:shadow-md transition-all duration-300"
+                      >
+                        <div className={`w-11 h-11 rounded-full flex items-center justify-center text-2xl bg-gray-50 shadow-sm shrink-0 ${area.color_class} ${area.animation_class}`}>
+                          {area.icon}
+                        </div>
+
+                        <div className="flex flex-col">
+                          <span className="text-lg font-extrabold text-gray-900 leading-none mb-1">
+                            {area.number_text}
+                          </span>
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wide leading-tight">
+                            {area.title}
+                          </span>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <p className="col-span-1 sm:col-span-2 xl:col-span-4 text-center text-gray-400 italic py-4">
+                      Loading Statistics...
+                    </p>
+                  )}
                 </div>
               </div>
-            </div>
+
+            </div> {/* Right Container Ends */}
           </div>
         </div>
       </section>
 
+      <BeforeAfterImpact />
 
-      {/* <ProjectSlider /> */}
-
-      <BeforeAfterImpact/>
-      
       <OurProgramsSection />
 
       <Testimonials />
@@ -709,13 +612,10 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* Dynamic State wise Completed Project Count calculation */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-105">
                         {selectedMapState.projects?.filter(
-                          (p) =>
-                            p.status?.toLowerCase() === "completed" ||
-                            p.is_completed,
+                          (p) => p.status?.toLowerCase() === "completed" || p.is_completed,
                         ).length || 0}
                       </div>
                       <div>
@@ -728,7 +628,6 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* Dynamic State wise Beneficiaries Mapping */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-105">
                         {getStateLivesImpactedCount(selectedMapState.name)}
@@ -796,12 +695,9 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* Dynamic Live National Counter for Completed Projects */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110">
-                        {globalCompletedCount > 0
-                          ? globalCompletedCount
-                          : "45+"}
+                        {globalCompletedCount > 0 ? globalCompletedCount : "45+"}
                       </div>
                       <div>
                         <div className="text-sm font-bold text-gray-800">
@@ -813,12 +709,9 @@ const Home = () => {
                       </div>
                     </li>
 
-                    {/* Dynamic Live National Counter for Lives Impacted Summation */}
                     <li className="flex items-center gap-4 group">
                       <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110">
-                        {globalLivesImpactedSum > 0
-                          ? formatCompact(globalLivesImpactedSum)
-                          : mapTotals.totalBeneficiaries}
+                        {globalLivesImpactedSum > 0 ? formatCompact(globalLivesImpactedSum) : mapTotals.totalBeneficiaries}
                       </div>
                       <div>
                         <div className="text-sm font-bold text-gray-800">
@@ -833,8 +726,7 @@ const Home = () => {
                   <div className="mt-10 pt-6 border-t border-gray-100 text-center">
                     <div className="inline-block animate-bounce mb-2">👆</div>
                     <p className="text-xs text-gray-400 italic px-4">
-                      Click any highlighted state on the map to view local
-                      project details.
+                      Click any highlighted state on the map to view local project details.
                     </p>
                   </div>
                 </div>
@@ -844,6 +736,7 @@ const Home = () => {
         </div>
       </section>
 
+      {/* --- Partners Marquee Section --- */}
       <section className="py-20 bg-[#F3EFE4] overflow-hidden" id="partners">
         <style>{`
           @keyframes marqueeLeft {
@@ -870,14 +763,10 @@ const Home = () => {
             Our Partners & Supporters
           </h2>
 
-          {/* साइड ब्लर शैडो इफ़ेक्ट */}
           <div className="absolute left-0 top-20 bottom-0 w-28 bg-gradient-to-r from-[#F3EFE4] to-transparent z-10 pointer-events-none"></div>
           <div className="absolute right-0 top-20 bottom-0 w-28 bg-gradient-to-l from-[#F3EFE4] to-transparent z-10 pointer-events-none"></div>
 
-          {/* स्क्रॉलिंग डेटा कंटेनर (2 लाइन) */}
           <div className="flex flex-col gap-6 w-full">
-            
-            {/* ➡️ पहली कतार (Row 1): Right to Left */}
             {row1Data.length > 0 && (
               <div className="overflow-hidden w-full">
                 <div className="flex w-max gap-6 animate-scroll-left">
@@ -889,7 +778,6 @@ const Home = () => {
                       rel="noopener noreferrer"
                       className="w-48 sm:w-56 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-lg group shrink-0"
                     >
-                      {/* ✅ FIXED: अब सटीक पार्टनर इमेज यूआरएल फ़ंक्शन काम करेगा */}
                       <img
                         src={getPartnerImageUrl(partner.img || partner.image_url)}
                         alt={partner.title || "partner"}
@@ -908,7 +796,6 @@ const Home = () => {
               </div>
             )}
 
-            {/* ⬅️ दूसरी कतार (Row 2): Left to Right */}
             {row2Data.length > 0 && (
               <div className="overflow-hidden w-full">
                 <div className="flex w-max gap-6 animate-scroll-right">
@@ -920,7 +807,6 @@ const Home = () => {
                       rel="noopener noreferrer"
                       className="w-48 sm:w-56 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-lg group shrink-0"
                     >
-                      {/* ✅ FIXED: अब सटीक पार्टनर इमेज यूआरएल फ़ंक्शन काम करेगा */}
                       <img
                         src={getPartnerImageUrl(partner.img || partner.image_url)}
                         alt={partner.title || "partner"}
@@ -938,11 +824,11 @@ const Home = () => {
                 </div>
               </div>
             )}
-
           </div>
         </div>
       </section>
 
+      {/* --- Subscribe Newsletter --- */}
       <section className="py-10 bg-primary/10 border-t border-primary/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="text-4xl mb-4 block animate-float">✉️</span>
@@ -950,14 +836,10 @@ const Home = () => {
             Subscribe to Our Newsletter
           </h2>
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Stay updated with our latest projects, success stories, and ways you
-            can help. Join our community of changemakers today.
+            Stay updated with our latest projects, success stories, and ways you can help.
           </p>
 
-          <form
-            onSubmit={handleSubscribe}
-            className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-          >
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
             <input
               type="email"
               value={email}
@@ -970,20 +852,14 @@ const Home = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-primary hover:bg-[#5a6425] text-white px-8 py-4 rounded-full font-bold transition-all shadow-md hover:-translate-y-1 hover:shadow-lg whitespace-nowrap disabled:opacity-70 disabled:hover:translate-y-0"
+              className="bg-primary hover:bg-[#5a6425] text-white px-8 py-4 rounded-full font-bold transition-all shadow-md hover:-translate-y-1 hover:shadow-lg whitespace-nowrap disabled:opacity-70"
             >
               {isSubmitting ? "Subscribing..." : "Subscribe"}
             </button>
           </form>
 
           {message.text && (
-            <div
-              className={`max-w-lg mx-auto mt-4 p-3 rounded-lg text-sm font-medium ${
-                message.type === "success"
-                  ? "bg-green-100 text-green-800 border border-green-200"
-                  : "bg-red-100 text-red-800 border border-red-200"
-              }`}
-            >
+            <div className={`max-w-lg mx-auto mt-4 p-3 rounded-lg text-sm font-medium ${message.type === "success" ? "bg-green-100 text-green-800 border border-green-200" : "bg-red-100 text-red-800 border border-red-200"}`}>
               {message.text}
             </div>
           )}
