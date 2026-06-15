@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const BeforeAfterImpact = () => {
@@ -14,7 +13,7 @@ const BeforeAfterImpact = () => {
 
   // एडमिन पैनल पाथ से इमेज का फुल URL निकालने का हेल्पर फ़ंक्शन
   const getFullUrl = (path) => {
-    if (!path) return "https://via.placeholder.com/600x400?text=SDF+Impact";
+    if (!path) return "https://via.placeholder.com/1200x600?text=SDF+Impact";
     if (path.startsWith("https") || path.startsWith("http")) return path;
     const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(
       /\/+$/,
@@ -46,7 +45,7 @@ const BeforeAfterImpact = () => {
   if (loading) {
     return (
       <div className="py-20 text-center text-[#6a752b] font-bold animate-pulse">
-        Loading Impact Stories...
+        Loading Impact Gallery...
       </div>
     );
   }
@@ -54,155 +53,69 @@ const BeforeAfterImpact = () => {
   if (impactData.length === 0) return null;
 
   return (
-    <section className="py-16 bg-[#F8F7F3] relative before-after-slider">
+    <section className="py-12 bg-[#F8F7F3] relative overflow-hidden">
+      
+      {/* 🟢 स्वाइपर बुलेट्स/डॉट्स को कस्टमाइज़ करने के लिए छोटा स्टाइल ब्लॉक */}
       <style>{`
-        .before-after-slider .swiper-button-next,
-        .before-after-slider .swiper-button-prev {
-          color: #6a752b !important;
-          background:transparent;
-          width: 20px;
-          height: 50px;
-          border-radius: 50%;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-          transition: all 0.3s ease;
-        }
-        .before-after-slider .swiper-button-next:hover,
-        .before-after-slider .swiper-button-prev:hover {
-        //   background: #6a752b;
-          color: #ffffff !important;
-        }
-        .before-after-slider .swiper-button-next:after,
-        .before-after-slider .swiper-button-prev:after {
-          font-size: 18px !important;
-          font-weight: bold;
-        }
-        .before-after-slider .swiper-pagination-bullet-active {
+        .before-after-slider-wrapper .swiper-pagination-bullet-active {
           background: #6a752b !important;
           width: 24px;
           border-radius: 4px;
         }
+        .before-after-slider-wrapper .swiper-pagination {
+          bottom: 20px !important;
+        }
       `}</style>
 
-      {/* चौड़ाई max-w-8xl पर है और एरो के लिए पर्याप्त पैडिंग दी गई है */}
-      <div className="max-w-8xl mx-auto px-4 sm:px-12 md:px-16">
-        {/* स्वाइपर कॉन्फ़िगरेशन */}
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={50}
-          slidesPerView={1}
-          loop={impactData.length > 1}
-          navigation={true}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 6000, disableOnInteraction: false }}
-          className="pb-16 rounded-3xl"
-        >
-          {impactData.map((item) => {
-            const img1Paragraphs = [
-              item.img1_p1,
-              item.img1_p2,
-              item.img1_p3,
-              item.img1_p4,
-            ].filter(Boolean);
-            const img2Paragraphs = [
-              item.img2_p1,
-              item.img2_p2,
-              item.img2_p3,
-              item.img2_p4,
-            ].filter(Boolean);
+      {/* ओरिजिनल कंटेनर अलाइनमेंट (max-w-7xl, px-4 जैसे पहले था) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative before-after-slider-wrapper">
+        
+        {/* 🔴 SLIDER WRAPPER - यह मेन इमेज कंटेनर को बिना छेड़े केवल बटन्स को बाहर पोजीशन करेगा */}
+        <div className="relative px-2">
+          
+          {/* 🟢 कस्टम आउटवर्ड लेफ्ट बटन */}
+          <button id="impact-prev-btn" className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 bg-white text-[#6a752b] hover:bg-[#6a752b] hover:text-white w-11 h-11 rounded-full shadow-lg border border-gray-100 flex items-center justify-center z-30 transition-all font-bold text-sm">
+            ←
+          </button>
 
-            return (
+          {/* 🟢 कस्टम आउटवर्ड राइट बटन */}
+          <button id="impact-next-btn" className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 bg-white text-[#6a752b] hover:bg-[#6a752b] hover:text-white w-11 h-11 rounded-full shadow-lg border border-gray-100 flex items-center justify-center z-30 transition-all font-bold text-sm">
+            →
+          </button>
+
+          {/* स्वाइपर स्लाइडर मुख्य ग्रिड */}
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            spaceBetween={30}
+            slidesPerView={1}
+            loop={impactData.length > 1}
+            // कस्टम बटन्स को स्वाइपर नेविगेशन आईडी से लिंक किया
+            navigation={{
+              prevEl: "#impact-prev-btn",
+              nextEl: "#impact-next-btn",
+            }}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            className="pb-4 rounded-3xl w-full"
+          >
+            {impactData.map((item) => (
               <SwiperSlide key={item.id} className="p-1">
-                <div className="w-full bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 flex flex-col relative">
-                  {/* TOP HEADER */}
-                  <div className="bg-[#6F7C2E] text-white py-5 px-6 text-center shadow-md">
-                    <h2 className="text-xl sm:text-3xl font-bold font-serif uppercase tracking-wide">
-                      {item.title || "Our Transformation Project"}
-                    </h2>
-                  </div>
-
-                  {/* IMAGES AREA (रो को सापेक्ष बनाकर लोगो को इमेज के निचले हिस्से पर लॉक किया गया है) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 relative">
-                    {/* वाम पक्ष (LEFT: BEFORE SECTION) */}
-                    <div className="flex flex-col border-b md:border-b-0 md:border-r border-gray-200">
-                      {/* इमेज कंटेनर */}
-                      <div className="relative aspect-[4/3] w-full overflow-hidden">
-                        <span className="absolute right-4 bg-[#6F7C2E] text-white text-xs sm:text-sm font-bold px-6 py-1.5 rounded-full shadow-md z-10 tracking-wider">
-                          BEFORE
-                        </span>
-                        <img
-                          src={getFullUrl(item.image_one)}
-                          alt="Condition Before Intervention"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      {/* पैराग्राफ्स */}
-                      <div className="p-6 md:p-8 bg-[#FAFAFA] flex-grow pt-10">
-                        <ul className="space-y-3">
-                          {img1Paragraphs.map((p, idx) => (
-                            <li
-                              key={`p1-${idx}`}
-                              className="flex items-start gap-2.5 text-[#6F7C2E] font-medium text-sm md:text-base"
-                            >
-                              <span className="text-[#6F7C2E] text-lg leading-none select-none">
-                                •
-                              </span>
-                              <span>{p}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col">
-                      <div className="relative aspect-[4/3] w-full overflow-hidden">
-                        <span className="absolute right-4 bg-[#6F7C2E] text-white text-xs sm:text-sm font-bold px-6 py-1.5 rounded-full shadow-md z-10 tracking-wider">
-                          AFTER
-                        </span>
-                        <img
-                          src={getFullUrl(item.image_two)}
-                          alt="Condition After Intervention"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      {/* पैराग्राफ्स */}
-                      <div className="p-6 md:p-8 bg-[#F4F9F4] flex-grow pt-10">
-                        <ul className="space-y-3">
-                          {img2Paragraphs.map((p, idx) => (
-                            <li
-                              key={`p2-${idx}`}
-                              className="flex items-start gap-2.5 text-[#6F7C2E] font-medium text-sm md:text-base"
-                            >
-                              <span className="text-[#6F7C2E] text-lg leading-none select-none">
-                                •
-                              </span>
-                              <span>{p}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    <div className="absolute hidden md:flex left-1/2 top-[calc(75.14%-40px)] -translate-x-1/2 -translate-y-1/2 z-20">
-                      <div className="w-20 h-20 bg-white rounded-full p-2 shadow-xl border border-gray-100 flex items-center justify-center">
-                        <img
-                          src="logo/logo.png"
-                          alt="SDF Logo"
-                          className="w-full h-auto object-contain"
-                          onError={(e) => {
-                            e.currentTarget.src = "🌱";
-                            e.currentTarget.className = "text-3xl";
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                <div className="w-full bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 relative">
+                  <img
+                    src={getFullUrl(item.image_path)}
+                    alt="SDF Impact Gallery"
+                    className="w-full h-auto block object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "https://via.placeholder.com/1200x600?text=Image+Not+Found";
+                    }}
+                  />
                 </div>
               </SwiperSlide>
-            );
-          })}
-        </Swiper>
+            ))}
+          </Swiper>
+        </div>
+
       </div>
     </section>
   );

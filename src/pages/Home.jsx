@@ -14,6 +14,7 @@ import MapSection from "../components/MapSection";
 import ProjectSlider from "../components/ProjectSlider";
 import OurProgramsSection from "../components/OurProgramsSection";
 import BeforeAfterImpact from "../components/BeforeAfterImpact";
+import PartnersOpportunities from "../components/PartnersOpportunities";
 
 const PROGRAMS_API_URL = `${API_BASE_URL}/programs.php?t=` + Date.now();
 const SUBSCRIBE_API_URL = `${API_BASE_URL}/subscribe.php`;
@@ -466,6 +467,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <PartnersOpportunities/>
 
       <BeforeAfterImpact />
 

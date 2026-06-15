@@ -33,7 +33,7 @@ export default function DonationForm() {
   const pollRef = useRef(null);
   const resetRef = useRef(null);
 
-  const upiId = "9709544166@ybl";
+  const upiId = "mab.037215004780131@axisbank"; // Replace with your actual UPI ID
   const payeeName = "SDF Trust";
 
   // Using API_BASE_URL from config

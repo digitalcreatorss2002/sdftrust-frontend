@@ -32,6 +32,9 @@ function Herosection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const intervalRef = useRef(null);
 
+  const [fundsList, setFundsList] = useState([]);
+  const [fundsLoading, setFundsLoading] = useState(true);
+
   useEffect(() => {
     const fetchHeroCard = async () => {
       try {
@@ -44,7 +47,24 @@ function Herosection() {
         console.error("Hero fetch error:", err);
       }
     };
+
+    const fetchFundsData = async () => {
+      try {
+        const fundRes = await fetch(`${API_BASE_URL}/funds.php?t=${Date.now()}`);
+        const fundData = await fundRes.json();
+        if (fundData.status === "success" && Array.isArray(fundData.data)) {
+          const activeOnly = fundData.data.filter(fund => fund.status === "active");
+          setFundsList(activeOnly);
+        }
+      } catch (error) {
+        console.error("Funds fetching error:", error);
+      } finally {
+        setFundsLoading(false);
+      }
+    };
+
     fetchHeroCard();
+    fetchFundsData();
   }, []);
 
   useEffect(() => {
@@ -65,11 +85,29 @@ function Herosection() {
 
   const activeVideo = getYoutubeId(heroCards[activeIndex]?.youtube_link);
 
+  const getRepeatedFunds = (data) => {
+    if (data.length === 0) return [];
+    if (data.length < 4) return [...data, ...data, ...data, ...data];
+    return [...data, ...data];
+  };
+
   return (
     <section className="relative bg-black overflow-hidden min-h-screen flex flex-col justify-between">
       
-      {/* 🎥 VIDEO SECTION */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+      <style>{`
+        @keyframes marqueeUp {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+        .animate-scroll-up {
+          animation: marqueeUp 25s linear infinite;
+        }
+        .animate-scroll-up:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
+      <div className="absolute inset-0 z-0 overflow-hidden bg-black brightness-110">
         {activeVideo ? (
           <iframe
             key={activeVideo}
@@ -84,13 +122,13 @@ function Herosection() {
           <div className="absolute inset-0 bg-gray-900"></div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-black/20"></div> 
+        <div className="absolute inset-0 bg-gradient-to-r from-black/35 via-transparent to-black/30"></div>
+        <div className="absolute inset-0 bg-black/10"></div> 
       </div>
 
-      {/* CONTENT */}
-      <div className="relative z-10 w-[90%] mx-auto flex-grow flex items-center pt-32 pb-48">
-        <div className="max-w-3xl text-white pl-4 md:pl-12">
+      <div className="relative z-10 w-[90%] mx-auto flex-grow flex flex-col lg:flex-row items-center justify-between pt-32 pb-48 gap-8">
+        
+        <div className="w-full lg:w-[63%] text-white pl-4 md:pl-12">
           <div key={activeIndex} className="animate-fadeSlide">
             <h1 className="w-full text-4xl md:text-7xl font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)] bg-[linear-gradient(to_right,#eab308,#2c8fa3)] bg-clip-text text-transparent leading-tight">
               {heroCards[activeIndex]?.title || "Loading..."}
@@ -103,14 +141,56 @@ function Herosection() {
 
           <Link
             to="/about"
-            className="bg-[#635d0d] hover:bg-[#4e490a] transition-all hover:scale-105 px-10 py-4 rounded-full font-bold shadow-xl inline-block text-white text-lg"
+            className="bg-primary hover:bg-[#5a6425] transition-all hover:scale-105 px-10 py-4 rounded-full font-bold shadow-xl inline-block text-white text-lg"
           >
             Learn More →
           </Link>
         </div>
+
+        <div className="w-full lg:w-[32%] xl:max-w-[250px] shrink-0">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-4 shadow-2xl text-white overflow-hidden">
+            
+            <h3 className="text-base font-bold font-serif mb-3 flex items-center gap-2 text-white border-b border-white/20 pb-2 drop-shadow-sm">
+              <span>🌱</span> Open Procurement (EOI/RFQ)
+            </h3>
+
+            <div className="relative h-[360px] overflow-hidden rounded-xl bg-black/20">
+              {fundsLoading ? (
+                <div className="text-center py-12 text-sm text-gray-200 animate-pulse">Loading listings...</div>
+              ) : fundsList.length > 0 ? (
+                <div className="flex flex-col gap-3 animate-scroll-up">
+                  {getRepeatedFunds(fundsList).map((fund, idx) => (
+                    <Link
+                      key={`scroll-${fund.id}-${idx}`}
+                      to="/get-involved#funds"
+                      className="block p-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30 transition-all duration-300 group shadow-md shrink-0"
+                    >
+                      <div className="flex flex-col gap-1">
+                        <h4 className="text-xs sm:text-sm font-bold text-green-300 group-hover:text-primary transition-colors line-clamp-1 drop-shadow-sm">
+                          {fund.title}
+                        </h4>
+                        <p className="text-[11px] sm:text-xs text-gray-100 line-clamp-2 leading-relaxed font-medium">
+                          {fund.description}
+                        </p>
+                        <div className="flex justify-between items-center mt-1 pt-1 border-t border-white/10 text-[9px] text-gray-300">
+                          <span>Procurement Update</span>
+                          <span className="text-white font-semibold uppercase tracking-wider">Active</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-xs text-gray-300 italic">
+                  No active updates available.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      {/* 🔄 CAROUSEL THUMBNAILS - CURVE EFFECT FIXED */}
       <div
         className="absolute bottom-15 left-0 w-full z-30 flex justify-center items-center"
         onMouseEnter={handleMouseEnter}
@@ -123,16 +203,12 @@ function Herosection() {
                 (activeIndex + offset + heroCards.length) % heroCards.length;
               const card = heroCards[index];
 
-              // Curve dynamic alignment logic using Tailwind CSS classes
               let curveClasses = "";
               if (offset === 0) {
-                // Center Active card: Upar utha hua, sidha aur bada border ke sath
                 curveClasses = "w-28 md:w-56 border-2 md:border-4 border-yellow-400 opacity-100 scale-110 shadow-2xl z-40 translate-y-[-12px]";
               } else if (offset === -1) {
-                // Left card: Thoda neeche dhasa hua aur left ki taraf tilted (-rotate)
                 curveClasses = "w-24 md:w-44 opacity-60 scale-95 translate-y-[12px] -rotate-6 z-20 hover:opacity-90";
               } else if (offset === 1) {
-                // Right card: Thoda neeche dhasa hua aur right ki taraf tilted (rotate)
                 curveClasses = "w-24 md:w-44 opacity-60 scale-95 translate-y-[12px] rotate-6 z-20 hover:opacity-90";
               }
 
@@ -158,7 +234,6 @@ function Herosection() {
         </div>
       </div>
 
-      {/* WAVE SVG */}
       <div className="absolute bottom-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
         <svg
           className="w-full h-16 md:h-24 lg:h-28"
