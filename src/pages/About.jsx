@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 
 const BASE_URL = ADMIN_BASE_URL;
@@ -14,16 +14,27 @@ const makeImageUrl = (path) => {
   if (cleanPath.startsWith("uploads/team/")) {
     return `${rootDomain}/backend/admin/${cleanPath}`;
   }
-
   if (cleanPath.startsWith("backend/admin/")) {
     return `${rootDomain}/${cleanPath}`;
   }
-
   if (cleanPath.startsWith("uploads/")) {
     return `${rootDomain}/${cleanPath}`;
   }
-
   return `${rootDomain}/${cleanPath}`;
+};
+
+// पार्टनर्स के लोगो का इमेज URL बनाने के लिए हेल्पर
+const getPartnerImageUrl = (path) => {
+  if (!path) return "https://placehold.co/150x150?text=No+Logo";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+
+  const rootDomain = BASE_URL.split("/backend")[0].replace(/\/+$/, "");
+  let cleanPath = path.replace(/^\/+/, "");
+
+  if (cleanPath.startsWith("admin/uploads/")) {
+    cleanPath = cleanPath.replace("admin/uploads/", "uploads/");
+  }
+  return `${rootDomain}/backend/${cleanPath}`;
 };
 
 const About = () => {
@@ -33,26 +44,49 @@ const About = () => {
   // STATES
   const [activeTab, setActiveTab] = useState("who-we-are");
   const [selectedLeader, setSelectedLeader] = useState(null);
-  const [selectedPartner, setSelectedPartner] = useState(null);
+
+  // पार्टनर्स टैब स्विच करने के लिए स्टेट
+  const [partnerTab, setPartnerTab] = useState("corporate");
 
   const [aboutData, setAboutData] = useState(null);
   const [leadershipData, setLeadershipData] = useState([]);
+
+  // पार्टनर्स डेटा स्टेट्स
+  const [partners, setPartners] = useState([]);
+  const [publicPartners, setPublicPartners] = useState([]);
+  const [societyPartners, setSocietyPartners] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const aboutRes = await fetch(
-          `${API_BASE_URL}/about_who_we_are.php?t=${Date.now()}`,
-        );
-        const aboutJson = await aboutRes.json();
-        if (aboutJson.status === "success") setAboutData(aboutJson.data);
+        // समानांतर में सभी डेटा लोड करना
+        const [aboutRes, leadRes, partnersRes, publicRes, societyRes] =
+          await Promise.all([
+            fetch(`${API_BASE_URL}/about_who_we_are.php?t=${Date.now()}`).then(
+              (res) => res.json(),
+            ),
+            fetch(`${API_BASE_URL}/leadership.php?t=${Date.now()}`).then(
+              (res) => res.json(),
+            ),
+            fetch(`${API_BASE_URL}/partners.php?t=${Date.now()}`).then((res) =>
+              res.json(),
+            ),
+            fetch(`${API_BASE_URL}/public_partners.php?t=${Date.now()}`).then(
+              (res) => res.json(),
+            ),
+            fetch(`${API_BASE_URL}/society_partners.php?t=${Date.now()}`).then(
+              (res) => res.json(),
+            ),
+          ]);
 
-        const leadRes = await fetch(
-          `${API_BASE_URL}/leadership.php?t=${Date.now()}`,
-        );
-        const leadJson = await leadRes.json();
-        if (leadJson.status === "success") setLeadershipData(leadJson.data);
+        if (aboutRes.status === "success") setAboutData(aboutRes.data);
+        if (leadRes.status === "success") setLeadershipData(leadRes.data);
+        if (partnersRes.status === "success") setPartners(partnersRes.data);
+        if (publicRes.status === "success") setPublicPartners(publicRes.data);
+        if (societyRes.status === "success")
+          setSocietyPartners(societyRes.data);
       } catch (err) {
         console.error("Data fetching error:", err);
       } finally {
@@ -83,6 +117,54 @@ const About = () => {
       setActiveTab("who-we-are");
     }
   }, [location]);
+
+  // लोगो ग्रिड रेंडर करने का कॉमन फ़ंक्शन
+  const renderPartnerGrid = (title, data) => {
+    if (!data || data.length === 0) {
+      return (
+        <div className="text-gray-500 py-6 italic">
+          No active partners found.
+        </div>
+      );
+    }
+    return (
+      <div className="text-left">
+        {title && (
+          <h3 className="text-xl font-serif mb-6 text-[#4a5840] font-bold">
+            {title}
+          </h3>
+        )}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {data.map((partner, index) => {
+            const imgSrc = getPartnerImageUrl(partner.img || partner.image_url);
+            return (
+              <a
+                key={partner.id || index}
+                href={partner.link || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md group"
+              >
+                <img
+                  src={imgSrc}
+                  alt={partner.title || "partner"}
+                  className="w-[85%] h-auto max-h-16 object-contain mb-3 transition-transform duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src =
+                      "https://placehold.co/150x150?text=No+Logo";
+                  }}
+                />
+                <p className="text-xs font-bold text-gray-600 text-center leading-snug">
+                  {partner.title}
+                </p>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   const faqs = [
     {
@@ -175,16 +257,13 @@ const About = () => {
               </p>
             </div>
 
-            {/* VISION & MISSION BLOCKS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               {[
                 {
-                  // title: "Our Vision",
                   text: aboutData?.vision_text,
                   img: aboutData?.vision_image || "/about/5.png",
                 },
                 {
-                  // title: "Our Mission",
                   text: aboutData?.mission_text,
                   img: aboutData?.mission_image || "/about/3.png",
                 },
@@ -199,7 +278,6 @@ const About = () => {
                   }}
                 >
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all duration-500 z-0"></div>
-
                   <div className="relative z-10 p-8 md:p-10 flex flex-col h-full justify-center">
                     <h3 className="text-2xl md:text-3xl font-serif text-white font-bold mb-4 border-b border-white/20 pb-2 inline-block max-w-max">
                       {box.title}
@@ -292,7 +370,9 @@ const About = () => {
                         return (
                           <div key={lvl}>
                             <h3 className="text-xl font-bold mb-8 border-b border-gray-100 pb-2 inline-block uppercase tracking-widest text-[#6a752b]">
-                              {lvl === "General" ? "Board & Advisory Team" : `${lvl} Level Team`}
+                              {lvl === "General"
+                                ? "Board & Advisory Team"
+                                : `${lvl} Level Team`}
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                               {filteredMembers.map((m, i) => (
@@ -316,8 +396,6 @@ const About = () => {
                                         {m.role}
                                       </p>
                                     </div>
-                                    
-                                    {/* ✅ FIXED: रोल के नीचे डेटाबेस से मैसेज (content) शो करने का ब्लॉक */}
                                     {m.content && (
                                       <div className="mt-2 border-t border-gray-50 text-left">
                                         <p className="text-gray-600 text-xs leading-relaxed italic whitespace-pre-line line-clamp-4 hover:line-clamp-none transition-all duration-300">
@@ -325,7 +403,6 @@ const About = () => {
                                         </p>
                                       </div>
                                     )}
-
                                   </div>
                                 </div>
                               ))}
@@ -360,48 +437,51 @@ const About = () => {
           </div>
         )}
 
-        {/* 4. PARTNERS */}
         {activeTab === "partners" && (
-          <div className="max-w-4xl mx-auto animate-fade-in text-center">
-            <div className="mb-12">
-              <h2 className="text-3xl font-serif text-text-primary mb-4">
-                Partners & Affiliations
+          <div className="max-w-6xl mx-auto animate-fade-in">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-serif text-text-primary mb-4">
+                Our Partners & Affiliations
               </h2>
               <div className="w-24 h-1 bg-primary mx-auto"></div>
+              <p className="mt-4 text-gray-500 max-w-xl mx-auto">
+                We are proud to collaborate with organizations across sectors to
+                drive sustainable and impactful development.
+              </p>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-16">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Link
-                  to="/partners"
-                  className="p-8 bg-gray-100 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-                >
-                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-                    Corporate
-                  </div>
-                  <div className="text-gray-500">CSR Partners</div>
-                </Link>
+            <div className="space-y-16 p-6 md:p-10 bg-[#F8F6F0] rounded-3xl border border-gray-100 shadow-inner">
+              {partners.length > 0 && (
+                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm flex flex-col w-full border border-primary">
+                  {renderPartnerGrid("Corporate & CSR Partners 🏢", partners)}
+                </div>
+              )}
 
-                <Link
-                  to="/public-partners"
-                  className="p-8 bg-gray-100 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-                >
-                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-                    Government and Institutional Partners
-                  </div>
-                  <div className="text-gray-500">Government Alliances</div>
-                </Link>
+              {publicPartners.length > 0 && (
+                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm flex flex-col w-full border border-primary">
+                  {renderPartnerGrid(
+                    "Government & Institutional Partners 🏛️",
+                    publicPartners,
+                  )}
+                </div>
+              )}
 
-                <Link
-                  to="/society-partners"
-                  className="p-8 bg-gray-100 rounded-2xl hover:shadow-lg transition-all group cursor-pointer border border-transparent hover:border-primary/20"
-                >
-                  <div className="font-bold text-primary text-xl mb-2 group-hover:scale-105 transition-transform">
-                    Civil Society
+              {societyPartners.length > 0 && (
+                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm flex flex-col w-full border border-primary">
+                  {renderPartnerGrid(
+                    "Civil Society & NGO Partners 🤝",
+                    societyPartners,
+                  )}
+                </div>
+              )}
+
+              {partners.length === 0 &&
+                publicPartners.length === 0 &&
+                societyPartners.length === 0 && (
+                  <div className="text-center text-gray-500 py-12 italic bg-white rounded-2xl">
+                    No active partners found at the moment.
                   </div>
-                  <div className="text-gray-500">NGO Partners</div>
-                </Link>
-              </div>
+                )}
             </div>
           </div>
         )}

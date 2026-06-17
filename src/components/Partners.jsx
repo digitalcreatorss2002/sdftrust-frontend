@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
+import PublicPartnersSection from "./PublicPartnersSection";
+import SocietyPartnersSection from "./SocietyPartnersSection";
 
 const PartnersSection = () => {
   const [partners, setPartners] = useState([]);
@@ -12,9 +14,9 @@ const PartnersSection = () => {
     if (path.startsWith("https")) return path;
 
     const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
-    
+
     let cleanPath = path.replace(/^\/+/, "");
-    
+
     if (cleanPath.startsWith("admin/uploads/")) {
       cleanPath = cleanPath.replace("admin/uploads/", "uploads/");
     }
@@ -25,21 +27,33 @@ const PartnersSection = () => {
   // Fetch partners data
   useEffect(() => {
     Promise.all([
-      fetch(`${API_BASE_URL}/partners.php?t=${Date.now()}`).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/public_partners.php?t=${Date.now()}`).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/society_partners.php?t=${Date.now()}`).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/partners.php?t=${Date.now()}`).then((res) =>
+        res.json(),
+      ),
+      fetch(`${API_BASE_URL}/public_partners.php?t=${Date.now()}`).then((res) =>
+        res.json(),
+      ),
+      fetch(`${API_BASE_URL}/society_partners.php?t=${Date.now()}`).then(
+        (res) => res.json(),
+      ),
     ])
       .then(([partnersRes, publicRes, societyRes]) => {
         if (partnersRes.status === "success") setPartners(partnersRes.data);
         if (publicRes.status === "success") setPublicPartners(publicRes.data);
-        if (societyRes.status === "success") setSocietyPartners(societyRes.data);
+        if (societyRes.status === "success")
+          setSocietyPartners(societyRes.data);
       })
       .catch((err) => console.error("Error loading partners:", err))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) return null;
-  if (partners.length === 0 && publicPartners.length === 0 && societyPartners.length === 0) return null;
+  if (
+    partners.length === 0 &&
+    publicPartners.length === 0 &&
+    societyPartners.length === 0
+  )
+    return null;
 
   const renderPartnerGrid = (title, data) => {
     if (!data || data.length === 0) return null;
@@ -64,7 +78,8 @@ const PartnersSection = () => {
                   className="w-[80%] h-auto max-h-20 object-contain mb-4 transition-transform duration-300 group-hover:scale-110"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    e.currentTarget.src = "https://placehold.co/150x150?text=No+Logo";
+                    e.currentTarget.src =
+                      "https://placehold.co/150x150?text=No+Logo";
                   }}
                 />
                 <p className="text-sm font-bold text-gray-600 text-center leading-snug">
@@ -77,20 +92,23 @@ const PartnersSection = () => {
       </div>
     );
   };
-
   return (
-    <section className="py-20 bg-[#F3EFE4]" id="partners">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        {/* Heading */}
-        <h2 className="text-4xl font-serif mb-12 text-[#233520]">
-          Our Partners & Supporters
-        </h2>
+    <>
+      <section className="py-20 bg-[#F3EFE4]" id="partners">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h2 className="text-4xl font-serif mb-12 text-[#233520]">
+            Our Partners & Supporters
+          </h2>
+          {renderPartnerGrid("", partners)}
+        </div>
+      </section>
 
-        {renderPartnerGrid("", partners)}
-        {/* {renderPartnerGrid("Public Partners", publicPartners)} */}
-        {/* {renderPartnerGrid("Society Partners", societyPartners)} */}
-      </div>
-    </section>
+      <PublicPartnersSection data={publicPartners} getImageUrl={getImageUrl} />
+      <SocietyPartnersSection
+        data={societyPartners}
+        getImageUrl={getImageUrl}
+      />
+    </>
   );
 };
 

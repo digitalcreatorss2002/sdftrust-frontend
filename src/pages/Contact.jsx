@@ -111,18 +111,26 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-white w-12 h-12 rounded-full shadow-sm flex items-center justify-center text-xl shrink-0 border border-gray-100">
-                    ✉️
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-text-primary mb-1">
-                      Email Address
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      contact@sdfoundation.org <br />
-                    </p>
-                  </div>
-                </div>
+  <div className="bg-white w-12 h-12 rounded-full shadow-sm flex items-center justify-center text-xl shrink-0 border border-gray-100">
+    ✉️
+  </div>
+  <div>
+    <h3 className="font-bold text-text-primary mb-1">
+      Email Addresses
+    </h3>
+    <p className="text-gray-600 text-sm leading-relaxed flex flex-col">
+      <a href="mailto:chairman@sdftrust.org" className="hover:text-blue-600 transition-colors">
+        chairman@sdftrust.org
+      </a>
+      <a href="mailto:hr@sdftrust.org" className="hover:text-blue-600 transition-colors">
+        hr@sdftrust.org
+      </a>
+      <a href="mailto:Sdftindia@gmail.com" className="hover:text-blue-600 transition-colors">
+        Sdftindia@gmail.com
+      </a>
+    </p>
+  </div>
+</div>
 
                 <div className="flex items-start gap-4">
                   <div className="bg-white w-12 h-12 rounded-full shadow-sm flex items-center justify-center text-xl shrink-0 border border-gray-100">

@@ -332,7 +332,7 @@ const Home = () => {
                 </h2>
               </div>
 
-              <p className="text-gray-600 text-justify mb-6 leading-relaxed line-clamp-10 text-sm md:text-base">
+              <p className="text-gray-600 text-justify mb-6 leading-relaxed line-clamp-8 text-sm md:text-base">
                 {aboutData && aboutData.who_we_are_text
                   ? aboutData.who_we_are_text
                   : "Established in 2014 by a dedicated group of professional social workers, the Sustainable Development Foundation (SDF) is a distinguished autonomous and 'not-for-profit' organization in India..."}
@@ -345,7 +345,6 @@ const Home = () => {
               </Link>
             </div>
 
-            {/* 🔴 Right Container: चौड़ाई lg:w-[75%] की गई ताकि पूरे 4 कार्ड्स ग्रिड में समानांतर आ सकें */}
             <div className="w-full lg:w-[75%] flex flex-col gap-6">
               
               {/* TOP ROW: 4 Project Cards Grid */}

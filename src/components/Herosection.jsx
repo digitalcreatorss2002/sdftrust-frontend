@@ -87,9 +87,12 @@ function Herosection() {
 
   const getRepeatedFunds = (data) => {
     if (data.length === 0) return [];
-    if (data.length < 4) return [...data, ...data, ...data, ...data];
-    return [...data, ...data];
+    if (data.length <= 4) return data; 
+    return [...data, ...data]; 
   };
+
+  const finalFundsToShow = getRepeatedFunds(fundsList);
+  const shouldScroll = fundsList.length > 4;
 
   return (
     <section className="relative bg-black overflow-hidden min-h-screen flex flex-col justify-between">
@@ -107,26 +110,28 @@ function Herosection() {
         }
       `}</style>
 
-      <div className="absolute inset-0 z-0 overflow-hidden bg-black brightness-110">
+      {/* वीडियो कंटेनर */}
+      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
         {activeVideo ? (
-          <iframe
-            key={activeVideo}
-            className="absolute top-1/2 left-1/2 w-screen h-[56.25vw] min-h-screen min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&mute=1&controls=0&loop=1&playlist=${activeVideo}&rel=0&modestbranding=1`}
-            title="Banner Video"
-            frameBorder="0"
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-          />
+          <>
+            <iframe
+              key={activeVideo}
+              /* सुधार: w-[130%] और scale-110 की मदद से प्ले/पॉज़ पूरी तरह फ्रेम के बाहर चला जाएगा */
+              className="absolute top-1/2 left-1/2 w-[130%] h-[56.25vw] min-h-screen min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none scale-110"
+              src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&mute=1&controls=0&loop=1&playlist=${activeVideo}&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&autohide=1`}
+              title="Banner Video"
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+            />
+            {/* सुधार: यह अदृश्य लेयर माउस के किसी भी होवर या इंटरैक्शन को यूट्यूब तक जाने से रोक देगी, जिससे पॉज़ थंबनेल ट्रिगर ही नहीं होगा */}
+            <div className="absolute inset-0 bg-transparent z-10 pointer-events-auto"></div>
+          </>
         ) : (
           <div className="absolute inset-0 bg-gray-900"></div>
         )}
-
-        <div className="absolute inset-0 bg-gradient-to-r from-black/35 via-transparent to-black/30"></div>
-        <div className="absolute inset-0 bg-black/10"></div> 
       </div>
 
-      <div className="relative z-10 w-[90%] mx-auto flex-grow flex flex-col lg:flex-row items-center justify-between pt-32 pb-48 gap-8">
+      <div className="relative z-20 w-[90%] mx-auto flex-grow flex flex-col lg:flex-row items-center justify-between pt-32 pb-48 gap-8">
         
         <div className="w-full lg:w-[63%] text-white pl-4 md:pl-12">
           <div key={activeIndex} className="animate-fadeSlide">
@@ -154,12 +159,12 @@ function Herosection() {
               <span>🌱</span> Open Procurement (EOI/RFQ)
             </h3>
 
-            <div className="relative h-[360px] overflow-hidden rounded-xl bg-black/20">
+            <div className={`relative h-[360px] ${shouldScroll ? 'overflow-hidden' : 'overflow-y-auto pr-1'} rounded-xl bg-black/20`}>
               {fundsLoading ? (
                 <div className="text-center py-12 text-sm text-gray-200 animate-pulse">Loading listings...</div>
-              ) : fundsList.length > 0 ? (
-                <div className="flex flex-col gap-3 animate-scroll-up">
-                  {getRepeatedFunds(fundsList).map((fund, idx) => (
+              ) : finalFundsToShow.length > 0 ? (
+                <div className={`flex flex-col gap-3 ${shouldScroll ? 'animate-scroll-up' : ''}`}>
+                  {finalFundsToShow.map((fund, idx) => (
                     <Link
                       key={`scroll-${fund.id}-${idx}`}
                       to="/get-involved#funds"
