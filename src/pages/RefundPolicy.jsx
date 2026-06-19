@@ -41,7 +41,6 @@ export default function RefundPolicy() {
           <li>Technical error during payment</li>
         </ul>
 
-        {/* Section 3 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           Refund Request Process
         </h2>
@@ -52,7 +51,6 @@ export default function RefundPolicy() {
           ID, date, and donation amount.
         </p>
 
-        {/* Section 4 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           Processing Time
         </h2>
