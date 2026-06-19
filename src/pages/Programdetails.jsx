@@ -4,7 +4,6 @@ import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 
 const BASE_URL = ADMIN_BASE_URL;
 
-// 🔥 MATCHED WITH YOUR EXACT BACKEND ROUTING STRUCTURE
 const makeImageUrl = (path) => {
   if (!path || typeof path !== "string") {
     return "https://via.placeholder.com/1200x800?text=No+Image";
@@ -12,26 +11,20 @@ const makeImageUrl = (path) => {
 
   const cleanPath = path.trim().replace(/^\/+/, "");
 
-  // स्थिति 1: अगर इमेज पहले से ही फुल एक्सटर्नल URL है (जैसे Unsplash लिंक)
   if (cleanPath.startsWith("http://") || cleanPath.startsWith("https://")) {
     return cleanPath;
   }
 
-  // ADMIN_BASE_URL (domain.com/backend/admin) से मुख्य रूट डोमेन अलग करना
   const rootDomain = BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
 
-  // स्थिति 2: अगर डेटाबेस पाथ में पहले से 'backend/admin' मौजूद है
   if (cleanPath.startsWith("backend/admin/")) {
     return `${rootDomain}/${cleanPath}`;
   }
 
-  // स्थिति 3: अगर पाथ 'uploads/' से शुरू हो रहा है (जैसे आपका बैकएंड सेव करता है)
-  // इसे सीधे एडमिन के अंदर वाले अपलोड फोल्डर पर री-रूट करना होगा
   if (cleanPath.startsWith("uploads/")) {
     return `${rootDomain}/backend/admin/${cleanPath}`;
   }
 
-  // फॉलबैक: बाकी सभी कंडीशंस के लिए
   return `${rootDomain}/backend/admin/${cleanPath}`;
 };
 
@@ -72,7 +65,6 @@ const ProgramDetails = () => {
 
         let rawImages = [];
 
-        // डेटाबेस की इमेज स्ट्रिंग को पार्स और वैलिडेट करना
         if (foundProgram.images) {
           if (Array.isArray(foundProgram.images)) {
             rawImages = foundProgram.images;
@@ -90,12 +82,10 @@ const ProgramDetails = () => {
           }
         } 
         
-        // अगर 'images' एरे खाली है पर 'image_url' कॉलम में डेटा मौजूद है
         if (rawImages.length === 0 && foundProgram.image_url) {
           rawImages = [foundProgram.image_url.trim()];
         }
 
-        // सभी पाथ्स को परफेक्ट वर्किंग इमेज URL में कन्वर्ट करना
         let normalizedImages = rawImages
           .filter(Boolean)
           .map((img) => makeImageUrl(img));

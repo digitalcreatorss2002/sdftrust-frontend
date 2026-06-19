@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
-// Swiper Components और Modules
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
@@ -11,7 +10,6 @@ const PartnersOpportunitiesSlider = () => {
   const [fundsList, setFundsList] = useState([]);
   const [fundsLoading, setFundsLoading] = useState(true);
 
-  // Fetch Data from API
   useEffect(() => {
     const fetchFundsData = async () => {
       try {
@@ -30,7 +28,6 @@ const PartnersOpportunitiesSlider = () => {
     fetchFundsData();
   }, []);
 
-  // HELPER FUNCTION: पीडीएफ फाइल का यूआरएल बनाने के लिए
   const getBackendFileUrl = (path) => {
     if (!path) return "";
     if (path.startsWith("https") || path.startsWith("http")) return path;
@@ -45,7 +42,6 @@ const PartnersOpportunitiesSlider = () => {
     return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
-  // केवल 'active' स्टेटस वाले फंड्स फ़िल्टर करें
   const activeFunds = fundsList.filter((fund) => fund.status === "active");
 
   if (fundsLoading) {
@@ -61,7 +57,6 @@ const PartnersOpportunitiesSlider = () => {
   return (
     <section className="py-12 bg-bg-color partners-funds-slider overflow-hidden">
       
-      {/* स्वाइपर नेविगेशन बटन्स के लिए CSS */}
       <style>{`
         .partners-funds-slider .swiper-button-next,
         .partners-funds-slider .swiper-button-prev {
@@ -111,10 +106,8 @@ const PartnersOpportunitiesSlider = () => {
         }
       `}</style>
 
-      {/* 🔴 FIXED: साइज को max-w-8xl से कम करके max-w-7xl किया ताकि ये प्रेजेंस मैप और बाकी वेबसाइट की चौड़ाई से परफेक्ट मैच हो जाए */}
       <div className="max-w-7xl mx-auto px-10 sm:px-12 md:px-16 relative">
         
-        {/* Header Section */}
         <div className="text-center mb-8">
           <span className="text-3xl mb-3 block animate-float">🌱</span>
           <h2 className="text-3xl font-serif text-text-primary mb-3">Partners (EOI/RFQ)</h2>
@@ -123,12 +116,11 @@ const PartnersOpportunitiesSlider = () => {
           </p>
         </div>
 
-        {/* स्वाइपर स्लाइडर */}
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={16} 
           loop={activeFunds.length > 4}
-          navigation={activeFunds.length > 4} // अगर 4 से कम कार्ड हैं तो एरो बटन्स हाइड रहेंगे क्योंकि वे पहले से सेंटर में दिखेंगे
+          navigation={activeFunds.length > 4}
           autoplay={activeFunds.length > 4 ? { delay: 5000, disableOnInteraction: false } : false}
           className="w-full pb-2"
           breakpoints={{
@@ -139,24 +131,20 @@ const PartnersOpportunitiesSlider = () => {
           }}
         >
           {activeFunds.map((fund, idx) => (
-            // 🔴 FIXED: कम कार्ड्स होने पर चौड़ाई बिगड़ने से रोकने के लिए max-w सेट किया गया है
             <SwiperSlide key={fund.id || idx} className="h-auto p-1" style={{ maxWidth: activeFunds.length < 4 ? '300px' : '100%' }}>
               <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full justify-between text-left">
                 
-                {/* शीर्ष भाग: टाइटल और पैराग्राफ */}
                 <div className="flex flex-col gap-2 mb-4">
                   {/* Title */}
                   <h3 className="text-base font-bold text-primary font-serif leading-snug line-clamp-2 min-h-[1rem]">
                     {fund.title}
                   </h3>
                   
-                  {/* Paragraph Description */}
                   <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-3 min-h-[2rem] whitespace-pre-line">
                     {fund.description}
                   </p>
                 </div>
 
-                {/* निचला भाग: एक्शन बटन */}
                 <div className="mt-auto pt-1">
                   {fund.file_url ? (
                     <a

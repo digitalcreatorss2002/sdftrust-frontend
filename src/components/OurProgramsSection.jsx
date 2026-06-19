@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
-// Swiper Components और Modules
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
@@ -12,7 +11,6 @@ const OurProgramsSection = () => {
   const [programsLoading, setProgramsLoading] = useState(true);
   const [programsError, setProgramsError] = useState(null);
 
-  // FETCH PROGRAMS
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
@@ -68,31 +66,25 @@ const OurProgramsSection = () => {
   return (
     <section className="py-16 bg-bg-color overflow-hidden" id="programs-scroll-section">
       
-      {/* ओरिजिनल कंटेनर अलाइनमेंट (max-w-7xl, px-4 जैसे पहले था) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <h2 className="text-3xl font-serif text-text-primary mb-12 text-center">
           Our Programs
         </h2>
 
-        {/* 🔴 SLIDER WRAPPER - यह कंटेनर को छेड़े बिना केवल बटन्स को बाहर पोजीशन करेगा */}
         <div className="relative px-2">
           
-          {/* 🟢 कस्टम आउटवर्ड लेफ्ट बटन */}
           <button id="prog-prev-btn" className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 bg-white text-[#6a752b] hover:bg-[#6a752b] hover:text-white w-11 h-11 rounded-full shadow-lg border border-gray-100 flex items-center justify-center z-30 transition-all font-bold text-sm">
             ←
           </button>
 
-          {/* 🟢 कस्टम आउटवर्ड राइट बटन */}
           <button id="prog-next-btn" className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 bg-white text-[#6a752b] hover:bg-[#6a752b] hover:text-white w-11 h-11 rounded-full shadow-lg border border-gray-100 flex items-center justify-center z-30 transition-all font-bold text-sm">
             →
           </button>
 
-          {/* स्वाइपर स्लाइडर मुख्य ग्रिड */}
           <Swiper
             modules={[Navigation, Autoplay]} 
             spaceBetween={24}
             loop={programsList.length > 4} 
-            // कस्टम बटन्स को स्वाइपर से लिंक किया
             navigation={{
               prevEl: "#prog-prev-btn",
               nextEl: "#prog-next-btn",
@@ -112,7 +104,6 @@ const OurProgramsSection = () => {
               <SwiperSlide key={program.id || idx} className="h-auto py-2 px-1">
                 <div className="bg-white rounded-xl border border-gray-100 text-left hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full">
                   
-                  {/* Image Container */}
                   <div className="h-48 overflow-hidden relative">
                     <img
                       src={getProgramImageUrl(program.image_url)}
@@ -125,7 +116,6 @@ const OurProgramsSection = () => {
                     />
                   </div>
 
-                  {/* Content Area */}
                   <div className="p-6 grow flex flex-col justify-between">
                     <div>
                       <h3 className="text-lg font-serif font-bold text-text-primary mb-2 leading-tight line-clamp-2 min-h-[3rem]">
@@ -150,7 +140,6 @@ const OurProgramsSection = () => {
           </Swiper>
         </div>
 
-        {/* Bottom Navigation Button */}
         <div className="mt-10 text-center">
           <Link
             to="/programs"

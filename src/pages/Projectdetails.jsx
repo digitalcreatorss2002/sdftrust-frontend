@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
 
-// Video Checker Helper
 const isVideoFile = (url) => {
   if (!url) return false;
-  // URL se query params hatane ke liye
   const cleanUrl = url.split('?')[0];
   return /\.(mp4|webm|ogg)$/i.test(cleanUrl);
 };
@@ -16,16 +14,13 @@ const ProjectDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔥 FIXED IMAGE URL HELPER: Aligned with your Bluehost folder structure
   const getImageUrl = (path) => {
     if (!path) return "https://via.placeholder.com/1200x800?text=SDF+Project";
     if (path.startsWith('https')) return path;
 
-    // Root domain nikalna (e.g., https://hrntechsolutions.com)
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
     const cleanPath = path.replace(/^\/+/, ''); 
     
-    // Images are in backend/admin/uploads/projects/
     return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
@@ -79,9 +74,7 @@ const ProjectDetails = () => {
 
   return (
     <div className="bg-bg-color min-h-screen ">
-      {/* Hero Header */}
       <section className="bg-primary text-white pt-20 pb-28 relative overflow-hidden">
-        {/* Abstract Background pattern */}
         <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -106,11 +99,9 @@ const ProjectDetails = () => {
         </div>
       </section>
 
-      {/* Main Content Layout */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           <div className="lg:w-2/3 flex flex-col gap-8">
-            {/* Media Container */}
             <div className="relative h-80 md:h-140 rounded-3xl overflow-hidden shadow-2xl border-[6px] border-white bg-gray-100 group">
               {isVideoFile(project.image_url) ? (
                 <video 
@@ -193,15 +184,12 @@ const ProjectDetails = () => {
             </div>
           </div>
 
-          {/* Sidebar */}
-          {/* Sidebar Snapshot Section Updated */}
 <div className="lg:w-1/3">
   <div className="sticky top-28 flex flex-col gap-8">
     <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
       <h3 className="text-xl font-serif font-bold text-text-primary border-b border-gray-100 pb-5 mb-8">Snapshot</h3>
       <ul className="space-y-6">
         
-        {/* State/Location */}
         <li className="flex items-start gap-5">
           <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 text-lg shadow-sm">📍</div>
           <div>
@@ -210,7 +198,6 @@ const ProjectDetails = () => {
           </div>
         </li>
 
-        {/* District - conditional */}
         {project.district && (
           <li className="flex items-start gap-5">
             <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0 text-lg shadow-sm">🏙️</div>
@@ -221,7 +208,6 @@ const ProjectDetails = () => {
           </li>
         )}
 
-        {/* Block - conditional */}
         {project.block && (
           <li className="flex items-start gap-5">
             <div className="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0 text-lg shadow-sm">🏘️</div>
@@ -232,7 +218,6 @@ const ProjectDetails = () => {
           </li>
         )}
 
-        {/* Village - conditional */}
         {project.village && (
           <li className="flex items-start gap-5">
             <div className="w-10 h-10 rounded-2xl bg-teal-50 text-teal-500 flex items-center justify-center shrink-0 text-lg shadow-sm">🏡</div>
@@ -243,7 +228,6 @@ const ProjectDetails = () => {
           </li>
         )}
 
-        {/* Beneficiaries */}
         <li className="flex items-start gap-5">
           <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0 text-xl shadow-sm">👥</div>
           <div>
@@ -252,7 +236,6 @@ const ProjectDetails = () => {
           </div>
         </li>
 
-        {/* Funding/Cost */}
         <li className="flex items-start gap-5">
           <div className="w-10 h-10 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center shrink-0 text-xl shadow-sm">💰</div>
           <div>
@@ -263,7 +246,6 @@ const ProjectDetails = () => {
       </ul>
     </div>
 
-    {/* Donation CTA */}
     <div className="bg-[#233520] rounded-3xl shadow-2xl p-10 text-center relative overflow-hidden text-white group">
       <span className="text-5xl block mb-6 animate-float">🤝</span>
       <h3 className="text-2xl font-serif font-bold mb-4">Empower Our Work</h3>

@@ -11,7 +11,6 @@ const Programs = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
 
-  // 🔥 HANDLE HASH FOR TABS
   useEffect(() => {
     if (location.hash) {
       const tab = location.hash.replace("#", "");
@@ -21,7 +20,6 @@ const Programs = () => {
     }
   }, [location]);
 
-  // FETCH DATA (Updated to show newest projects first)
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
@@ -32,11 +30,9 @@ const Programs = () => {
 
         const data = await response.json();
         if (data.status === "success") {
-          // 🔥 Reverse array to show newly added items first
           const sortedData = [...data.data].reverse();
           setProgramsList(sortedData);
 
-          // 🔥 SET DEFAULT TAB TO FIRST CATEGORY OF SORTED LIST
           if (!location.hash && sortedData.length > 0) {
             const firstCat = sortedData[0].program_id?.trim().toLowerCase();
             if (firstCat) setActiveTab(firstCat);
@@ -53,7 +49,6 @@ const Programs = () => {
     fetchPrograms();
   }, [location.hash]);
 
-  // 🔥 SCROLL LOGIC FOR ARROWS
   const scroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft } = scrollRef.current;
@@ -70,7 +65,6 @@ const Programs = () => {
     }
   };
 
-  // 🔥 EXTRACT UNIQUE CATEGORIES (Removed "all")
   const uniqueCategories = [
     ...new Set(
       programsList
@@ -79,14 +73,11 @@ const Programs = () => {
     ),
   ];
 
-  // Helper to format tab labels
   const formatTabLabel = (id) => {
     if (id === "all") return "All Programs 🌍";
     return id.replace(/[_-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  // 🔥 FILTER PROGRAMS
-  // 🔥 FILTER PROGRAMS (Simplified)
   const displayPrograms = programsList.filter(
     (p) =>
       (p.program_id || "").toLowerCase().trim() ===
@@ -116,7 +107,6 @@ const Programs = () => {
 
   return (
     <div className="bg-bg-color min-h-screen pb-20">
-      {/* HEADER SECTION */}
       <section className="bg-secondary text-white py-20 bg-opacity-90 relative">
         <div className="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000')] bg-cover bg-center"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -130,10 +120,8 @@ const Programs = () => {
         </div>
       </section>
 
-      {/* 🔥 TABS SECTION WITH ARROWS */}
       <section className="border-b sticky top-20 bg-white z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group">
-          {/* Left Arrow Button */}
           <button
             onClick={() => scroll("left")}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 shadow-lg rounded-full hover:bg-primary hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex items-center justify-center w-10 h-10 border border-gray-100"
@@ -141,10 +129,8 @@ const Programs = () => {
             <span className="text-lg">❮</span>
           </button>
 
-          {/* Scrollable Tab Container */}
           <div
             ref={scrollRef}
-            /* px-12 gives room for arrows so they don't cover "All Programs" */
             className="flex items-center space-x-8 overflow-x-auto no-scrollbar scroll-smooth px-12"
           >
             {uniqueCategories.map((tabId) => (
@@ -154,7 +140,6 @@ const Programs = () => {
                   setActiveTab(tabId);
                   window.history.replaceState(null, "", `#${tabId}`);
                 }}
-                /* shrink-0 is vital so the text doesn't squash */
                 className={`py-4 border-b-2 font-bold whitespace-nowrap transition-colors shrink-0 ${
                   activeTab === tabId
                     ? "border-primary text-primary"
@@ -166,7 +151,6 @@ const Programs = () => {
             ))}
           </div>
 
-          {/* Right Arrow Button */}
           <button
             onClick={() => scroll("right")}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 shadow-lg rounded-full hover:bg-primary hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex items-center justify-center w-10 h-10 border border-gray-100"
@@ -176,7 +160,6 @@ const Programs = () => {
         </div>
       </section>
 
-      {/* CONTENT GRID */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayPrograms.length === 0 && (

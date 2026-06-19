@@ -1,4 +1,3 @@
-{/* Sidebar Column */}
 <div className="bg-white sticky top-24 rounded-xl shadow-sm border border-gray-100 p-8 min-h-112.5">
   {selectedMapState ? (
     <div className="animate-in fade-in duration-500">
@@ -7,12 +6,10 @@
         <button onClick={() => setSelectedMapState(null)} className="text-gray-400 hover:text-red-500 text-3xl font-light">&times;</button>
       </div>
 
-      {/* 1. Static State Image */}
       <div className="mb-8 rounded-xl overflow-hidden h-48 shadow-md border border-gray-100">
         <img src={selectedMapState.staticImage} alt={selectedMapState.name} className="w-full h-full object-cover" />
       </div>
 
-      {/* 2. List-style Impact Metrics */}
       <ul className="space-y-8">
         <li className="pb-2 border-b border-gray-50">
           <h4 className="text-2xl font-serif font-bold text-gray-900">📍 {selectedMapState.name}</h4>
@@ -47,10 +44,8 @@
       </ul>
     </div>
   ) : (
-    /* National Impact View (Default) */
     <div>
       <h3 className="text-xl font-serif font-bold text-gray-800 mb-8">📊 National Impact</h3>
-      {/* Same <ul> list as above with national totals */}
     </div>
   )}
 </div>

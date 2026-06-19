@@ -9,19 +9,15 @@ const PressCoverageDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ✅ E-COMMERCE STYLE INTERACTIVE ACTIVE PREVIEW IMAGE STATE
   const [activePreviewImage, setActivePreviewImage] = useState("");
 
-  // ✅ GALLERY LIGHTBOX MODAL STATES
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 🔥 FIXED IMAGE URL HELPER: Aligned with backend structure perfectly
   const getImageUrl = (path) => {
     if (!path) return null;
     if (path.startsWith('https') || path.startsWith('http')) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root domain nikalna
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
     const cleanPath = path.replace(/^\/+/, ''); 
     
@@ -55,7 +51,6 @@ const PressCoverageDetails = () => {
           throw new Error("Coverage not found");
         }
 
-        // ✅ NEW DYNAMIC COLUMN PARSING: image1 se image5 tak automatic mapping
         let galleryImages = [];
         
         for (let i = 1; i <= 5; i++) {
@@ -66,7 +61,6 @@ const PressCoverageDetails = () => {
           }
         }
 
-        // Fallback agar by chance kisi wajah se images empty hon to default placeholder
         if (galleryImages.length === 0) {
           galleryImages.push("https://via.placeholder.com/1200x800?text=No+Image");
         }
@@ -79,7 +73,6 @@ const PressCoverageDetails = () => {
           images: galleryImages,
         });
 
-        // E-commerce pattern initial active state array index 0 mapping
         setActivePreviewImage(baseFeatureImage);
 
       } catch (err) {
@@ -138,7 +131,6 @@ const PressCoverageDetails = () => {
     <div className="bg-white min-h-screen">
       <article className="max-w-4xl mx-auto px-4 pt-16 pb-12">
         
-        {/* Meta Info */}
         <div className="flex items-center gap-3 mb-4 text-sm font-bold text-primary uppercase tracking-widest">
             <span>{coverage.tag || "Press Coverage"}</span>
             <span className="text-gray-300">•</span>
@@ -149,11 +141,7 @@ const PressCoverageDetails = () => {
             {coverage.title}
         </h1>
 
-        {/* ========================================================
-            🔥 E-COMMERCE STYLE INTERACTIVE GALLERY CONTAINER
-           ======================================================== */}
         <div className="mb-10 flex flex-col gap-4">
-            {/* 1. Large Main Dynamic View Screen */}
             <div className="relative group overflow-hidden rounded-3xl shadow-md border border-gray-100 bg-gray-50 flex items-center justify-center">
                 <img
                   src={activePreviewImage}
@@ -163,7 +151,6 @@ const PressCoverageDetails = () => {
                 />
             </div>
 
-            {/* 2. Interactive Dynamic Row Thumbnails Layout (Shows only actual backend array size) */}
             {coverage.images && coverage.images.length > 1 && (
                 <div className="flex flex-wrap gap-3 items-center justify-start p-1 overflow-x-auto no-scrollbar">
                     {coverage.images.map((img, i) => {
@@ -186,7 +173,6 @@ const PressCoverageDetails = () => {
             )}
         </div>
 
-        {/* ✅ TEXT CONTENT AREA */}
         <div className="prose prose-lg max-w-none mb-12">
             {(coverage.para || "").split("\n").map((p, i) => (
               <p key={i} className="mb-6 text-gray-700 leading-relaxed text-lg">
@@ -197,19 +183,15 @@ const PressCoverageDetails = () => {
 
       </article>
 
-      {/* ✅ LIGHTBOX FULLSCREEN MODAL GALLERY WRAPPER */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-[100] backdrop-blur-md transition-opacity" onClick={closeModal}>
           
-          {/* Close Button UI */}
           <button className="absolute top-8 right-8 text-white/70 hover:text-white text-5xl font-light z-50 transition-colors" onClick={closeModal}>&times;</button>
 
-          {/* Previous Arrow Button */}
           <button className="absolute left-4 md:left-8 text-white/50 hover:text-white bg-white/10 hover:bg-white/20 p-4 rounded-full z-50 transition-all" onClick={(e) => { e.stopPropagation(); prevImage(); }}>
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
           </button>
 
-          {/* Absolute Image Showcase Wrapper Box */}
           <div className="relative max-w-5xl max-h-[85vh] px-4" onClick={(e) => e.stopPropagation()}>
               <img
                 src={selectedImage}
@@ -221,7 +203,6 @@ const PressCoverageDetails = () => {
               </div>
           </div>
 
-          {/* Next Arrow Button */}
           <button className="absolute right-4 md:right-8 text-white/50 hover:text-white bg-white/10 hover:bg-white/20 p-4 rounded-full z-50 transition-all" onClick={(e) => { e.stopPropagation(); nextImage(); }}>
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
           </button>

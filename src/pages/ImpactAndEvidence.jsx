@@ -1,9 +1,6 @@
-// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-// 🔥 Import Recharts components
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// 🔥 Sample data for the chart (You can update these numbers)
 const impactData = [
     { year: '2019', beneficiaries: 120000 },
     { year: '2020', beneficiaries: 250000 },
@@ -16,7 +13,6 @@ const impactData = [
 const ImpactAndEvidence = () => {
     return (
         <div className="bg-white min-h-screen">
-            {/* Hero Section */}
             <section className="bg-primary text-white py-20 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <motion.h1
@@ -37,7 +33,6 @@ const ImpactAndEvidence = () => {
                 </div>
             </section>
 
-            {/* Impact Dashboard */}
             <section id="dashboard" className="py-16 px-4 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-text-primary text-center mb-12">Impact Dashboard</h2>
@@ -64,7 +59,6 @@ const ImpactAndEvidence = () => {
                 </div>
             </section>
 
-            {/* Beneficiaries Reached */}
             <section id="beneficiaries" className="py-16 px-4">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-text-primary text-center mb-12">Beneficiaries Reached</h2>
@@ -90,20 +84,17 @@ const ImpactAndEvidence = () => {
                             </ul>
                         </div>
                         
-                        {/* 🔥 NEW CHART SECTION */}
                         <div className="md:w-1/2 bg-white min-h-87.5 p-6 md:p-10 flex flex-col justify-center relative">
                             <h4 className="text-lg font-serif font-bold text-text-primary mb-6 text-center">Growth of Beneficiaries (2019-2024)</h4>
                             <div className="w-full h-62.5 md:h-75">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <AreaChart data={impactData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                                         <defs>
-                                            {/* Gradient matching your brand's primary color (#6a752b) */}
                                             <linearGradient id="colorBeneficiaries" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="5%" stopColor="#6a752b" stopOpacity={0.4}/>
                                                 <stop offset="95%" stopColor="#6a752b" stopOpacity={0}/>
                                             </linearGradient>
                                         </defs>
-                                        {/* Clean, minimal grid lines */}
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                                         <XAxis 
                                             dataKey="year" 
@@ -118,7 +109,6 @@ const ImpactAndEvidence = () => {
                                             tick={{fill: '#9ca3af', fontSize: 12}} 
                                             tickFormatter={(value) => `${value / 1000}k`} 
                                         />
-                                        {/* Beautiful hover tooltip */}
                                         <Tooltip
                                             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                                             formatter={(value) => [new Intl.NumberFormat('en-IN').format(value), 'Lives Impacted']}
@@ -141,12 +131,10 @@ const ImpactAndEvidence = () => {
                 </div>
             </section>
 
-            {/* States & Districts Covered & Sector-wise Impact */}
             <section id="coverage-impact" className="py-16 px-4 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-                        {/* States & Districts */}
                         <div id="coverage">
                             <h2 className="text-3xl font-bold text-text-primary mb-8">States & Districts Covered</h2>
                             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
@@ -173,7 +161,6 @@ const ImpactAndEvidence = () => {
                             </div>
                         </div>
 
-                        {/* Sector-wise Impact */}
                         <div id="sector-impact">
                             <h2 className="text-3xl font-bold text-text-primary mb-8">Sector-wise Impact</h2>
                             <div className="space-y-6">

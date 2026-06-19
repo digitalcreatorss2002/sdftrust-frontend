@@ -23,7 +23,6 @@ const makeImageUrl = (path) => {
   return `${rootDomain}/${cleanPath}`;
 };
 
-// पार्टनर्स के लोगो का इमेज URL बनाने के लिए हेल्पर
 const getPartnerImageUrl = (path) => {
   if (!path) return "https://placehold.co/150x150?text=No+Logo";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
@@ -41,17 +40,14 @@ const About = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const location = useLocation();
 
-  // STATES
   const [activeTab, setActiveTab] = useState("who-we-are");
   const [selectedLeader, setSelectedLeader] = useState(null);
 
-  // पार्टनर्स टैब स्विच करने के लिए स्टेट
   const [partnerTab, setPartnerTab] = useState("corporate");
 
   const [aboutData, setAboutData] = useState(null);
   const [leadershipData, setLeadershipData] = useState([]);
 
-  // पार्टनर्स डेटा स्टेट्स
   const [partners, setPartners] = useState([]);
   const [publicPartners, setPublicPartners] = useState([]);
   const [societyPartners, setSocietyPartners] = useState([]);
@@ -61,7 +57,6 @@ const About = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // समानांतर में सभी डेटा लोड करना
         const [aboutRes, leadRes, partnersRes, publicRes, societyRes] =
           await Promise.all([
             fetch(`${API_BASE_URL}/about_who_we_are.php?t=${Date.now()}`).then(
@@ -118,7 +113,6 @@ const About = () => {
     }
   }, [location]);
 
-  // लोगो ग्रिड रेंडर करने का कॉमन फ़ंक्शन
   const renderPartnerGrid = (title, data) => {
     if (!data || data.length === 0) {
       return (
@@ -209,7 +203,6 @@ const About = () => {
 
   return (
     <div className="bg-bg-color min-h-screen pb-10">
-      {/* Hero Section */}
       <section className="bg-primary text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold mb-4">
@@ -222,7 +215,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* TABS BAR */}
       <section className="border-b sticky top-20 bg-white z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-start md:justify-center space-x-8 overflow-x-auto no-scrollbar px-4 md:px-0">
@@ -242,9 +234,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* CONTENT AREA */}
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {/* 1. WHO WE ARE */}
         {activeTab === "who-we-are" && (
           <div className="animate-fade-in">
             <div className="text-center mb-12">
@@ -301,7 +291,6 @@ const About = () => {
           </div>
         )}
 
-        {/* 2. LEADERSHIP */}
         {activeTab === "leadership" && (
           <div className="animate-fade-in">
             <div className="text-center mb-12">
@@ -329,7 +318,6 @@ const About = () => {
               ))}
             </div>
 
-            {/* Leadership Modal */}
             {selectedLeader && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
                 <div
@@ -418,7 +406,6 @@ const About = () => {
           </div>
         )}
 
-        {/* 3. APPROACH */}
         {activeTab === "approach" && (
           <div className="max-w-4xl mx-auto animate-fade-in">
             <div className="text-center mb-12">
@@ -486,7 +473,6 @@ const About = () => {
           </div>
         )}
 
-        {/* 5. FAQ */}
         {activeTab === "faq" && (
           <div className="max-w-3xl mx-auto animate-fade-in">
             <div className="text-center mb-12">

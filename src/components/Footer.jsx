@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-[#75843a] text-white font-sans">
-      {/* 🔥 MAIN CONTENT AREA */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 items-start">
           
-          {/* 🌿 LEFT SIDE */}
           <div className="space-y-8 flex flex-col justify-start lg:col-span-1">
             <p
               className="text-white/95 text-2xl md:text-[21px] leading-[1.4] max-w-[420px] text-left"
@@ -43,7 +41,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* 🔗 Quick Links */}
           <div className="lg:pl-4">
             <h4 className="text-xl font-bold mb-6 border-b-2 border-white/30 w-fit pb-1">
               Quick Links
@@ -72,7 +69,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* 🎯 Our Programs */}
           <div>
             <h4 className="text-xl font-bold mb-6 border-b-2 border-white/30 w-fit pb-1">
               Our Programs
@@ -86,7 +82,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* 📍 Contact Information */}
           <div>
             <h4 className="text-xl font-bold mb-6 border-b-2 border-white/30 w-fit pb-1">
               Contact
@@ -107,7 +102,6 @@ const Footer = () => {
                 </a>
               </li>
 
-              {/* ✉️ 3 Dynamic Functional Emails Block */}
               <li className="flex items-start gap-3">
                 <span className="text-xl select-none mt-0.5">✉️</span>
                 <div className="flex flex-col space-y-2">
@@ -136,7 +130,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* 🔻 BOTTOM STRIP */}
       <div className="border-t border-white/10 bg-black/5 py-6 px-4">
         <div className="max-w-7xl mx-auto flex flex-row flex-wrap items-center justify-center text-center text-[13px] opacity-80 gap-x-2">
           <p>

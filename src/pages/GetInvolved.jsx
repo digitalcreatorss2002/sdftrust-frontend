@@ -6,15 +6,12 @@ const GetInvolved = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("volunteer");
   
-  // States for Careers
   const [careersList, setCareersList] = useState([]);
   const [careersLoading, setCareersLoading] = useState(true);
 
-  // States for Funds (Partners EOI/RFQ)
   const [fundsList, setFundsList] = useState([]);
   const [fundsLoading, setFundsLoading] = useState(true);
 
-  // Handle URL hash navigation (e.g., /get-involved#funds)
   useEffect(() => {
     if (location.hash) {
       const targetTab = location.hash.replace("#", "");
@@ -32,18 +29,15 @@ const GetInvolved = () => {
     }
   }, [location.hash]);
 
-  // Fetch Data from APIs
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Careers
         const careerRes = await fetch(`${API_BASE_URL}/careers.php`);
         const careerData = await careerRes.json();
         if (careerData.status === "success") {
           setCareersList(careerData.data);
         }
 
-        // Fetch Funds (Partners EOI/RFQ)
         const fundRes = await fetch(`${API_BASE_URL}/funds.php?t=${Date.now()}`);
         const fundData = await fundRes.json();
         if (fundData.status === "success") {
@@ -60,7 +54,6 @@ const GetInvolved = () => {
     fetchData();
   }, []);
 
-  // HELPER FUNCTION: करियर और फंड्स दोनों के PDF पाथ को सही करने के लिए
   const getBackendFileUrl = (path) => {
     if (!path) return "";
     if (path.startsWith("https") || path.startsWith("http")) return path;
@@ -75,12 +68,10 @@ const GetInvolved = () => {
     return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
-  // केवल 'active' स्टेटस वाले फंड्स को ही फ़्रंटएंड पर दिखाना है
   const activeFunds = fundsList.filter((fund) => fund.status === "active");
 
   return (
     <div className="bg-bg-color min-h-screen pb-24 relative">
-      {/* Hero Section */}
       <section className="bg-secondary text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
@@ -93,7 +84,6 @@ const GetInvolved = () => {
         </div>
       </section>
 
-      {/* Sticky Navigation Tabs */}
       <section className="border-b border-gray-200 sticky top-20 bg-white z-40 shadow-sm">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8">
@@ -124,7 +114,6 @@ const GetInvolved = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 min-h-[50vh]">
         
-        {/* --- VOLUNTEER SECTION --- */}
         {activeTab === "volunteer" && (
           <section id="volunteer" className="mb-24 scroll-mt-32">
             <div className="flex flex-col md:flex-row gap-12 items-center">
@@ -155,7 +144,6 @@ const GetInvolved = () => {
           </section>
         )}
 
-        {/* --- CAREERS SECTION --- */}
         {activeTab === "careers" && (
           <section id="careers" className="scroll-mt-32 max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -185,7 +173,6 @@ const GetInvolved = () => {
                         </a>
                       )}
                     </div>
-                    {/* ✅ FIXED: "Apply Now" बटन को सीधे /contact पेज पर जाने के लिए स्टैटिक लिंक से रैप कर दिया गया है */}
                     <Link 
                       to="/contact" 
                       className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-6 py-2 rounded-full font-bold transition-all text-center"
@@ -201,7 +188,6 @@ const GetInvolved = () => {
           </section>
         )}
 
-        {/* --- FUNDS (PARTNERS) SECTION --- */}
         {activeTab === "funds" && (
           <section id="funds" className="scroll-mt-32 max-w-4xl mx-auto">
             <div className="text-center mb-12">

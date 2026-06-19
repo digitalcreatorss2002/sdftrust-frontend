@@ -5,27 +5,21 @@ const SocietyPartnersSection = () => {
   const [societyPartners, setSocietyPartners] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ FIXED: ब्लूहोस्ट लाइव सर्वर के सटीक 'backend/uploads/' पाथ स्ट्रक्चर के लिए परफेक्ट हेल्पर फ़ंक्शन
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/150x150?text=No+Logo";
     if (path.startsWith("https")) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) से '/backend' तक का रूट निकालना
     const rootDomain = ADMIN_BASE_URL.split("/backend")[0].replace(/\/+$/, "");
     
-    // पाथ के शुरुआत के स्लैश को साफ करना
     let cleanPath = path.replace(/^\/+/, "");
     
-    // अगर बैकएंड पाथ में पहले से 'admin/' लगा हुआ आ रहा है, तो उसे क्लीन करें क्योंकि फ़ाइलें सीधे backend/uploads/ में हैं
     if (cleanPath.startsWith("admin/")) {
       cleanPath = cleanPath.replace("admin/", "");
     }
 
-    // फ़ाइनल यूआरएल स्ट्रक्चर: https://hrntechsolutions.com/backend/uploads/society_partners/filename.ext
     return `${rootDomain}/backend/${cleanPath}`;
   };
 
-  // Fetch only society partners matching your exact database schema
   useEffect(() => {
     fetch(`${API_BASE_URL}/society_partners.php?t=${Date.now()}`)
       .then((res) => {
@@ -51,18 +45,15 @@ const SocietyPartnersSection = () => {
     );
   }
 
-  // Hide container natively if database collection contains no objects
   if (societyPartners.length === 0) return null;
 
   return (
     <section className="py-20 bg-gray-50" id="society-partners">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        {/* Main Reference Standard Header Section */}
         <h2 className="text-4xl font-serif mb-16 text-gray-900 tracking-wide font-medium">
           Our Society Partners & Supporters
         </h2>
 
-        {/* MATCHED DESIGN GRID: Aligned exactly with premium layout structure */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {societyPartners.map((partner, index) => {
             const targetPath = partner.image_url || partner.img || "";
@@ -76,7 +67,6 @@ const SocietyPartnersSection = () => {
                 rel="noopener noreferrer"
                 className="bg-white rounded-3xl p-6 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col items-center justify-between transition-all duration-300 ease-in-out hover:-translate-y-1.5 group aspect-[4/5]"
               >
-                {/* Image Container Wrapper ensuring square ratio scale box */}
                 <div className="w-full flex-1 flex items-center justify-center min-h-[110px] mb-4">
                   <img
                     src={imgSrc}
@@ -89,7 +79,6 @@ const SocietyPartnersSection = () => {
                   />
                 </div>
                 
-                {/* Title Text Area matching clean grey typography */}
                 <p className="text-sm font-serif font-semibold text-gray-700 text-center leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-3 w-full px-1">
                   {partner.title}
                 </p>

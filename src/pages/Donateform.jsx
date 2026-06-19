@@ -15,7 +15,7 @@ export default function DonationForm() {
     pan_number: "",
   };
 
-  const PAYMENT_TIME_LIMIT = 120; // 2 minutes for better UX
+  const PAYMENT_TIME_LIMIT = 120;
   const RESET_DELAY = 4000;
 
   const [showPan, setShowPan] = useState(false);
@@ -33,10 +33,9 @@ export default function DonationForm() {
   const pollRef = useRef(null);
   const resetRef = useRef(null);
 
-  const upiId = "mab.037215004780131@axisbank"; // Replace with your actual UPI ID
+  const upiId = "mab.037215004780131@axisbank";
   const payeeName = "SDF Trust";
 
-  // Using API_BASE_URL from config
   const CREATE_DONATION_API = `${API_BASE_URL}/create-donation.php`;
   const CHECK_STATUS_API = `${API_BASE_URL}/check-payment-status.php`;
   const EXPIRE_PAYMENT_API = `${API_BASE_URL}/expire-payment.php`;

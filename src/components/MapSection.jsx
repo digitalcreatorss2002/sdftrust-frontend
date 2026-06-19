@@ -4,7 +4,6 @@ import "leaflet/dist/leaflet.css";
 
 import { API_BASE_URL } from "../config";
 
-// --- STATE NORMALIZATION UTILITY ---
 const normalizeStateName = (name) => {
   if (!name) return "";
   const cleaned = name.trim().toLowerCase().replace(/\s+/g, " ");
@@ -15,7 +14,6 @@ const normalizeStateName = (name) => {
   return name.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
 };
 
-// --- STATIC STATE DATA ---
 const stateDataMap = {
   "Andhra Pradesh": { image: "/map/AndhraPradesh.jpg", livesImpacted: "800k+" },
   "Arunachal Pradesh": { image: "/map/ArunachalPradesh.jpg", livesImpacted: "50k+" },
@@ -206,7 +204,6 @@ const MapSection = ({ onStateSelect, onDataLoad }) => {
             const hasProjects = data.list.length > 0;
 
             if (hasProjects) {
-              // PIN (📍) REMOVED FROM TOOLTIP
               layer.bindTooltip(`<div style="display:flex; flex-direction:column; align-items:center; line-height:1.2;"><span><b>${stateName}</b></span></div>`, {
                 permanent: true,
                 direction: "center",

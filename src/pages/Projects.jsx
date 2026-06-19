@@ -5,7 +5,6 @@ import "leaflet/dist/leaflet.css";
 import MapSection from "../components/MapSection";
 import { motion, useScroll, useTransform, useMotionTemplate } from "framer-motion";
 
-// Video Checker Helper
 const isVideoFile = (url) => {
   if (!url) return false;
   const cleanUrl = url.split('?')[0];
@@ -28,29 +27,23 @@ const Projects = () => {
       totalBeneficiaries: "2M+"
   });
 
-  // Category state under dynamic dynamic listings - defaults to null to show all projects initially
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // 🔥 UPDATED IMAGE URL HELPER: Fixed to dynamically handle paths with or without admin/uploads prefix securely
   const getImageUrl = (path) => {
     if (!path) return "https://placehold.co/600x400?text=No+Media";
     
     if (path.startsWith('https')) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root nikalna
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
     
-    // Path clean karna (shuruat ke slashes hatana)
     let cleanPath = path.replace(/^\/+/, ""); 
 
-    // Agar path me already 'backend/admin/' ya 'admin/' laga ho to redundant mapping clean karein
     if (cleanPath.startsWith('backend/admin/')) {
       cleanPath = cleanPath.replace('backend/admin/', '');
     } else if (cleanPath.startsWith('admin/')) {
       cleanPath = cleanPath.replace('admin/', '');
     }
     
-    // Final URL: Root + backend/admin + uploads path
     return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
@@ -77,7 +70,6 @@ const Projects = () => {
 
   const mapClipPath = useMotionTemplate`circle(${mapClipPercentage}% at 50% 50%)`;
 
-  // --- STATE NORMALIZATION UTILITY ---
   const normalizeStateName = (name) => {
     if (!name) return "";
     const cleaned = name.trim().toLowerCase().replace(/\s+/g, " ");
@@ -168,7 +160,6 @@ const Projects = () => {
     }
   };
 
-  // Dynamically pulls unique categories from backend projects
   const uniqueCategories = [
     ...new Set(projects.map((p) => p.category?.trim()).filter(Boolean)),
   ];
@@ -199,10 +190,8 @@ const Projects = () => {
     return label.replace(/[_-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  // Calculate dynamic completed projects counts directly from the array for global snapshot view
   const globalCompletedCount = projects.filter(p => p.status?.trim().toLowerCase() === 'completed').length;
 
-  // Exact conditional schema validation logic aligned with dynamic tabs
   let displayProjects = [];
   if (activeTab === "all") {
       displayProjects = projects.filter((p) => p.status?.trim().toLowerCase() === 'active' || p.status?.trim().toLowerCase() === 'ongoing');
@@ -256,7 +245,6 @@ const Projects = () => {
             <span>❮</span>
           </button>
           
-          {/* Main Top Navigation Header with Completed and Planned Tabs Reinstated */}
           <div ref={scrollRef} className="flex items-center justify-center space-x-8 overflow-x-auto no-scrollbar scroll-smooth px-12">
             <button onClick={() => { setActiveTab("all"); setSelectedCategory(null); window.history.replaceState(null, "", `#all`); }} className={`py-4 border-b-2 font-bold whitespace-nowrap transition-colors shrink-0 ${activeTab === "all" ? "border-primary text-primary" : "border-transparent text-gray-500 hover:text-primary"}`}>Ongoing Projects 🏢</button>
             <button onClick={() => { setActiveTab("completed"); setSelectedCategory(null); window.history.replaceState(null, "", `#completed`); }} className={`py-4 border-b-2 font-bold whitespace-nowrap transition-colors shrink-0 ${activeTab === "completed" ? "border-primary text-primary" : "border-transparent text-gray-500 hover:text-primary"}`}>Completed Projects ✅</button>
@@ -264,7 +252,6 @@ const Projects = () => {
             <button onClick={() => { setActiveTab("listings"); window.history.replaceState(null, "", `#listings`); }} className={`py-4 border-b-2 font-bold whitespace-nowrap transition-colors shrink-0 ${activeTab === "listings" ? "border-primary text-primary" : "border-transparent text-gray-500 hover:text-primary"}`}>State-wise Listings 📍</button>
           </div>
 
-          {/* Sub-menu Row: Core Dynamic Sub-Categories shown across status variations */}
           {(activeTab === "all" || activeTab === "completed" || activeTab === "planned") && uniqueCategories.length > 0 && (
             <div className="flex flex-wrap items-center justify-center gap-2 mt-2 pb-4 bg-white border-t pt-3 border-gray-50 animate-in fade-in duration-300">
               {uniqueCategories.map(cat => (
@@ -273,7 +260,6 @@ const Projects = () => {
             </div>
           )}
 
-          {/* Sub-menu Row: States show here ONLY when "State-wise Listings" is active */}
           {activeTab === "listings" && uniqueStates.length > 0 && (
             <div className="flex flex-wrap items-center justify-center gap-2 mt-2 pb-4 bg-white border-t pt-3 border-gray-50 animate-in fade-in duration-300">
               {uniqueStates.map(state => (
@@ -328,7 +314,6 @@ const Projects = () => {
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-[10px] font-bold text-accent uppercase tracking-widest">{project.category}</div>
-                      {/* 🔥 FIXED BADGE DISPLAY: Added absolute text capitalization template for badges formatting uniformity */}
                       <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded ${project.status?.trim().toLowerCase() === 'completed' ? 'bg-green-100 text-green-700' : project.status?.trim().toLowerCase() === 'planned' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-700'}`}>
                         {project.status?.trim().toLowerCase() === 'active' || project.status?.trim().toLowerCase() === 'ongoing' ? 'Ongoing' : project.status}
                       </span>

@@ -8,25 +8,20 @@ const MediaAndStories = () => {
   const [activeTab, setActiveTab] = useState('photos');
   const location = useLocation(); 
   
-  // 🔥 NEW CONTINUOUS GALLERY MODAL STATES
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   
-  // States for Photos
   const [medias, setMedias] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // States for Videos
   const [videos, setVideos] = useState([]);
   const [isVideoLoading, setIsVideoLoading] = useState(true);
   const [playingVideoId, setPlayingVideoId] = useState(null);
 
-  // States for Press
   const [pressCov, setPressCov] = useState([]);
   const [isPressLoading, setIsPressLoading] = useState(true);
 
-  // Handle URL hash navigation (e.g., /media#videos)
   useEffect(() => {
     if (location.hash) {
       const targetTab = location.hash.replace('#', '');
@@ -44,7 +39,6 @@ const MediaAndStories = () => {
     }
   }, [location.hash]);
 
-  // 1. Fetch Photos from Database
   useEffect(() => {
     const fetchMedia = async () => {
       try {
@@ -67,7 +61,6 @@ const MediaAndStories = () => {
     fetchMedia();
   }, []);
 
-  // 2. Fetch Videos from Database
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -87,7 +80,6 @@ const MediaAndStories = () => {
     fetchVideos();
   }, []);
 
-  // 3. Fetch Press Coverage from Database
   useEffect(() => {
     const fetchPressCoverage = async () => {
       try {
@@ -107,7 +99,6 @@ const MediaAndStories = () => {
     fetchPressCoverage();
   }, []);
 
-  // Helper function to turn normal YouTube links into playable embedded links
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return '';
     let videoId = '';
@@ -119,20 +110,16 @@ const MediaAndStories = () => {
     return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
   };
 
-  // 🔥 FIXED IMAGE URL HELPER: Aligned with Bluehost root structure
   const getImageUrl = (path) => {
     if (!path) return 'https://via.placeholder.com/800x600?text=No+Media';
     if (path.startsWith('https') || path.startsWith('http')) return path;
 
-    // ADMIN_BASE_URL (https://hrntechsolutions.com/backend/admin) se root domain nikalna
     const rootDomain = ADMIN_BASE_URL.split('/backend/admin')[0].replace(/\/+$/, ""); 
     const cleanPath = path.replace(/^\/+/, ''); 
     
-    // Path: domain/backend/admin/uploads/...
     return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
-  // 🔥 Gallery Navigation Handlers
   const handlePrevPhoto = useCallback((e) => {
     e?.stopPropagation();
     setCurrentPhotoIndex((prev) => (prev === 0 ? medias.length - 1 : prev - 1));
@@ -143,7 +130,6 @@ const MediaAndStories = () => {
     setCurrentPhotoIndex((prev) => (prev === medias.length - 1 ? 0 : prev + 1));
   }, [medias.length]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isPhotoModalOpen) return;
@@ -157,7 +143,6 @@ const MediaAndStories = () => {
 
   return (
     <div className="bg-white min-h-screen relative">
-      {/* Hero Section */}
       <section className="bg-primary text-white py-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <motion.h1
@@ -178,7 +163,6 @@ const MediaAndStories = () => {
         </div>
       </section>
 
-      {/* Navigation Tabs */}
       <section className="border-b border-gray-200 sticky top-20 bg-white z-40">
         <div className="max-w-xl mx-auto px-4 justify-center">
           <div className="flex overflow-x-auto hide-scrollbar space-x-8 ">
@@ -202,11 +186,9 @@ const MediaAndStories = () => {
         </div>
       </section>
 
-      {/* Content Area */}
       <section className="py-12 px-4 bg-gray-50 min-h-[60vh]">
         <div className="max-w-7xl mx-auto">
 
-          {/* Photo Gallery */}
           {activeTab === 'photos' && (
             <motion.div
               id="photos"
@@ -249,7 +231,6 @@ const MediaAndStories = () => {
             </motion.div>
           )}
 
-          {/* Video Gallery */}
           {activeTab === 'videos' && (
             <motion.div
               id="videos"
@@ -319,7 +300,6 @@ const MediaAndStories = () => {
             </motion.div>
           )}
 
-          {/* Press Coverage */}
           {activeTab === 'press' && (
             <motion.div
               id="press"
@@ -341,7 +321,6 @@ const MediaAndStories = () => {
                   <Link key={item.id} to={`/press-coverage/${item.slug}`} className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
                     <div className="md:w-48 h-32 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 shrink-0 overflow-hidden">
                       <div className="group-hover:scale-105 transition-transform w-full h-full">
-                        {/* 🔥 FIXED: item.image ko badal kar item.image1 kiya taaki single primary photo render ho sake */}
                         <img src={getImageUrl(item.image1)} alt={item.title} className='w-full h-full object-cover' />
                       </div>
                     </div>
@@ -366,13 +345,11 @@ const MediaAndStories = () => {
         </div>
       </section>
 
-      {/* 🔥 THE CONTINUOUS GALLERY MODAL */}
       {isPhotoModalOpen && medias.length > 0 && (
         <div 
           className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-md transition-opacity"
           onClick={() => setIsPhotoModalOpen(false)}
         >
-          {/* Close Button */}
           <button 
             className="absolute top-6 right-6 text-white/70 hover:text-white text-4xl font-light transition-colors z-50"
             onClick={() => setIsPhotoModalOpen(false)}
@@ -380,10 +357,8 @@ const MediaAndStories = () => {
             &times;
           </button>
 
-          {/* Main Image Container */}
           <div className="relative flex items-center justify-center w-full max-w-5xl flex-1 max-h-[75vh]">
             
-            {/* Prev Button */}
             {medias.length > 1 && (
               <button 
                 onClick={handlePrevPhoto}
@@ -404,7 +379,6 @@ const MediaAndStories = () => {
               onClick={(e) => e.stopPropagation()} 
             />
 
-            {/* Next Button */}
             {medias.length > 1 && (
               <button 
                 onClick={handleNextPhoto}
@@ -415,7 +389,6 @@ const MediaAndStories = () => {
             )}
           </div>
 
-          {/* Thumbnails */}
           {medias.length > 1 && (
             <div 
               className="w-full max-w-4xl mt-6 flex gap-2 overflow-x-auto py-2 custom-scrollbar justify-start md:justify-center px-4"
@@ -435,7 +408,6 @@ const MediaAndStories = () => {
             </div>
           )}
 
-          {/* Counter text */}
           {medias.length > 1 && (
              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest">
                {currentPhotoIndex + 1} / {medias.length}

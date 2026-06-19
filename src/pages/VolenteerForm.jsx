@@ -8,7 +8,7 @@ export default function VolunteerForm() {
     phone: "",
     age: "",
     address: "",
-    pincode: "", // Added pincode to state
+    pincode: "",
     interest: "",
     message: "",
   });
@@ -41,7 +41,6 @@ export default function VolunteerForm() {
 
       if (response.ok && data.status === "success") {
         setStatus({ type: "success", message: data.message });
-        // Resetting form with correct keys
         setFormData({ name: "", email: "", phone: "", age: "", address: "", pincode: "", interest: "", message: "" });
       } else {
         setStatus({ type: "error", message: data.message || "Failed to submit application." });
@@ -56,7 +55,6 @@ export default function VolunteerForm() {
   return (
     <section className="py-16 bg-gray-100 min-h-screen">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-        {/* Heading */}
         <h2 className="text-3xl font-bold text-center mb-2">
           Become a Volunteer 🙌
         </h2>
@@ -64,7 +62,6 @@ export default function VolunteerForm() {
           Join us and make a difference in the community.
         </p>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {status.message && (
             <div className={`p-4 rounded-lg text-center font-medium ${status.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -72,7 +69,6 @@ export default function VolunteerForm() {
             </div>
           )}
 
-          {/* Name */}
           <div>
             <label className="block mb-1 font-medium">Full Name</label>
             <input
@@ -86,7 +82,6 @@ export default function VolunteerForm() {
             />
           </div>
 
-          {/* Email + Phone */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-1 font-medium">Email</label>
@@ -104,7 +99,7 @@ export default function VolunteerForm() {
             <div>
               <label className="block mb-1 font-medium">Phone</label>
               <input
-                type="tel" // Use tel for phone numbers
+                type="tel"
                 name="phone"
                 placeholder="Enter phone"
                 value={formData.phone}
@@ -115,7 +110,6 @@ export default function VolunteerForm() {
             </div>
           </div>
 
-          {/* Age + Interest */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-1 font-medium">Age</label>
@@ -148,7 +142,6 @@ export default function VolunteerForm() {
             </div>
           </div>
 
-          {/* Address + Pincode */}
           <div className="grid md:grid-cols-2 gap-4">
             <div> 
               <label className="block mb-1 font-medium">Full Address</label>
@@ -166,10 +159,10 @@ export default function VolunteerForm() {
             <div>
               <label className="block mb-1 font-medium">Pincode</label>
               <input
-                type="text" // Use text or number
-                name="pincode" // Changed from age to pincode
+                type="text"
+                name="pincode"
                 placeholder="Enter Pincode"
-                value={formData.pincode} // Corrected state link
+                value={formData.pincode}
                 onChange={handleChange}
                 className="input w-full p-2 border rounded-lg"
                 required
@@ -177,7 +170,6 @@ export default function VolunteerForm() {
             </div>
           </div>
 
-          {/* Message */}
           <div>
             <label className="block mb-1 font-medium">Message</label>
             <textarea
@@ -189,7 +181,6 @@ export default function VolunteerForm() {
             ></textarea>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}

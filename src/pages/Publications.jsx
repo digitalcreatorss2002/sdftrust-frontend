@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom"; 
 
@@ -10,12 +9,10 @@ const Publications = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // TAB STATE
   const [activeTab, setActiveTab] = useState("annual-reports");
 
   const location = useLocation(); 
 
-  // ✅ FIXED: प्रोजेक्ट्स और पब्लिकेशन्स (backend/admin/) पाथ के लिए सटीक हेल्पर फ़ंक्शन
   const getFullUrl = (path) => {
     if (!path) return "";
     if (path.startsWith("https") || path.startsWith("http")) return path;
@@ -23,28 +20,24 @@ const Publications = () => {
     const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
     const cleanPath = path.replace(/^\/+/, "");
 
-    // अगर डेटाबेस में पहले से 'backend/admin/' जुड़कर आ रहा है तो उसे डुप्लिकेट होने से रोकें
     if (cleanPath.startsWith("backend/admin/")) {
       return `${rootDomain}/${cleanPath}`;
     }
     return `${rootDomain}/backend/admin/${cleanPath}`;
   };
 
-  // HANDLE HASH FOR DIRECT LINKING
   useEffect(() => {
     if (location.hash) {
       const tab = location.hash.replace("#", "");
 
-      // Allowed valid tabs including legal-documents
       if (["annual-reports", "case-studies", "legal-documents", "in-publications"].includes(tab)) {
         setActiveTab(tab);
       }
     } else {
-      setActiveTab("annual-reports"); // default
+      setActiveTab("annual-reports");
     }
   }, [location]);
 
-  // FETCH DATA
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,14 +78,12 @@ const Publications = () => {
     return <div className="text-center text-red-500 py-20 font-bold">{error}</div>;
   }
 
-  // ✅ डेटा फ़िल्टरिंग (अलग-अलग टाइप्स के आधार पर)
   const reports = publications.filter((p) => p.type === "report");
   const caseStudies = publications.filter((p) => p.type === "case_study");
   const legalDocuments = publications.filter((p) => p.type === "legal_document"); // 🔥 NEW: लीगल डाक्यूमेंट्स फ़िल्टर
 
   return (
     <div className="bg-bg-color min-h-screen">
-      {/* HEADER */}
       <section className="bg-primary text-white py-20 px-4 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -106,7 +97,6 @@ const Publications = () => {
         </motion.p>
       </section>
 
-      {/* TABS */}
       <section className="border-b sticky top-20 bg-white z-40 shadow-sm border-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center space-x-8 overflow-x-auto no-scrollbar">
@@ -135,10 +125,8 @@ const Publications = () => {
         </div>
       </section>
 
-      {/* CONTENT */}
       <div className="max-w-7xl mx-auto px-4 py-12 min-h-screen">
         
-        {/* REPORTS */}
         {activeTab === "annual-reports" && (
           reports.length > 0 ? (
             <div className="grid md:grid-cols-3 gap-6">
@@ -166,7 +154,6 @@ const Publications = () => {
           )
         )}
 
-        {/* CASE STUDIES */}
         {activeTab === "case-studies" && (
           caseStudies.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -197,7 +184,6 @@ const Publications = () => {
           )
         )}
 
-        {/* ✅ LEGAL DOCUMENTS CONTENT AREA */}
         {activeTab === "legal-documents" && (
           legalDocuments.length > 0 ? (
             <div className="grid md:grid-cols-3 gap-6">
@@ -225,7 +211,6 @@ const Publications = () => {
           )
         )}
 
-        {/* IN PUBLICATIONS */}
         {activeTab === "in-publications" && (
           inPublications.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

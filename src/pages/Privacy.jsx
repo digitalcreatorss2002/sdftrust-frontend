@@ -19,7 +19,6 @@ export default function PrivacyPolicy() {
           safeguard your information when you visit our website.
         </p>
 
-        {/* Section 1 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           Information We Collect
         </h2>
@@ -30,7 +29,6 @@ export default function PrivacyPolicy() {
           contact us.
         </p>
 
-        {/* Section 2 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           How We Use Your Information
         </h2>
@@ -42,7 +40,6 @@ export default function PrivacyPolicy() {
           <li>To respond to inquiries and support requests</li>
         </ul>
 
-        {/* Section 3 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           Sharing Your Information
         </h2>
@@ -53,7 +50,6 @@ export default function PrivacyPolicy() {
           complete transactions.
         </p>
 
-        {/* Section 4 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           Data Security
         </h2>
@@ -63,7 +59,6 @@ export default function PrivacyPolicy() {
           information from unauthorized access or disclosure.
         </p>
 
-        {/* Section 5 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           Your Rights
         </h2>
@@ -73,7 +68,6 @@ export default function PrivacyPolicy() {
           personal information by contacting us.
         </p>
 
-        {/* Section 6 */}
         <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">
           Contact Us
         </h2>

@@ -22,7 +22,6 @@ const Contact = () => {
     setStatusMessage({ text: "", type: "" });
 
     try {
-      // In production, point to actual PHP server
       const response = await fetch(`${API_BASE_URL}/submit-contact.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,7 +47,6 @@ const Contact = () => {
       } else {
         setStatusMessage({ text: data.message, type: "error" });
       }
-      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setStatusMessage({
         text: "Connection failed. Ensure PHP backend is running.",
@@ -60,7 +58,6 @@ const Contact = () => {
   };
   return (
     <div className="bg-bg-color min-h-screen">
-      {/* Hero */}
       <section className="bg-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
@@ -74,7 +71,6 @@ const Contact = () => {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Contact Information */}
           <div className="lg:col-span-1 space-y-8">
             <div>
               <h2 className="text-2xl font-serif font-bold text-text-primary mb-6">
@@ -111,26 +107,35 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-  <div className="bg-white w-12 h-12 rounded-full shadow-sm flex items-center justify-center text-xl shrink-0 border border-gray-100">
-    ✉️
-  </div>
-  <div>
-    <h3 className="font-bold text-text-primary mb-1">
-      Email Addresses
-    </h3>
-    <p className="text-gray-600 text-sm leading-relaxed flex flex-col">
-      <a href="mailto:chairman@sdftrust.org" className="hover:text-blue-600 transition-colors">
-        chairman@sdftrust.org
-      </a>
-      <a href="mailto:hr@sdftrust.org" className="hover:text-blue-600 transition-colors">
-        hr@sdftrust.org
-      </a>
-      <a href="mailto:Sdftindia@gmail.com" className="hover:text-blue-600 transition-colors">
-        Sdftindia@gmail.com
-      </a>
-    </p>
-  </div>
-</div>
+                  <div className="bg-white w-12 h-12 rounded-full shadow-sm flex items-center justify-center text-xl shrink-0 border border-gray-100">
+                    ✉️
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-text-primary mb-1">
+                      Email Addresses
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed flex flex-col">
+                      <a
+                        href="mailto:chairman@sdftrust.org"
+                        className="hover:text-blue-600 transition-colors"
+                      >
+                        chairman@sdftrust.org
+                      </a>
+                      <a
+                        href="mailto:hr@sdftrust.org"
+                        className="hover:text-blue-600 transition-colors"
+                      >
+                        hr@sdftrust.org
+                      </a>
+                      <a
+                        href="mailto:Sdftindia@gmail.com"
+                        className="hover:text-blue-600 transition-colors"
+                      >
+                        Sdftindia@gmail.com
+                      </a>
+                    </p>
+                  </div>
+                </div>
 
                 <div className="flex items-start gap-4">
                   <div className="bg-white w-12 h-12 rounded-full shadow-sm flex items-center justify-center text-xl shrink-0 border border-gray-100">
@@ -149,7 +154,6 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Verification Google Maps Placeholder */}
             <div className="w-full h-48 bg-gray-200 rounded-xl overflow-hidden shadow-inner border border-gray-300 relative">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3503.539593014628!2d77.315106!3d28.583585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce51ee5d79db7%3A0x685544a078523ffb!2sHRN%20Tech%20Solutions!5e0!3m2!1sen!2sin!4v1756100513176!5m2!1sen!2sin"
@@ -159,10 +163,10 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Contact Form */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-10">
             <h2 className="text-2xl font-serif font-bold text-[#6F7C2E] mb-2">
-              Write to us for Enqueries, Volunteering, Partnerships, or Donations.
+              Write to us for Enqueries, Volunteering, Partnerships, or
+              Donations.
             </h2>
             <p className="text-gray-500 mb-8">
               Fill out the form below and our team will get back to you shortly.

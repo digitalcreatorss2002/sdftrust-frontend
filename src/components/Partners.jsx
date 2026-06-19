@@ -24,7 +24,6 @@ const PartnersSection = () => {
     return `${rootDomain}/backend/${cleanPath}`;
   };
 
-  // Fetch partners data
   useEffect(() => {
     Promise.all([
       fetch(`${API_BASE_URL}/partners.php?t=${Date.now()}`).then((res) =>

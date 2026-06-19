@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
-// Swiper Components और Modules
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
@@ -11,7 +10,6 @@ const BeforeAfterImpact = () => {
   const [impactData, setImpactData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // एडमिन पैनल पाथ से इमेज का फुल URL निकालने का हेल्पर फ़ंक्शन
   const getFullUrl = (path) => {
     if (!path) return "https://via.placeholder.com/1200x600?text=SDF+Impact";
     if (path.startsWith("https") || path.startsWith("http")) return path;
@@ -55,7 +53,6 @@ const BeforeAfterImpact = () => {
   return (
     <section className="py-12 bg-[#F8F7F3] relative overflow-hidden">
       
-      {/* 🟢 स्वाइपर बुलेट्स/डॉट्स को कस्टमाइज़ करने के लिए छोटा स्टाइल ब्लॉक */}
       <style>{`
         .before-after-slider-wrapper .swiper-pagination-bullet-active {
           background: #6a752b !important;
@@ -67,29 +64,23 @@ const BeforeAfterImpact = () => {
         }
       `}</style>
 
-      {/* ओरिजिनल कंटेनर अलाइनमेंट (max-w-7xl, px-4 जैसे पहले था) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative before-after-slider-wrapper">
         
-        {/* 🔴 SLIDER WRAPPER - यह मेन इमेज कंटेनर को बिना छेड़े केवल बटन्स को बाहर पोजीशन करेगा */}
         <div className="relative px-2">
           
-          {/* 🟢 कस्टम आउटवर्ड लेफ्ट बटन */}
           <button id="impact-prev-btn" className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 bg-white text-[#6a752b] hover:bg-[#6a752b] hover:text-white w-11 h-11 rounded-full shadow-lg border border-gray-100 flex items-center justify-center z-30 transition-all font-bold text-sm">
             ←
           </button>
 
-          {/* 🟢 कस्टम आउटवर्ड राइट बटन */}
           <button id="impact-next-btn" className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 bg-white text-[#6a752b] hover:bg-[#6a752b] hover:text-white w-11 h-11 rounded-full shadow-lg border border-gray-100 flex items-center justify-center z-30 transition-all font-bold text-sm">
             →
           </button>
 
-          {/* स्वाइपर स्लाइडर मुख्य ग्रिड */}
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={30}
             slidesPerView={1}
             loop={impactData.length > 1}
-            // कस्टम बटन्स को स्वाइपर नेविगेशन आईडी से लिंक किया
             navigation={{
               prevEl: "#impact-prev-btn",
               nextEl: "#impact-next-btn",

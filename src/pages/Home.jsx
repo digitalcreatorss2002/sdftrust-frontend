@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-// eslint-disable-next-line no-unused-vars
 import {
   motion,
   useScroll,
@@ -16,7 +15,6 @@ import BeforeAfterImpact from "../components/BeforeAfterImpact";
 
 const PROGRAMS_API_URL = `${API_BASE_URL}/programs.php?t=` + Date.now();
 const SUBSCRIBE_API_URL = `${API_BASE_URL}/subscribe.php`;
-// Nayi API Endpoint Path for Gallery Images
 const GALLERY_API_URL = `${API_BASE_URL}/home_about_image.php?t=` + Date.now();
 
 const getPartnerImageUrl = (path) => {
@@ -66,11 +64,9 @@ const Home = () => {
   const [allProjects, setAllProjects] = useState([]);
   const [allPartnersData, setAllPartnersData] = useState([]);
 
-  // State Hooks for newly uploaded images gallery
   const [galleryImages, setGalleryImages] = useState([]);
   const [galleryLoading, setGalleryLoading] = useState(true);
 
-  // Map Animation hooks
   const mapRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: mapRef,
@@ -159,7 +155,6 @@ const Home = () => {
       }
     };
 
-    // Dynamic Fetching Pipeline for Gallery Images (home_about_images table)
     const fetchHomeAboutImages = async () => {
       try {
         const response = await fetch(GALLERY_API_URL);
@@ -210,12 +205,10 @@ const Home = () => {
     fetchPartnersDataDirectly();
   }, []);
 
-  // ✅ FIXED: Clean dynamic path routing structure to prevent cross-origin loop blocks
   const getGalleryImageUrl = (path) => {
   if (!path) return "https://placehold.co/500x300?text=No+Image";
   if (path.startsWith("https://") || path.startsWith("http://")) return path;
 
-  // Split root domain cleanly
   const rootDomain = ADMIN_BASE_URL.split("/backend/admin")[0].replace(/\/+$/, "");
   const cleanPath = path.replace(/^\/+/, "");
   
@@ -387,7 +380,6 @@ const Home = () => {
       <section className="py-12 relative bg-bg-color">
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row xl:items-start gap-8 justify-between">
-            {/* 🟢 1. Left Block: Info Content (Why SDF?) */}
             <div className="w-full lg:w-[22%] xl:max-w-[320px] shrink-0">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl shadow-sm animate-float shrink-0">
@@ -413,7 +405,6 @@ const Home = () => {
               </Link>
             </div>
             <div className="w-full lg:w-[75%] flex flex-col gap-6">
-              {/* 🔄 TOP ROW: Replaced Project Cards Grid with 4 Gallery Images Grid from new backend */}
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
                 {galleryLoading ? (
                   <div className="col-span-1 sm:col-span-2 xl:col-span-4 text-center text-gray-500 py-10 bg-white/50 rounded-2xl border border-dashed">
@@ -431,7 +422,6 @@ const Home = () => {
                           alt="SDF Asset"
                           className="w-full h-full object-cover rounded-xl shadow-sm"
                           onError={(e) => {
-                            // Stable asset placeholder service setup
                             e.currentTarget.src =
                               "https://placehold.co/500x300?text=SDF+Image";
                           }}
@@ -446,7 +436,6 @@ const Home = () => {
                 )}
               </div>
 
-              {/* 🟢 BOTTOM ROW: Our Impact Statistics (Bilkul same aur untouched hai) */}
               <div className="w-full">
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
                   {focusAreas && focusAreas.length > 0 ? (
@@ -486,7 +475,6 @@ const Home = () => {
                 </div>
               </div>
             </div>{" "}
-            {/* Right Container Ends */}
           </div>
         </div>
       </section>
@@ -497,7 +485,6 @@ const Home = () => {
 
       <Testimonials />
 
-      {/* Map Section Grassroots Presence */}
       <section className="py-16 bg-bg-color">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-4xl font-serif text-text-primary mb-10 text-center">
@@ -766,7 +753,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- Partners Marquee Section --- */}
       <section className="py-20 bg-[#F3EFE4] overflow-hidden" id="partners">
         <style>{`
           @keyframes marqueeLeft {
@@ -864,7 +850,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- Subscribe Newsletter --- */}
       <section className="py-10 bg-primary/10 border-t border-primary/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="text-4xl mb-4 block animate-float">✉️</span>

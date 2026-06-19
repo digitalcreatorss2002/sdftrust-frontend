@@ -7,10 +7,8 @@ const Navbar = () => {
   const [activeMobileMenu, setActiveMobileMenu] = useState(null);
   const [dynamicPrograms, setDynamicPrograms] = useState([]);
 
-  // ✅ Fix for (EOI/RFQ) capitalization - Regex handles any case variation
   const formatLabel = (label) => {
     if (!label) return "";
-    // Program ID format ko readable banana (e.g., lowercase dashes to uppercase/spaces)
     let formatted = label.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     return formatted.replace(/\(eoi\/rfq\)/gi, "(EOI/RFQ)");
   };
@@ -30,7 +28,6 @@ const Navbar = () => {
             if (normalizedId && !seen.has(normalizedId.toLowerCase())) {
               seen.add(normalizedId.toLowerCase());
               uniquePrograms.push({
-                // 🔥 FIXED: Title ki jagah ab Program ID select ho raha hai dropdown label ke liye
                 label: normalizedId, 
                 path: `/programs?filter=${encodeURIComponent(normalizedId.toLowerCase())}`,
                 icon: prog.icon || "📌",
@@ -78,11 +75,6 @@ const Navbar = () => {
       hasDropdown: true,
       dropdownItems: [
         { label: "Ongoing Projects", path: "/projects#ongoing", icon: "🏢" },
-        // {
-        //   label: "State-wise Listings",
-        //   path: "/projects#listings",
-        //   icon: "🗺️",
-        // },
         { label: "Impact Snapshot", path: "/projects#impact", icon: "📊" },
       ],
     },
@@ -151,7 +143,6 @@ const Navbar = () => {
     <nav className="bg-white backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
-          {/* Logo Section */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2">
               <div className="flex items-center justify-center h-16 w-auto">
@@ -164,7 +155,6 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden xl:flex items-center space-x-1">
             {menuItems.map((item) => (
               <div key={item.name} className="relative group px-2 py-6">
@@ -212,7 +202,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="flex items-center xl:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -224,7 +213,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       <div
         className={`xl:hidden transition-all duration-300 ease-in-out overflow-hidden ${
           isOpen ? "max-h-screen border-t border-gray-100" : "max-h-0"
