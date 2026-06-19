@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_BASE_URL } from "../config";
 
@@ -6,6 +6,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeMobileMenu, setActiveMobileMenu] = useState(null);
   const [dynamicPrograms, setDynamicPrograms] = useState([]);
+  const navigate = useNavigate();
 
   const formatLabel = (label) => {
     if (!label) return "";
@@ -20,15 +21,19 @@ const Navbar = () => {
           `${API_BASE_URL}/programs.php?t=${Date.now()}`,
         );
         const data = await response.json();
-        if (data.status === "success") {
+        if (data.status === "success" || data.status === true || Array.isArray(data.data)) {
           const uniquePrograms = [];
           const seen = new Set();
-          for (const prog of data.data) {
+          
+          const programsList = Array.isArray(data.data) ? data.data : [];
+
+          for (const prog of programsList) {
             const normalizedId = (prog.program_id || "").trim();
             if (normalizedId && !seen.has(normalizedId.toLowerCase())) {
               seen.add(normalizedId.toLowerCase());
               uniquePrograms.push({
-                label: normalizedId, 
+                rawLabel: normalizedId,
+                label: formatLabel(normalizedId), 
                 path: `/programs?filter=${encodeURIComponent(normalizedId.toLowerCase())}`,
                 icon: prog.icon || "📌",
               });
@@ -45,6 +50,13 @@ const Navbar = () => {
 
   const toggleMobileMenu = (menu) => {
     setActiveMobileMenu(activeMobileMenu === menu ? null : menu);
+  };
+
+  const handleDropdownItemClick = (path) => {
+    setIsOpen(false);
+    setActiveMobileMenu(null);
+    navigate(path);
+    window.dispatchEvent(new Event("popstate"));
   };
 
   const menuItems = [
@@ -83,26 +95,10 @@ const Navbar = () => {
       path: "/publications",
       hasDropdown: true,
       dropdownItems: [
-        {
-          label: "Annual Reports",
-          path: "/publications#annual-reports",
-          icon: "📈",
-        },
-        {
-          label: "Case Studies",
-          path: "/publications#case-studies",
-          icon: "📝",
-        },
-        {
-          label: "Legal Documents",
-          path: "/publications#legal-documents",
-          icon: "📄",
-        },
-        {
-          label: "Our Publications",
-          path: "/publications#in-publications",
-          icon: "📚",
-        },
+        { label: "Annual Reports", path: "/publications#annual-reports", icon: "📈" },
+        { label: "Case Studies", path: "/publications#case-studies", icon: "📝" },
+        { label: "Legal Documents", path: "/publications#legal-documents", icon: "📄" },
+        { label: "Our Publications", path: "/publications#in-publications", icon: "📚" },
       ],
     },
     {
@@ -120,17 +116,9 @@ const Navbar = () => {
       path: "/get-involved",
       hasDropdown: true,
       dropdownItems: [
-        {
-          label: "Volunteer With Us",
-          path: "/get-involved#volunteer",
-          icon: "🤝",
-        },
+        { label: "Volunteer With Us", path: "/get-involved#volunteer", icon: "🤝" },
         { label: "Careers", path: "/get-involved#careers", icon: "💼" },
-        {
-          label: "Partners (EOI/RFQ)",
-          path: "/get-involved#funds",
-          icon: "🌱",
-        },
+        { label: "Partners (EOI/RFQ)", path: "/get-involved#funds", icon: "🌱" },
       ],
     },
     {
@@ -155,6 +143,7 @@ const Navbar = () => {
             </Link>
           </div>
 
+          {/* Desktop Menu */}
           <div className="hidden xl:flex items-center space-x-1">
             {menuItems.map((item) => (
               <div key={item.name} className="relative group px-2 py-6">
@@ -173,19 +162,19 @@ const Navbar = () => {
                 {item.hasDropdown && (
                   <div className="absolute left-1/2 -translate-x-1/2 top-[90%] w-64 bg-white shadow-2xl border border-gray-100 rounded-xl opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-2 group-hover:pointer-events-auto transition-all duration-300 z-50">
                     <div className="p-2">
-                      {item.dropdownItems.map((subItem) => (
-                        <Link
-                          key={subItem.label}
-                          to={subItem.path}
-                          className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors group/link"
+                      {item.dropdownItems.map((subItem, idx) => (
+                        <button
+                          key={subItem.path + idx}
+                          onClick={() => handleDropdownItemClick(subItem.path)}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors group/link text-left"
                         >
                           <span className="text-xl group-hover/link:scale-110 transition-transform">
                             {subItem.icon}
                           </span>
                           <span className="text-sm font-bold text-gray-700 group-hover/link:text-primary normal-case">
-                            {formatLabel(subItem.label)}
+                            {subItem.label}
                           </span>
-                        </Link>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -202,6 +191,7 @@ const Navbar = () => {
             </div>
           </div>
 
+          {/* Mobile Hamburger Button */}
           <div className="flex items-center xl:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -213,6 +203,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       <div
         className={`xl:hidden transition-all duration-300 ease-in-out overflow-hidden ${
           isOpen ? "max-h-screen border-t border-gray-100" : "max-h-0"
@@ -220,10 +211,7 @@ const Navbar = () => {
       >
         <div className="px-4 pt-2 pb-6 space-y-1 bg-white shadow-inner max-h-[calc(100vh-80px)] overflow-y-auto">
           {menuItems.map((item) => (
-            <div
-              key={item.name}
-              className="border-b border-gray-50 last:border-0"
-            >
+            <div key={item.name} className="border-b border-gray-50 last:border-0">
               {item.hasDropdown ? (
                 <>
                   <button
@@ -244,38 +232,35 @@ const Navbar = () => {
                         : "max-h-0 opacity-0"
                     }`}
                   >
-                    {item.dropdownItems.map((subItem) => (
-                      <Link
-                        key={subItem.label}
-                        to={subItem.path}
-                        className="flex items-center gap-3 px-6 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-white transition-colors normal-case"
-                        onClick={() => setIsOpen(false)}
+                    {item.dropdownItems.map((subItem, idx) => (
+                      <button
+                        key={subItem.path + idx}
+                        className="w-full flex items-center gap-3 px-6 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-white transition-colors normal-case text-left"
+                        onClick={() => handleDropdownItemClick(subItem.path)}
                       >
                         <span className="text-lg">{subItem.icon}</span>
-                        {formatLabel(subItem.label)}
-                      </Link>
+                        {subItem.label}
+                      </button>
                     ))}
                   </div>
                 </>
               ) : (
-                <Link
-                  to={item.path}
-                  className="block px-3 py-4 text-base font-bold text-text-primary"
-                  onClick={() => setIsOpen(false)}
+                <button
+                  className="block w-full text-left px-3 py-4 text-base font-bold text-text-primary"
+                  onClick={() => handleDropdownItemClick(item.path)}
                 >
                   {item.name}
-                </Link>
+                </button>
               )}
             </div>
           ))}
           <div className="pt-6 pb-2">
-            <Link
-              to="/donate"
+            <button
               className="block w-full text-center bg-accent text-white px-6 py-4 rounded-xl font-bold shadow-md"
-              onClick={() => setIsOpen(false)}
+              onClick={() => handleDropdownItemClick("/donate")}
             >
               ❤️ Donate Now
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -283,4 +268,5 @@ const Navbar = () => {
   );
 };
 
+// 🔥 यहाँ डिफ़ॉल्ट एक्सपोर्ट जोड़ा गया है जो मिसिंग था
 export default Navbar;

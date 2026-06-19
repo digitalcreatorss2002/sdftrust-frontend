@@ -1,25 +1,33 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation, Link } from "react-router-dom";
-import { API_BASE_URL, ADMIN_BASE_URL } from "../config";
+import { useLocation, Link, useSearchParams } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 const Programs = () => {
   const location = useLocation();
   const scrollRef = useRef(null);
+  
+  // URL से ?filter=health जैसी वैल्यू को रीड करने के लिए
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filterParam = searchParams.get("filter");
 
   const [programsList, setProgramsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
 
+  // 1. जब भी URL का क्वेरी पैरामीटर (?filter=...) बदलेगा, एक्टिव टैब अपडेट होगा
   useEffect(() => {
-    if (location.hash) {
-      const tab = location.hash.replace("#", "");
-      setActiveTab(tab);
+    if (filterParam) {
+      setActiveTab(filterParam.trim().toLowerCase());
+    } else if (location.hash) {
+      // बैकवर्ड कम्पैटिबिलिटी के लिए (अगर हैश यूज़ हो रहा हो)
+      setActiveTab(location.hash.replace("#", "").trim().toLowerCase());
     } else {
       setActiveTab("all");
     }
-  }, [location]);
+  }, [filterParam, location.hash]);
 
+  // 2. API से डेटा फेच करना
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
@@ -33,7 +41,8 @@ const Programs = () => {
           const sortedData = [...data.data].reverse();
           setProgramsList(sortedData);
 
-          if (!location.hash && sortedData.length > 0) {
+          // अगर यूआरएल में कोई फ़िल्टर नहीं है, तो पहले प्रोग्राम की कैटेगरी को एक्टिव करें
+          if (!filterParam && !location.hash && sortedData.length > 0) {
             const firstCat = sortedData[0].program_id?.trim().toLowerCase();
             if (firstCat) setActiveTab(firstCat);
           }
@@ -47,7 +56,7 @@ const Programs = () => {
       }
     };
     fetchPrograms();
-  }, [location.hash]);
+  }, [filterParam, location.hash]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -65,6 +74,7 @@ const Programs = () => {
     }
   };
 
+  // यूनिक कैटेगरीज की लिस्ट तैयार करना
   const uniqueCategories = [
     ...new Set(
       programsList
@@ -78,6 +88,7 @@ const Programs = () => {
     return id.replace(/[_-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
+  // एक्टिव टैब के आधार पर प्रोग्राम्स को फ़िल्टर करना
   const displayPrograms = programsList.filter(
     (p) =>
       (p.program_id || "").toLowerCase().trim() ===
@@ -120,6 +131,7 @@ const Programs = () => {
         </div>
       </section>
 
+      {/* Categories Tabs Section */}
       <section className="border-b sticky top-20 bg-white z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group">
           <button
@@ -138,7 +150,8 @@ const Programs = () => {
                 key={tabId}
                 onClick={() => {
                   setActiveTab(tabId);
-                  window.history.replaceState(null, "", `#${tabId}`);
+                  // जब यूज़र पेज पर मौजूद किसी टैब पर क्लिक करेगा, तो URL भी ?filter=... में बदल जाएगा
+                  setSearchParams({ filter: tabId });
                 }}
                 className={`py-4 border-b-2 font-bold whitespace-nowrap transition-colors shrink-0 ${
                   activeTab === tabId
@@ -160,6 +173,7 @@ const Programs = () => {
         </div>
       </section>
 
+      {/* Programs Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayPrograms.length === 0 && (
