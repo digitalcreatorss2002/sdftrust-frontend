@@ -10,6 +10,7 @@ const Navbar = () => {
 
   const formatLabel = (label) => {
     if (!label) return "";
+    if (label.toLowerCase().trim() === "cbo") return "CBO"; // Handled CBO explicitly here
     let formatted = label.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     return formatted.replace(/\(eoi\/rfq\)/gi, "(EOI/RFQ)");
   };

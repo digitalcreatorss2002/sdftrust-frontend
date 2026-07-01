@@ -85,6 +85,7 @@ const Programs = () => {
 
   const formatTabLabel = (id) => {
     if (id === "all") return "All Programs 🌍";
+    if (id.toLowerCase().trim() === "cbo") return "CBO"; // Handled CBO explicitly here
     return id.replace(/[_-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
