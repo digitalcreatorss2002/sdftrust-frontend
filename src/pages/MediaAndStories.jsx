@@ -143,25 +143,36 @@ const MediaAndStories = () => {
 
   return (
     <div className="bg-white min-h-screen relative">
-      <section className="bg-primary text-white py-20 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold mb-6"
-          >
-            Media & Stories
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg md:text-xl max-w-3xl mx-auto"
-          >
-            Discover the stories of change, our latest news, and the visual journey of our impact.
-          </motion.p>
-        </div>
-      </section>
+      <section className="bg-primary text-white py-35 px-4 text-center relative overflow-hidden">
+  {/* Background Image Layer */}
+  <div 
+    className="absolute inset-0 z-0 bg-[url('header/media.webp.jpeg')] bg-cover bg-center bg-no-repeat"
+    style={{ backgroundImage: `url('header/media.webp.jpeg')` }}
+  />
+  
+  {/* Dark Overlay Filter (Text readability ke liye) */}
+  <div className="absolute inset-0 bg-black/40 z-10" />
+
+  {/* Content Layer with Motion */}
+  <div className="max-w-7xl mx-auto relative z-20">
+    <motion.h1
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="text-4xl md:text-5xl font-bold mb-6 drop-shadow-md heading-font"
+    >
+      Media & Stories
+    </motion.h1>
+    
+    <motion.p
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      className="text-lg md:text-xl max-w-3xl mx-auto text-white opacity-95 drop-shadow-sm body-font"
+    >
+      Discover the stories of change, our latest news, and the visual journey of our impact.
+    </motion.p>
+  </div>
+</section>
 
       <section className="border-b border-gray-200 sticky top-20 bg-white z-40">
         <div className="max-w-xl mx-auto px-4 justify-center">

@@ -203,12 +203,22 @@ const About = () => {
 
   return (
     <div className="bg-bg-color min-h-screen pb-10">
-      <section className="bg-primary text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold mb-4">
+      <section className="bg-primary text-white py-35 relative overflow-hidden">
+        {/* Background Image Layer */}
+        <div
+          className="absolute inset-0 z-0 bg-[url('/header/about.webp.jpeg')] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url('header/about.webp.jpeg')` }} // Aap apna sahi image path yahan daal sakte hain
+        />
+
+        {/* Dark Overlay Filter (Text ko acche se read karne ke liye) */}
+        <div className="absolute inset-0 bg-black/30 z-10" />
+
+        {/* Content Container */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold mb-4 drop-shadow-sm">
             About Us
           </h1>
-          <p className="text-xl lg:text-2xl max-w-2xl mx-auto text-white opacity-90">
+          <p className="text-xl lg:text-2xl max-w-2xl mx-auto text-white opacity-95 drop-shadow-sm">
             Discover our journey, our vision, and the people behind our mission
             to empower communities.
           </p>

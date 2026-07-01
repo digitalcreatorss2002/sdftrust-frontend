@@ -88,7 +88,6 @@ const Programs = () => {
     return id.replace(/[_-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  // एक्टिव टैब के आधार पर प्रोग्राम्स को फ़िल्टर करना
   const displayPrograms = programsList.filter(
     (p) =>
       (p.program_id || "").toLowerCase().trim() ===
@@ -118,13 +117,22 @@ const Programs = () => {
 
   return (
     <div className="bg-bg-color min-h-screen pb-20">
-      <section className="bg-secondary text-white py-20 bg-opacity-90 relative">
-        <div className="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000')] bg-cover bg-center"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-            Our Programmes
+      <section className="bg-primary text-white py-40 relative overflow-hidden">
+        {/* Background Image Layer */}
+        <div
+          className="absolute inset-0 z-0 bg-[url('/header/program.webp.jpeg')] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url('header/program.webp.jpeg')` }}
+        />
+
+        {/* Dark Overlay Filter (Text ko acche se read karne ke liye) */}
+        <div className="absolute inset-0 bg-black/30 z-10" />
+
+        {/* Content Container */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold mb-4 drop-shadow-sm">
+            Our Programs
           </h1>
-          <p className="text-xl max-w-2xl mx-auto text-green-50">
+          <p className="text-xl lg:text-2xl max-w-2xl mx-auto text-white opacity-95 drop-shadow-sm">
             Impact-driven initiatives targeting the most critical challenges
             facing our communities today.
           </p>
